@@ -1,0 +1,157 @@
+.step7-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    background: linear-gradient(to bottom, #fff5f8, #ffffff);
+    padding: 40px 20px 100px;
+    min-height: 100vh;
+    justify-content: center;
+}
+
+.step7-left,
+.step7-right {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-shadow: 0 5px 16px rgba(255, 182, 193, 0.25);
+}
+
+.step7-left {
+    flex: 1 1 60%;
+    max-width: 700px;
+}
+
+.step7-right {
+    flex: 1 1 30%;
+    max-width: 350px;
+    align-self: flex-start;
+    position: sticky;
+    top: 20px;
+}
+
+.step7-title {
+    color: #e85a82;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.step7-subtitle {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.form-section label {
+    display: block;
+    font-weight: 500;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+.form-section input,
+.form-section select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #f8cdda;
+    border-radius: 10px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.select-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.select-box {
+    flex: 1 1 30%;
+    min-width: 150px;
+}
+
+/* --- BÊN PHẢI --- */
+.payment-summary h3 {
+    color: #e85a82;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.price-breakdown {
+    margin-top: 20px;
+    border-top: 1px dashed #ffd5e1;
+    padding-top: 10px;
+}
+
+.price-row,
+.price-total {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 1rem;
+}
+
+.price-total {
+    border-top: 1px solid #ffd5e1;
+    padding-top: 8px;
+    font-size: 1.1rem;
+    color: #d94a6f;
+}
+
+.button-row {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.btn-primary {
+    background: #e85a82;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-secondary {
+    background: #ffe6ed;
+    color: #d94a6f;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #ff7fa3;
+}
+
+.btn-secondary:hover {
+    background: #ffdbe6;
+}
+
+@media (max-width: 900px) {
+
+    .step7-left,
+    .step7-right {
+        max-width: 100%;
+    }
+
+    .step7-right {
+        position: static;
+        width: 100%;
+    }
+
+    .button-row {
+        flex-direction: column;
+    }
+
+    .button-row button {
+        width: 100%;
+    }
+}

@@ -1,16 +1,13 @@
-// src/pages/Quiz/Step4.js
 import React, { useEffect, useState } from "react";
 import { step4 } from "../../services/QuizService";
+import "./step4.css";
 
 const Step4 = ({ data, onNext, onPrev }) => {
     const [menu, setMenu] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (data?.sessionId) {
-            fetchMenu(data.sessionId);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (data?.sessionId) fetchMenu(data.sessionId);
     }, [data?.sessionId]);
 
     const fetchMenu = async (sessionId) => {
@@ -30,55 +27,50 @@ const Step4 = ({ data, onNext, onPrev }) => {
         }
     };
 
-    const handleNext = () => {
-        onNext && onNext({ menu });
-    };
-
-    const handlePrev = () => {
-        onPrev && onPrev();
-    };
+    const handleNext = () => onNext && onNext({ menu });
 
     return (
-        <div className="quiz-step">
-            <div className="quiz-box">
-                <h2 className="quiz-title">Bước 4: Gợi ý thực đơn cho bé</h2>
+        <div className="step4-wrapper">
+            <div className="step4-container">
+                <h2 className="step4-title">Bước 4: Gợi ý thực đơn cho bé 🍽️</h2>
 
                 {loading ? (
-                    <p className="loading">Đang tạo thực đơn phù hợp cho bé... 🍲</p>
+                    <p className="step4-loading">Đang tạo thực đơn phù hợp cho bé... 🍲</p>
                 ) : (
                     <>
                         {menu.length > 0 ? (
-                            <div className="menu-list">
-                                {menu.map((item, index) => (
-                                    <div key={index} className="menu-item">
-                                        <h4>Ngày {item.day}</h4>
-                                        <p>
-                                            <strong>Món:</strong> {item.menu}
-                                        </p>
-                                        <p>
-                                            <strong>Lý do:</strong> {item.reason}
-                                        </p>
+                            <div className="step4-menu-list">
+                                {menu.map((dayItem, index) => (
+                                    <div key={index} className="step4-day-card">
+                                        <h3 className="step4-day-title">📅 Ngày {dayItem.day}</h3>
+                                        <ul className="step4-meal-list">
+                                            {dayItem.meals.map((meal, i) => (
+                                                <li key={i} className="step4-meal-item">
+                                                    {meal}
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p>Chưa có gợi ý nào. Vui lòng thử lại.</p>
+                            <p className="step4-empty">Chưa có gợi ý nào. Vui lòng thử lại.</p>
                         )}
                     </>
                 )}
+            </div>
 
-                <div className="button-row">
-                    <button onClick={handlePrev} className="btn-secondary">
-                        ← Quay lại
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        className="btn-primary"
-                        disabled={loading}
-                    >
-                        Tiếp tục →
-                    </button>
-                </div>
+            <div className="step4-btn-group">
+                <button onClick={onPrev} className="step4-btn step4-btn-back">
+                    ← Quay lại
+                </button>
+                <button
+                    onClick={handleNext}
+                    className="step4-btn step4-btn-next"
+                    disabled={loading}
+                >
+                    Tiếp tục →
+                </button>
             </div>
         </div>
     );

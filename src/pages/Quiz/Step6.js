@@ -1,10 +1,11 @@
-// src/pages/Quiz/Step6.js
 import React, { useEffect, useState } from "react";
 import { step6 } from "../../services/QuizService";
+import "./step6.css";
 
 const Step6 = ({ data, onNext, onPrev }) => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [agree, setAgree] = useState(false);
     const sessionId = data?.sessionId;
 
     useEffect(() => {
@@ -19,7 +20,8 @@ const Step6 = ({ data, onNext, onPrev }) => {
         }
     }, [sessionId]);
 
-    if (loading) return <p className="loading">Đang tải dữ liệu tổng hợp...</p>;
+    if (loading)
+        return <p className="loading">Đang tải dữ liệu tổng hợp...</p>;
 
     if (!summary)
         return <p className="loading">Không có dữ liệu tổng hợp nào được tìm thấy.</p>;
@@ -27,12 +29,12 @@ const Step6 = ({ data, onNext, onPrev }) => {
     const { childInfo, selectedProducts, selectedSet, suggestedMenu } = summary;
 
     return (
-        <div className="quiz-step">
-            <div className="quiz-box">
-                <h2 className="quiz-title">Bước 6: Kết quả gợi ý cho bé</h2>
+        <div className="step6-wrapper">
+            <div className="step6-container">
+                <h2 className="step6-title">Bước 6: Kết quả gợi ý cho bé 🎉</h2>
 
                 {/* --- Thông tin bé --- */}
-                <div className="summary-section">
+                <div className="step6-section">
                     <h3>👶 Thông tin bé</h3>
                     <ul>
                         <li><strong>Tháng tuổi:</strong> {childInfo?.age}</li>
@@ -48,22 +50,22 @@ const Step6 = ({ data, onNext, onPrev }) => {
                 </div>
 
                 {/* --- Nguyên liệu đã chọn --- */}
-                <div className="summary-section">
+                <div className="step6-section">
                     <h3>🥦 Nguyên liệu sẵn có</h3>
-                    <ul>
+                    <div className="step6-ingredients">
                         {selectedProducts?.map((p, i) => (
-                            <li key={i}>
-                                {p.name} <span className="text-muted">({p.category})</span>
-                            </li>
+                            <div key={i} className="ingredient-chip">
+                                {p.name}
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
 
                 {/* --- Set ăn dặm --- */}
-                <div className="summary-section">
+                <div className="step6-section">
                     <h3>🍱 Set ăn dặm đã chọn</h3>
                     {selectedSet ? (
-                        <div className="set-box">
+                        <div className="step6-setbox">
                             <p><strong>Tên:</strong> {selectedSet.name}</p>
                             <p><strong>Thời gian:</strong> {selectedSet.duration} ngày</p>
                             <p><strong>Giá:</strong> {selectedSet.price.toLocaleString()}đ</p>
@@ -73,29 +75,31 @@ const Step6 = ({ data, onNext, onPrev }) => {
                     )}
                 </div>
 
-                {/* --- Thực đơn 7 ngày --- */}
-                <div className="summary-section">
-                    <h3>🍽️ Gợi ý thực đơn 7 ngày</h3>
-                    <div className="menu-list">
-                        {suggestedMenu?.map((item) => (
-                            <div key={item._id || item.day} className="menu-item">
-                                <h4>Ngày {item.day}</h4>
-                                <p><strong>Món:</strong> {item.menu}</p>
-                                <p><strong>Lý do:</strong> {item.reason}</p>
-                            </div>
-                        ))}
-                    </div>
+                {/* --- Điều khoản --- */}
+                <div className="step6-agree">
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={agree}
+                            onChange={(e) => setAgree(e.target.checked)}
+                        />{" "}
+                        Tôi đồng ý với <a href="#">điều khoản và chính sách</a> của chương trình.
+                    </label>
                 </div>
+            </div>
 
-                {/* --- Nút điều hướng --- */}
-                <div className="button-row">
-                    <button onClick={onPrev} className="btn-secondary">
-                        ← Quay lại
-                    </button>
-                    <button onClick={onNext} className="btn-primary">
-                        Thanh toán →
-                    </button>
-                </div>
+            {/* --- Nút điều hướng cố định --- */}
+            <div className="step6-btn-group">
+                <button onClick={onPrev} className="step6-btn step6-btn-back">
+                    ← Quay lại
+                </button>
+                <button
+                    onClick={() => agree && onNext()}
+                    className={`step6-btn step6-btn-next ${!agree ? "disabled" : ""}`}
+                    disabled={!agree}
+                >
+                    Thanh toán →
+                </button>
             </div>
         </div>
     );

@@ -1,23 +1,56 @@
 import React, { useState } from "react";
 import * as QuizService from "../../services/QuizService";
+import "./step1.css";
 
 const Step1 = ({ data, onNext }) => {
     const [form, setForm] = useState({
         age: "",
         weight: "",
-        allergies: "",
+        allergies: [],
     });
+    const [allergyInput, setAllergyInput] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+    const ageOptions = [
+        "6-8 tháng",
+        "8-10 tháng",
+        "10-12 tháng",
+        "12-18 tháng",
+        "18-24 tháng",
+    ];
+
+    const weightOptions = [
+        "6-8 kg",
+        "8-10 kg",
+        "10-12 kg",
+        "12-14 kg",
+        "14-16 kg",
+    ];
+
+    const handleAllergyKeyDown = (e) => {
+        if (e.key === "Enter" && allergyInput.trim() !== "") {
+            e.preventDefault();
+            if (!form.allergies.includes(allergyInput.trim())) {
+                setForm((prev) => ({
+                    ...prev,
+                    allergies: [...prev.allergies, allergyInput.trim()],
+                }));
+            }
+            setAllergyInput("");
+        }
+    };
+
+    const handleRemoveAllergy = (item) => {
+        setForm((prev) => ({
+            ...prev,
+            allergies: prev.allergies.filter((a) => a !== item),
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.age || !form.weight) {
-            alert("Vui lòng nhập đầy đủ tháng tuổi và cân nặng của bé");
+            alert("Vui lòng chọn đầy đủ tháng tuổi và cân nặng của bé");
             return;
         }
         setLoading(true);
@@ -42,57 +75,70 @@ const Step1 = ({ data, onNext }) => {
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg"
-        >
-            <h2 className="text-2xl font-semibold text-center text-pink-600 mb-4">
-                Bước 1: Thông tin của bé
-            </h2>
-            <div className="space-y-4">
-                <div>
-                    <label className="block mb-2 font-medium">Tháng tuổi</label>
-                    <input
-                        type="number"
-                        name="age"
-                        value={form.age}
-                        onChange={handleChange}
-                        className="border w-full p-3 rounded-xl"
-                        placeholder="VD: 8"
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="block mb-2 font-medium">Cân nặng (kg)</label>
-                    <input
-                        type="number"
-                        step="0.1"
-                        name="weight"
-                        value={form.weight}
-                        onChange={handleChange}
-                        className="border w-full p-3 rounded-xl"
-                        placeholder="VD: 7.5"
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="block mb-2 font-medium">Dị ứng (nếu có)</label>
-                    <input
-                        type="text"
-                        name="allergies"
-                        value={form.allergies}
-                        onChange={handleChange}
-                        className="border w-full p-3 rounded-xl"
-                        placeholder="VD: Sữa bò, trứng..."
-                    />
+        <form className="step1-form" onSubmit={handleSubmit}>
+            {/* <h2 className="step1-title">Bước 1: Thông tin của bé</h2> */}
+
+            {/* --- Chọn tháng tuổi --- */}
+            <div className="form-group">
+                <label>Tháng tuổi</label>
+                <div className="option-grid">
+                    {ageOptions.map((opt) => (
+                        <div
+                            key={opt}
+                            className={`option-box ${form.age === opt ? "selected" : ""}`}
+                            onClick={() => setForm((prev) => ({ ...prev, age: opt }))}
+                        >
+                            {opt}
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            <button
-                type="submit"
-                disabled={loading}
-                className="bg-pink-500 hover:bg-pink-600 text-white w-full py-3 rounded-xl mt-6 transition-all"
-            >
+            {/* --- Chọn cân nặng --- */}
+            <div className="form-group">
+                <label>Cân nặng (kg)</label>
+                <div className="option-grid">
+                    {weightOptions.map((opt) => (
+                        <div
+                            key={opt}
+                            className={`option-box ${form.weight === opt ? "selected" : ""}`}
+                            onClick={() => setForm((prev) => ({ ...prev, weight: opt }))}
+                        >
+                            {opt}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* --- Dị ứng --- */}
+            <div className="form-group">
+                <label>Dị ứng thực phẩm (nếu có)</label>
+                <input
+                    type="text"
+                    value={allergyInput}
+                    onChange={(e) => setAllergyInput(e.target.value)}
+                    onKeyDown={handleAllergyKeyDown}
+                    placeholder="Nhập thực phẩm rồi nhấn Enter"
+                    className="allergy-input"
+                />
+
+                <div className="allergy-tags">
+                    {form.allergies.map((item, index) => (
+                        <div key={index} className="tag">
+                            {item}
+                            <button
+                                type="button"
+                                className="remove-btn"
+                                onClick={() => handleRemoveAllergy(item)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <button type="submit" className="submit-btn" disabled={loading}>
                 {loading ? "Đang lưu..." : "Tiếp tục"}
             </button>
         </form>

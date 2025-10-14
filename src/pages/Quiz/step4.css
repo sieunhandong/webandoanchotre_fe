@@ -1,0 +1,175 @@
+.step4-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step4-container {
+    width: 100%;
+    padding: 32px 20px 100px;
+    text-align: center;
+}
+
+.step4-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ff6f91;
+    margin-bottom: 24px;
+}
+
+.step4-loading {
+    color: #888;
+    font-style: italic;
+}
+
+.step4-empty {
+    color: #999;
+}
+
+.step4-menu-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.step4-day-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.step4-day-card:hover {
+    transform: translateY(-4px);
+}
+
+.step4-day-title {
+    font-weight: 600;
+    color: #f57b9d;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.step4-meal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.step4-meal-item {
+    background: #fff8f9;
+    border: 1px solid #ffe1eb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #444;
+    text-align: left;
+}
+
+/* --- Cố định nút ở cuối màn hình --- */
+.step4-btn-group {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid #ffd3df;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+}
+
+.step4-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.step4-btn-back {
+    background: #fff;
+    border: 1px solid #f4b4c4;
+    color: #e75480;
+}
+
+.step4-btn-next {
+    background: #ff7aa2;
+    color: white;
+}
+
+.step4-btn-next:hover {
+    background: #ff5f8e;
+}
+
+/* ---------------------- Responsive ---------------------- */
+
+/* Tablet */
+@media (max-width: 768px) {
+    .step4-container {
+        padding: 24px 16px 100px;
+    }
+
+    .step4-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .step4-menu-list {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .step4-day-card {
+        padding: 16px;
+    }
+
+    .step4-btn-group {
+        flex-direction: row;
+        padding: 10px 16px;
+    }
+
+    .step4-btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .step4-container {
+        padding: 20px 12px 90px;
+    }
+
+    .step4-title {
+        font-size: 1.3rem;
+        line-height: 1.4;
+    }
+
+    .step4-menu-list {
+        grid-template-columns: 1fr;
+    }
+
+    .step4-day-card {
+        padding: 14px;
+    }
+
+    .step4-btn-group {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .step4-btn {
+        width: 100%;
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,170 @@
+.step3-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+}
+
+.step3-container {
+    width: 100%;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(255, 182, 193, 0.2);
+    padding: 30px;
+    /* border: 1px solid #f8cdda; */
+}
+
+.step3-title {
+    text-align: center;
+    color: #e75480;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+/* CATEGORY */
+.step3-category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+
+.step3-category-item {
+    background: #fff6f8;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 10px;
+    text-align: center;
+    flex: 1 1 calc(25% - 15px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    position: relative;
+}
+
+.step3-category-item.active {
+    border-color: #ff7aa2;
+    background: #ffe0ea;
+}
+
+.step3-category-header {
+    font-weight: 600;
+    color: #e75480;
+    margin-bottom: 6px;
+}
+
+.step3-category-selected {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.step3-selected-thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid #f4b4c4;
+}
+
+/* PRODUCTS GRID */
+.step3-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.step3-product-card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    background: #fff9fb;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    text-align: center;
+}
+
+.step3-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(255, 182, 193, 0.3);
+}
+
+.step3-product-card.selected {
+    border-color: #ff7aa2;
+    background: #ffe6ef;
+}
+
+.step3-product-img img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-bottom: 1px solid #f4b4c4;
+}
+
+.step3-product-name {
+    padding: 8px;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* BUTTONS */
+/* BUTTONS (CỐ ĐỊNH Ở CUỐI MÀN HÌNH) */
+.step3-btn-group {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid #f8cdda;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+}
+
+.step3-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.step3-btn-back {
+    background: #fff;
+    border: 1px solid #f4b4c4;
+    color: #e75480;
+}
+
+.step3-btn-next {
+    background: #ff7aa2;
+    color: white;
+}
+
+.step3-btn-next:hover {
+    background: #ff5f8e;
+}
+
+/* Tạo khoảng trống phía dưới container để không bị che mất */
+.step3-container {
+    padding-bottom: 90px;
+    /* Đủ chỗ cho thanh nút cố định */
+}
+
+@media (max-width: 768px) {
+    .step3-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step3-category-item {
+        flex: 1 1 calc(50% - 10px);
+    }
+}

@@ -2,10 +2,16 @@ import React, { useEffect, useState } from "react";
 import { step7 } from "../../services/QuizService";
 import { getMealSetById } from "../../services/MealSetService";
 import { getProvinces, getDistricts, getWards } from "../../services/GHNService";
+import { useNavigate, useLocation } from "react-router-dom";
+import "./step7.css"; // ✅ Thêm file CSS mới
 
 const Step7 = ({ data, onPrev }) => {
-    const sessionId = data?.sessionId;
-    const selectedSetId = data?.selectedSet || data?.selectedSetId;
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const sessionId = data?.sessionId || localStorage.getItem("quiz_sessionId");
+    const selectedSetId =
+        data?.selectedSet || data?.selectedSetId || localStorage.getItem("quiz_selectedSetId");
 
     const [selectedSet, setSelectedSet] = useState(null);
     const [deliveryTime, setDeliveryTime] = useState("");
@@ -25,41 +31,45 @@ const Step7 = ({ data, onPrev }) => {
         wardName: "",
     });
 
-    // ✅ Lấy danh sách tỉnh
+    useEffect(() => {
+        if (data?.sessionId) localStorage.setItem("quiz_sessionId", data.sessionId);
+        if (data?.selectedSet || data?.selectedSetId)
+            localStorage.setItem("quiz_selectedSetId", data.selectedSet || data.selectedSetId);
+    }, [data]);
+
+    useEffect(() => {
+        localStorage.setItem("quiz_current_step", "7");
+    }, []);
+
     useEffect(() => {
         const fetchProvinces = async () => {
             try {
                 const res = await getProvinces();
-                const list =
-                    Array.isArray(res?.data?.data)
-                        ? res.data.data
-                        : Array.isArray(res?.data)
-                            ? res.data
-                            : [];
+                const list = Array.isArray(res?.data?.data)
+                    ? res.data.data
+                    : Array.isArray(res?.data)
+                        ? res.data
+                        : [];
                 setProvinces(list);
             } catch (err) {
                 console.error("❌ Lỗi load tỉnh:", err);
-                setProvinces([]); // fallback để tránh crash
+                setProvinces([]);
             }
         };
         fetchProvinces();
     }, []);
 
-
-    // ✅ Lấy thông tin gói ăn dặm đã chọn
     useEffect(() => {
         if (selectedSetId) {
             getMealSetById(selectedSetId)
                 .then((res) => {
                     const setData = res.data?.data || res.data;
-                    console.log("👉 Dữ liệu gói ăn:", setData);
                     setSelectedSet(setData);
                 })
                 .catch((err) => console.error("❌ Lỗi khi lấy thông tin gói:", err));
         }
     }, [selectedSetId]);
 
-    // ✅ Khi chọn tỉnh
     const handleProvinceChange = async (e) => {
         const provinceId = e.target.value;
         const provinceName =
@@ -75,12 +85,11 @@ const Step7 = ({ data, onPrev }) => {
         });
         try {
             const res = await getDistricts(provinceId);
-            const list =
-                Array.isArray(res?.data?.data)
-                    ? res.data.data
-                    : Array.isArray(res?.data)
-                        ? res.data
-                        : [];
+            const list = Array.isArray(res?.data?.data)
+                ? res.data.data
+                : Array.isArray(res?.data)
+                    ? res.data
+                    : [];
             setDistricts(list);
             setWards([]);
         } catch (err) {
@@ -102,12 +111,11 @@ const Step7 = ({ data, onPrev }) => {
         });
         try {
             const res = await getWards(districtId);
-            const list =
-                Array.isArray(res?.data?.data)
-                    ? res.data.data
-                    : Array.isArray(res?.data)
-                        ? res.data
-                        : [];
+            const list = Array.isArray(res?.data?.data)
+                ? res.data.data
+                : Array.isArray(res?.data)
+                    ? res.data
+                    : [];
             setWards(list);
         } catch (err) {
             console.error("❌ Lỗi load xã:", err);
@@ -115,26 +123,26 @@ const Step7 = ({ data, onPrev }) => {
         }
     };
 
-
-    // ✅ Khi chọn xã
     const handleWardChange = (e) => {
         const wardCode = e.target.value;
         const wardName = wards.find((w) => w.WardCode == wardCode)?.WardName || "";
         setAddress({ ...address, wardCode, wardName });
     };
 
-    // ✅ Xử lý xác nhận thanh toán
     const handleConfirm = async () => {
+        const token =
+            localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+        if (!token) {
+            alert("Vui lòng đăng nhập trước khi thanh toán.");
+            navigate("/account/login", { state: { redirectTo: location.pathname } });
+            return;
+        }
+
         if (!deliveryTime) {
             alert("Vui lòng chọn ngày giao hàng mong muốn.");
             return;
         }
-        if (
-            !address.address ||
-            !address.provinceId ||
-            !address.districtId ||
-            !address.wardCode
-        ) {
+        if (!address.address || !address.provinceId || !address.districtId || !address.wardCode) {
             alert("Vui lòng nhập đầy đủ địa chỉ giao hàng.");
             return;
         }
@@ -144,16 +152,9 @@ const Step7 = ({ data, onPrev }) => {
             const res = await step7({ sessionId, deliveryTime, address });
             if (res.data?.success) {
                 const { paymentUrl } = res.data.data;
-                window.location.href = paymentUrl; // Chuyển sang trang thanh toán VNPAY
+                window.location.href = paymentUrl;
             }
         } catch (error) {
-            if (error.response?.status === 401) {
-                const redirect = error.response.data?.redirect;
-                if (redirect) {
-                    window.location.href = redirect;
-                    return;
-                }
-            }
             alert("Thanh toán thất bại, vui lòng thử lại.");
             console.error(error);
         } finally {
@@ -161,12 +162,16 @@ const Step7 = ({ data, onPrev }) => {
         }
     };
 
+    const deliveryFee = 0;
+    const subtotal = selectedSet?.price || 0;
+    const total = subtotal + deliveryFee;
+
     return (
-        <div className="quiz-step two-column-layout">
-            {/* BÊN TRÁI: Form nhập thông tin giao hàng */}
-            <div className="left-column">
-                <h2>Bước 7: Xác nhận thanh toán</h2>
-                <p>Vui lòng nhập thông tin giao hàng trước khi thanh toán.</p>
+        <div className="quiz-step step7-layout">
+            {/* BÊN TRÁI */}
+            <div className="step7-left">
+                <h2 className="step7-title">Bước 7: Xác nhận thanh toán 💳</h2>
+                <p className="step7-subtitle">Vui lòng nhập thông tin giao hàng trước khi thanh toán.</p>
 
                 <div className="form-section">
                     <label>📅 Ngày giao hàng mong muốn:</label>
@@ -181,18 +186,13 @@ const Step7 = ({ data, onPrev }) => {
                         type="text"
                         placeholder="Ví dụ: Số 10, Nguyễn Huệ..."
                         value={address.address}
-                        onChange={(e) =>
-                            setAddress({ ...address, address: e.target.value })
-                        }
+                        onChange={(e) => setAddress({ ...address, address: e.target.value })}
                     />
 
                     <div className="select-row">
                         <div className="select-box">
                             <label>Tỉnh / Thành phố:</label>
-                            <select
-                                value={address.provinceId}
-                                onChange={handleProvinceChange}
-                            >
+                            <select value={address.provinceId} onChange={handleProvinceChange}>
                                 <option value="">-- Chọn tỉnh --</option>
                                 {provinces?.map((p) => (
                                     <option key={p.ProvinceID} value={p.ProvinceID}>
@@ -237,25 +237,25 @@ const Step7 = ({ data, onPrev }) => {
                 </div>
             </div>
 
-            {/* BÊN PHẢI: Thông tin gói ăn dặm */}
-            <div className="right-column">
-                <div className="package-summary">
-                    <h3>Gói bạn đã chọn</h3>
+            {/* BÊN PHẢI */}
+            <div className="step7-right">
+                <div className="payment-summary">
+                    <h3>🧺 Gói bạn đã chọn</h3>
                     {selectedSet ? (
                         <>
-                            <p>
-                                <strong>Tên gói:</strong> {selectedSet.title}
-                            </p>
-                            <p>
-                                <strong>Thời lượng:</strong> {selectedSet.duration} ngày
-                            </p>
-                            <p>
-                                <strong>Giá tiền:</strong>{" "}
-                                {selectedSet.price.toLocaleString("vi-VN")}₫
-                            </p>
-                            <p>
-                                <strong>Mô tả:</strong> {selectedSet.description}
-                            </p>
+                            <p><strong>{selectedSet.title}</strong></p>
+                            <p>{selectedSet.description}</p>
+                            <div className="price-breakdown">
+                                <div className="price-row">
+                                    <span>Thời gian:</span>
+                                    <span>{selectedSet.duration} ngày</span>
+                                </div>
+
+                                <div className="price-total">
+                                    <strong>Giá:</strong>
+                                    <strong>{subtotal.toLocaleString("vi-VN")}₫</strong>
+                                </div>
+                            </div>
                         </>
                     ) : (
                         <p>Đang tải thông tin gói...</p>

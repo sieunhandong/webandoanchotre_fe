@@ -1,6 +1,6 @@
-// src/pages/Quiz/Step5.js
 import React, { useEffect, useState } from "react";
 import { getSets, step5, getStepData } from "../../services/QuizService";
+import "./step5.css";
 
 const Step5 = ({ data, onNext, onPrev }) => {
     const [sets, setSets] = useState([]);
@@ -40,45 +40,47 @@ const Step5 = ({ data, onNext, onPrev }) => {
     };
 
     return (
-        <div className="quiz-step">
-            <div className="quiz-box">
-                <h2 className="quiz-title">Bước 5: Gợi ý set ăn dặm phù hợp</h2>
+        <div className="step5-wrapper">
+            <div className="step5-container">
+                <h2 className="step5-title">Bước 5: Gợi ý set ăn dặm phù hợp 🍼</h2>
+                <p className="step5-desc">
+                    Dưới đây là các set ăn dặm phù hợp với thông tin của bé. Mẹ chọn 1 set nhé!
+                </p>
 
-                <div className="option-grid">
+                <div className="step5-grid">
                     {sets.length > 0 ? (
                         sets.map((s) => (
                             <div
                                 key={s._id}
-                                className={`option-card ${selectedSet === s._id ? "selected" : ""}`}
+                                className={`step5-card ${selectedSet === s._id ? "selected" : ""
+                                    }`}
                                 onClick={() => setSelectedSet(s._id)}
                             >
                                 <h3>{s.title}</h3>
-                                <p>{s.description}</p>
-                                <p>
-                                    <strong>Thời gian:</strong> {s.duration} ngày
-                                </p>
-                                <p>
-                                    <strong>Giá:</strong> {s.price.toLocaleString()}đ
-                                </p>
+                                <p className="step5-card-desc">{s.description}</p>
+                                <div className="step5-info">
+                                    <span>⏱ {s.duration} ngày</span>
+                                    <span>💰 {s.price.toLocaleString()}đ</span>
+                                </div>
                             </div>
                         ))
                     ) : (
                         <p>Đang tải danh sách set ăn dặm...</p>
                     )}
                 </div>
+            </div>
 
-                <div className="button-row">
-                    <button onClick={onPrev} className="btn-secondary">
-                        ← Quay lại
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        className="btn-primary"
-                        disabled={loading}
-                    >
-                        Tiếp tục →
-                    </button>
-                </div>
+            <div className="step5-btn-group">
+                <button onClick={onPrev} className="step5-btn step5-btn-back">
+                    ← Quay lại
+                </button>
+                <button
+                    onClick={handleNext}
+                    className="step5-btn step5-btn-next"
+                    disabled={loading}
+                >
+                    {loading ? "Đang xử lý..." : "Tiếp tục →"}
+                </button>
             </div>
         </div>
     );

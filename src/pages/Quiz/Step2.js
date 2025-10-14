@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { step2, getStepData } from "../../services/QuizService";
-import "./Quiz.css"
+import "./step2.css";
+
 const Step2 = ({ data, onNext, onPrev }) => {
     const [feedingMethod, setFeedingMethod] = useState("");
     const [loading, setLoading] = useState(false);
-    console.log(data?.sessionId)
+
     useEffect(() => {
         if (data?.sessionId) {
             getStepData(data.sessionId, 2).then((res) => {
@@ -37,43 +38,54 @@ const Step2 = ({ data, onNext, onPrev }) => {
         }
     };
 
+    const options = [
+        {
+            id: "traditional",
+            label: "Ăn dặm truyền thống",
+            desc: "Bé ăn cháo loãng, mẹ đút từng thìa.",
+        },
+        {
+            id: "blw",
+            label: "Ăn dặm tự chỉ huy (BLW)",
+            desc: "Bé tự cầm nắm thức ăn, khám phá mùi vị.",
+        },
+        {
+            id: "japanese",
+            label: "Ăn dặm kiểu Nhật",
+            desc: "Bé ăn theo giai đoạn, rèn kỹ năng ăn riêng biệt.",
+        },
+    ];
+
     return (
-        <div className="quiz-step">
-            <div className="quiz-container">
-                <h2 className="quiz-title">Bước 2: Chọn phương pháp ăn dặm của bé</h2>
-                <p className="quiz-desc">
+        <div className="step2-wrapper">
+            <div className="step2-container">
+                <h2 className="step2-title">Bước 2: Chọn phương pháp ăn dặm của bé</h2>
+                <p className="step2-desc">
                     Mỗi bé sẽ phù hợp với một phương pháp khác nhau — mẹ chọn cách mình
                     đang hoặc muốn áp dụng nhé!
                 </p>
 
-                <div className="options">
-                    {[
-                        { id: "traditional", label: "Ăn dặm truyền thống" },
-                        { id: "blw", label: "Ăn dặm tự chỉ huy (BLW)" },
-                        { id: "mixed", label: "Ăn dặm kết hợp" },
-                    ].map((item) => (
-                        <label key={item.id} className="option-item">
-                            <input
-                                type="radio"
-                                name="feedingMethod"
-                                value={item.id}
-                                checked={feedingMethod === item.id}
-                                onChange={() => setFeedingMethod(item.id)}
-                            />
-                            <span className="checkmark"></span>
-                            {item.label}
-                        </label>
+                <div className="step2-option-grid">
+                    {options.map((item) => (
+                        <div
+                            key={item.id}
+                            className={`step2-card ${feedingMethod === item.id ? "active" : ""}`}
+                            onClick={() => setFeedingMethod(item.id)}
+                        >
+                            <div className="step2-card-title">{item.label}</div>
+                            <p className="step2-card-desc">{item.desc}</p>
+                        </div>
                     ))}
                 </div>
 
-                <div className="btn-group">
-                    <button onClick={onPrev} className="btn btn-back">
+                <div className="step2-btn-group">
+                    <button onClick={onPrev} className="step2-btn step2-btn-back">
                         ← Quay lại
                     </button>
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="btn btn-next"
+                        className="step2-btn step2-btn-next"
                     >
                         {loading ? "Đang gửi..." : "Tiếp tục →"}
                     </button>

@@ -1,0 +1,176 @@
+.step1-form {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 35px;
+    box-shadow: 0 6px 16px rgba(255, 182, 193, 0.25);
+    max-width: 100%;
+    margin: 0 auto;
+    border: 1px solid #ffd4df;
+    box-sizing: border-box;
+}
+
+.step1-title {
+    text-align: center;
+    font-size: 24px;
+    color: #ff4f81;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+/* ==== Option grid (tháng tuổi, cân nặng) ==== */
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+.option-box {
+    border: 1px solid #f5b5c2;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.option-box:hover {
+    border-color: #ff4f81;
+    color: #ff4f81;
+    background: #fff4f7;
+}
+
+.option-box.selected {
+    background: #ff4f81;
+    color: white;
+    border-color: #ff4f81;
+}
+
+/* ==== Dị ứng ==== */
+.allergy-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #f5b5c2;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.allergy-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.tag {
+    background: #ffe6eb;
+    color: #ff4f81;
+    border-radius: 20px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.tag:hover {
+    background: #ffd0d9;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: #ff4f81;
+    margin-left: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.remove-btn:hover {
+    color: #d83767;
+}
+
+/* ==== Submit button ==== */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(to right, #ff91a4, #ff4f81);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-top: 25px;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(to right, #ff7a96, #ff2f6a);
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 768px) {
+    .step1-form {
+        padding: 25px 20px;
+        border-radius: 16px;
+        box-shadow: none;
+    }
+
+    .step1-title {
+        font-size: 20px;
+    }
+
+    .option-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 8px;
+    }
+
+    .option-box {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        font-size: 15px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .step1-form {
+        padding: 20px 15px;
+    }
+
+    .step1-title {
+        font-size: 18px;
+    }
+
+    .option-box {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .tag {
+        font-size: 12px;
+        padding: 4px 9px;
+    }
+
+    .submit-btn {
+        font-size: 14px;
+    }
+}

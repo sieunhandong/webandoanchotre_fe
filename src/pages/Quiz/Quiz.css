@@ -1,0 +1,172 @@
+.quiz-container {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #ffe6eb, #fff);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+.quiz-box {
+    width: 100%;
+    max-width: 1600px;
+    background: #fff;
+    border: 1px solid #f8cdda;
+    border-radius: 24px;
+    box-shadow: 0 6px 20px rgba(255, 182, 193, 0.25);
+    padding: 40px 50px;
+    box-sizing: border-box;
+}
+
+/* ===== Thanh tiến trình 7 mốc ===== */
+.quiz-progress {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.progress-line {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #ffe6eb;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.progress-fill {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(to right, #ff91a4, #ff4f81);
+    border-radius: 2px;
+    z-index: 2;
+    transition: width 0.4s ease;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 3;
+}
+
+.progress-step {
+    text-align: center;
+    width: 14%;
+    color: #ff9db0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.progress-step .circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #ff9db0;
+    color: #ff9db0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 6px auto;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.progress-step.active .circle {
+    background: linear-gradient(to right, #ff91a4, #ff4f81);
+    color: #fff;
+    border-color: #ff4f81;
+}
+
+.progress-step .label {
+    display: block;
+    line-height: 1.2;
+}
+
+/* ===== Loading & Error ===== */
+.quiz-loading,
+.quiz-error {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ff4f81;
+    font-weight: 500;
+    background: #fff0f3;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #ffc2ce;
+    border-top: 4px solid #ff4f81;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+    .quiz-box {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .quiz-box {
+        width: 100%;
+        padding: 25px 20px;
+        border-radius: 16px;
+        box-shadow: none;
+    }
+
+    .progress-step {
+        width: 14%;
+        font-size: 11px;
+    }
+
+    .progress-step .circle {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+    }
+
+    .progress-line {
+        top: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quiz-container {
+        padding: 20px 10px;
+    }
+
+    .quiz-box {
+        padding: 20px 15px;
+    }
+
+    .progress-step {
+        font-size: 10px;
+    }
+
+    .progress-step .circle {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+
+    .progress-line {
+        top: 12px;
+    }
+}
