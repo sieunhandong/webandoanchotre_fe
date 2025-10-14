@@ -56,15 +56,14 @@ const Header = ({
         <Box className="nav-bar">
           {/* --- Logo --- */}
           <Box className="nav-logo">
-            <img src="/NB (2).png" alt="logo" />
             <Typography component={Link} to="/" className="logo-text">
-              NewBooks
+              <img src="/NB (2).png" alt="logo" />
             </Typography>
           </Box>
 
           {/* --- Menu giữa --- */}
           <Box className="nav-center">
-            <Button className="custom-icon-button" component={Link} to="/quiz">
+            <Button className="custom-icon-button" component={Link} to="/quiz/start">
               <Typography variant="body2" className="custom-typography">
                 Quiz
               </Typography>
@@ -73,6 +72,11 @@ const Header = ({
             <Button className="custom-icon-button" component={Link} to="/about">
               <Typography variant="body2" className="custom-typography">
                 Về chúng tôi
+              </Typography>
+            </Button>
+            <Button className="custom-icon-button" component={Link} to="/blog">
+              <Typography variant="body2" className="custom-typography">
+                Blog
               </Typography>
             </Button>
           </Box>
@@ -115,6 +119,13 @@ const Header = ({
                           minWidth: 180,
                         }}
                       >
+                        <MenuItem
+                          component={Link}
+                          to="/track-order"
+                          className="user-menu-item"
+                        >
+                          Đơn hàng của tôi
+                        </MenuItem>
                         <MenuItem
                           component={Link}
                           to="/user/profile"
