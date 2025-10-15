@@ -36,13 +36,6 @@ export default function AccountLayout({ user, children }) {
             </Link>
           </li>
           <li
-            className={location.pathname === "/user/addresses" ? "active" : ""}
-          >
-            <Link to="/user/addresses">
-              <HomeIcon /> Địa chỉ
-            </Link>
-          </li>
-          <li
             className={location.pathname === "/user/complaint" ? "active" : ""}
           >
             <Link to="/user/complaint">

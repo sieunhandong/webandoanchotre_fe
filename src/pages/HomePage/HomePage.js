@@ -1,409 +1,758 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./HomePage.css";
+import React, { useEffect, useState } from "react";
 import {
-  Typography,
   Box,
-  Snackbar,
-  Alert,
-  IconButton,
+  Typography,
   Grid,
   Button,
+  Card,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Container,
+  Chip,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import {
-  ArrowBackIos,
-  ArrowForwardIos,
-} from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import * as BlogService from "../../services/AdminService/blogService";
+import * as MealSetService from "../../services/MealSetService";
+import * as FoodService from "../../services/FoodService";
 
-import BookCard from "../../components/BookCard/BookCard";
-import * as BookService from "../../services/BookService";
-import { getWishlist, addToWishlist, deleteFromWishlist } from "../../services/WishlistService";
-import * as CategoryService from "../../services/CategoryService";
-
-const HomePage = ({ updateWishlistCount, updateCartData }) => {
-  const [books, setBooks] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
-  const [hoveredId, setHoveredId] = useState(null);
-  const [newBooks, setNewBooks] = useState([]);
-  const [saleBooks, setSaleBooks] = useState([]);
-  const navigate = useNavigate();
-  const fetchCategories = async () => {
-    setIsLoading(true);
-    try {
-      const response = await CategoryService.getCategories();
-      if (response.data && Array.isArray(response.data)) {
-        setCategories(response.data);
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy danh mục:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const scrollRef = useRef(null);
-
-  const handleScroll = (direction) => {
-    const container = scrollRef.current;
-    const scrollAmount = 445;
-
-    if (direction === "left") {
-      container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
+const HomePage = () => {
+  const [homeBlogs, setHomeBlogs] = useState([]);
+  const [mealSets, setMealSets] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+  const [loadingBlogs, setLoadingBlogs] = useState(true);
+  const [loadingMealSets, setLoadingMealSets] = useState(true);
+  const [loadingRecipes, setLoadingRecipes] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchCategories();
-    BookService.getBooks().then(async (response) => {
-      const bookData = response.data.map((book) => ({
-        ...book,
-        price: book.price,
-        originalPrice: book.originalPrice,
-      }));
-      setBooks(bookData);
-      setIsLoading(false);
-    })
-      .catch((error) => {
-        console.error("Lỗi khi lấy danh sách sách:", error);
-        setIsLoading(false);
-      });
+    const fetchBlogs = async () => {
+      try {
+        setLoadingBlogs(true);
+        const homeData = await BlogService.getHomeBlogs();
+        setHomeBlogs(homeData.blogs);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingBlogs(false);
+      }
+    };
 
-    BookService.getNewBook().then((response) => {
-      setNewBooks(response.data);
-    })
-      .catch((error) => {
-        console.error("Lỗi khi lấy danh sách sách:", error);
-      });
+    const fetchMealSets = async () => {
+      try {
+        setLoadingMealSets(true);
+        const mealData = await MealSetService.getAllMealSets();
+        setMealSets(mealData.data.data.slice(0, 3));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingMealSets(false);
+      }
+    };
 
-    BookService.getSalesBook().then((response) => {
-      setSaleBooks(response.data);
-    })
-      .catch((error) => {
-        console.error("Lỗi khi lấy danh sách sách:", error);
-      })
+    const fetchRecipes = async () => {
+      try {
+        setLoadingRecipes(true);
+        const res = await FoodService.getFoodHome();
+        setRecipes(res.data.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingRecipes(false);
+      }
+    };
 
-
-    const access_token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-    if (access_token) {
-      getWishlist().then((response) => {
-        if (response.data && response.data.wishlist) {
-          const wishlistIds = response.data.wishlist.map((book) => book._id);
-          setWishlist(wishlistIds);
-        }
-      })
-        .catch((error) =>
-          console.error("Lỗi khi lấy danh sách yêu thích:", error)
-        );
-    }
-
-
+    fetchRecipes();
+    fetchBlogs();
+    fetchMealSets();
   }, []);
 
-  const toggleWishlist = async (bookId) => {
-    const access_token =
-      localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-    if (!access_token) {
-      setNotifications((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          message: "Vui lòng đăng nhập để thêm vào yêu thích",
-          severity: "warning",
-        },
-      ]);
-      return;
-    }
-
-    try {
-      if (wishlist.includes(bookId)) {
-        await deleteFromWishlist(bookId);
-
-        setWishlist((prev) => prev.filter((id) => id !== bookId));
-        if (updateWishlistCount) {
-          updateWishlistCount();
-        }
-        setNotifications((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            message: "Đã xóa khỏi danh sách yêu thích",
-            severity: "success",
-          },
-        ]);
-      } else {
-        await addToWishlist(bookId);
-
-        setWishlist((prev) => [...prev, bookId]);
-        if (updateWishlistCount) {
-          updateWishlistCount();
-        }
-        setNotifications((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            message: "Đã thêm vào danh sách yêu thích",
-            severity: "success",
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Wishlist error:", error);
-      setNotifications((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          message: "Không thể cập nhật danh sách yêu thích",
-          severity: "error",
-        },
-      ]);
-    }
-  };
-
-  const handleMouseEnter = (bookId) => {
-    setHoveredId(bookId);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredId(null);
-  };
-
-  const handleClickToAll = (filterType) => {
-    navigate("/shopAll", {
-      state: { selectedFilter: filterType },
-    });
-  };
-
-  const handleCategoryClick2 = (categoryId) => {
-    navigate("/shopAll", {
-      state: { selectedCategoryId: categoryId },
-    });
-  };
-
   return (
-    <Box className="homepage-container">
-      <Box className="banner-container"
+    <Box sx={{ backgroundColor: "#FFFFFF" }}>
+      {/* Banner */}
+      <Box
         sx={{
-          backgroundImage: `url("/book2.jpeg")`,
+          height: "85vh",
+          background: "linear-gradient(135deg, rgba(114, 205, 241, 0.95) 0%, rgba(114, 205, 241, 0.7) 100%), url('/homepage.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          height: "92vh",
-        }}>
-        <Box className="banner-content">
-          <Typography variant="h1" className="banner-title">
-            Khám phá thế giới sách đầy màu sắc
+          backgroundBlendMode: "overlay",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          color: "#fff",
+          position: "relative",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "150px",
+            background: "linear-gradient(to top, #FFFFFF, transparent)",
+          },
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography
+            variant="h2"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              fontSize: { xs: "2rem", md: "3.5rem" },
+              textShadow: "2px 4px 8px rgba(0,0,0,0.2)",
+              mb: 2,
+            }}
+          >
+            Khám phá thế giới ăn dặm & công thức dinh dưỡng
           </Typography>
-
-          <Typography variant="h5" className="banner-subtitle">
-            Hơn 10,000 đầu sách với nhiều thể loại đa dạng đang chờ bạn khám phá
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1rem", md: "1.5rem" },
+              textShadow: "1px 2px 4px rgba(0,0,0,0.2)",
+              mb: 4,
+            }}
+          >
+            Tư vấn dinh dưỡng, công thức ăn dặm cho bé yêu của bạn
           </Typography>
-
           <Button
-            component={Link}
-            to="/shopAll"
             variant="contained"
             size="large"
-            className="banner-button"
+            component={Link}
+            to="/quiz"
+            sx={{
+              mt: 2,
+              px: 5,
+              py: 1.5,
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              backgroundColor: "#FFFFFF",
+              color: "#72CDF1",
+              borderRadius: "50px",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                backgroundColor: "#FFFFFF",
+                transform: "translateY(-3px)",
+                boxShadow: "0 12px 28px rgba(0,0,0,0.25)",
+              },
+            }}
           >
-            Mua sắm ngay
+            Bắt đầu Quiz ngay
           </Button>
-        </Box>
+        </Container>
       </Box>
 
-      <Box maxWidth="xl" className="main-container">
-        <Box className="bestseller-container">
-          <Typography
-            variant="h3"
-            className="bestseller-title"
-          >
-            New Released Books
-          </Typography>
-          <Typography className="bestseller-subtitle" sx={{ mt: 2, mb: 4 }}>
-            Các loại sách mới được phát hành, hãy là người đầu tiên trải nghiệm những cuốn sách mới này
-          </Typography>
-
-          <Box className="buttonAll">
-            <Typography sx={{ fontWeight: "bold" }} onClick={() => handleClickToAll("new-release")}>
-              Xem tất cả
-            </Typography>
-          </Box>
-        </Box>
-        <Box className="books-grid-container">
-          {isLoading ? (
-            <Typography className="loading-text">Đang tải...</Typography>
-          ) : (
-            <Grid container spacing={4}>
-              {newBooks.slice(0, 5).map((book) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4, xl: 2.4 }} key={book._id}>
-                  <BookCard
-                    book={book}
-                    hoveredId={hoveredId}
-                    wishlist={wishlist}
-                    onHover={handleMouseEnter}
-                    onLeave={handleMouseLeave}
-                    toggleWishlist={toggleWishlist}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Box>
-      </Box>
-
-      <Box className="banner-1">
-        <img src="banner2.png" alt="Background" className="background-image" />
-      </Box>
-
-      <Box maxWidth="xl" className="main-container">
-        <Box className="bestseller-container">
-          <Typography
-            variant="h3"
-            className="bestseller-title"
-          >
-            Books on Sales
-          </Typography>
-          <Typography className="bestseller-subtitle" sx={{ mt: 2, mb: 4 }}>
-            Các loại sách mới nhất đang được sales trong đợt Big Sale
-          </Typography>
-
-          <Box className="buttonAll">
-            <Typography sx={{ fontWeight: "bold" }} onClick={() => handleClickToAll("big-sale")}>
-              Xem tất cả
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box className="books-grid-container">
-          {isLoading ? (
-            <Typography className="loading-text">Đang tải...</Typography>
-          ) : (
-            <Grid container spacing={4}>
-              {saleBooks.slice(0, 10).map((book) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4, xl: 2.4 }} key={book._id}>
-                  <BookCard
-                    book={book}
-                    hoveredId={hoveredId}
-                    wishlist={wishlist}
-                    onHover={handleMouseEnter}
-                    onLeave={handleMouseLeave}
-                    toggleWishlist={toggleWishlist}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Box>
-      </Box>
-
-      {notifications.map((notification) => (
-        <Snackbar
-          key={notification.id}
-          open
-          autoHideDuration={3000}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          onClose={() => setNotifications(prev =>
-            prev.filter(n => n.id !== notification.id)
-          )}
-        >
-          <Alert
-            severity={notification.severity || 'info'}
-            onClose={() => setNotifications(prev =>
-              prev.filter(n => n.id !== notification.id)
-            )}
-          >
-            {notification.message}
-          </Alert>
-        </Snackbar>
-      ))}
-
-      <Box className="blog-section" sx={{ mt: 8, mb: 8 }}>
-        <Box className="blog-image-container">
-          <img
-            src="https://i.pinimg.com/736x/cc/24/07/cc2407d15782f286ce11973e25c3a848.jpg"
-            alt="sample"
-            className="blog-image"
+      {/* Blog Section */}
+      <Container maxWidth="xl" sx={{ my: 10 }}>
+        <Box textAlign="center" mb={6}>
+          <Chip
+            label="BLOG MỚI NHẤT"
+            sx={{
+              backgroundColor: "#72CDF1",
+              color: "#FFFFFF",
+              fontWeight: 600,
+              mb: 2,
+            }}
           />
-        </Box>
-
-        <Box className="blog-content">
-          <Typography variant="h4" className="blog-title">
-            Blog
-          </Typography>
-          <Typography variant="body1" className="blog-text">
-            Khu vực Blog là nơi độc giả có thể chia sẻ cảm nhận, đánh giá sách
-            đã đọc, cũng như khám phá nhiều góc nhìn thú vị từ cộng đồng yêu
-            sách. Người dùng có thể đăng bài review sách, tương tác bằng cách{" "}
-            <b>thả tim</b> và <b>bình luận</b> để tạo nên một không gian thảo
-            luận sôi động và tích cực.
-          </Typography>
-
-          <Button variant="contained" className="blog-button" component={Link}
-                        to="/blog">
-            Khám phá ngay
-          </Button>
-        </Box>
-      </Box>
-
-      {/* <Box className="categories-section">
-        <Box className="bestseller-container">
           <Typography
             variant="h3"
-            className="bestseller-title"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              color: "#333",
+              fontSize: { xs: "2rem", md: "2.5rem" },
+            }}
           >
-            Thể loại sách
+            Bài viết nổi bật
           </Typography>
-          <Typography className="bestseller-subtitle" sx={{ mt: 2, mb: 4 }}>
-            Bạn có thể tìm sách của các thể loại sách mà bạn yêu thích
+          <Typography variant="body1" color="text.secondary">
+            Cập nhật kiến thức dinh dưỡng mới nhất cho bé yêu
           </Typography>
         </Box>
 
-        <Box className="categories-container">
-          <IconButton
-            onClick={() => handleScroll("left")}
-            className="icon-button"
+        {loadingBlogs ? (
+          <Box textAlign="center">
+            <CircularProgress sx={{ color: "#72CDF1" }} />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 4,
+              flexWrap: "wrap",
+            }}
           >
-            <ArrowBackIos />
-          </IconButton>
-
-          <Box ref={scrollRef} className="categories-scroll">
-            {categories.map((category) => (
-              <Box key={category._id} className="category-card" onClick={() => handleCategoryClick2(category._id)}>
-                <img
-                  src="https://i.pinimg.com/736x/47/c1/88/47c1880a9ca02b67d5911862f757336d.jpg"
-                  alt={category.name}
-                />
-                <Box className="category-overlay">
-                  <Box>
-                    <Typography className="category-title2">
-                      {category.name}
-                    </Typography>
+            {homeBlogs.map((blog) => (
+              <Card
+                key={blog._id}
+                sx={{
+                  flex: "1 1 calc(33.333% - 32px)",
+                  cursor: "pointer",
+                  minWidth: 280,
+                  maxWidth: 400,
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  boxShadow: "0 4px 20px rgba(114, 205, 241, 0.15)",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  border: "2px solid transparent",
+                  "&:hover": {
+                    transform: "translateY(-12px)",
+                    boxShadow: "0 12px 35px rgba(114, 205, 241, 0.3)",
+                    border: "2px solid #72CDF1",
+                  },
+                }}
+                onClick={() => (window.location.href = `/blog/${blog._id}`)}
+              >
+                {blog.images?.[0] && (
+                  <Box sx={{ position: "relative", overflow: "hidden" }}>
+                    <CardMedia
+                      component="img"
+                      height="220"
+                      image={blog.images[0]}
+                      alt={blog.title}
+                      sx={{
+                        transition: "transform 0.4s ease",
+                        "&:hover": { transform: "scale(1.1)" },
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 16,
+                        right: 16,
+                        backgroundColor: "#72CDF1",
+                        color: "#FFFFFF",
+                        px: 2,
+                        py: 0.5,
+                        borderRadius: "20px",
+                        fontSize: "0.85rem",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Mới
+                    </Box>
                   </Box>
-                  <Box>
-                    <Typography className="category-description">
-                      {category.description}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-
+                )}
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 600,
+                      mb: 1.5,
+                      color: "#333",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {blog.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {blog.content.replace(/<[^>]+>/g, "").slice(0, 120)}...
+                  </Typography>
+                </CardContent>
+              </Card>
             ))}
           </Box>
 
-          <IconButton
-            onClick={() => handleScroll("right")}
-            className="icon-button"
+        )}
+        <Box textAlign="center">
+          <Button
+            variant="contained"
+            size="large"
+            component={Link}
+            to="/blog"
+            sx={{
+              px: 5,
+              py: 1.5,
+              fontSize: "1rem",
+              fontWeight: 600,
+              backgroundColor: "#B4E7CE",
+              color: "#2D5F4C",
+              borderRadius: "50px",
+              boxShadow: "0 6px 20px rgba(180, 231, 206, 0.3)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                backgroundColor: "#9DD9B8",
+                transform: "translateY(-3px)",
+                boxShadow: "0 10px 28px rgba(180, 231, 206, 0.4)",
+              },
+            }}
           >
-            <ArrowForwardIos />
-          </IconButton>
+            Xem thêm
+          </Button>
         </Box>
-      </Box> */}
+      </Container>
+
+      {/* Meal Sets Section */}
+      <Box sx={{ backgroundColor: "#F8FCFF", py: 10 }}>
+        <Container maxWidth="xl">
+          <Box textAlign="center" mb={6}>
+            <Chip
+              label="GÓI ĂN DẶM"
+              sx={{
+                backgroundColor: "#72CDF1",
+                color: "#FFFFFF",
+                fontWeight: 600,
+                mb: 2,
+              }}
+            />
+            <Typography
+              variant="h3"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                color: "#333",
+                fontSize: { xs: "2rem", md: "2.5rem" },
+              }}
+            >
+              SET ĂN DẶM
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Lựa chọn gói phù hợp nhất cho bé yêu của bạn
+            </Typography>
+          </Box>
+
+          {loadingMealSets ? (
+            <Box textAlign="center">
+              <CircularProgress sx={{ color: "#72CDF1" }} />
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 4,
+                flexWrap: "wrap",
+              }}
+            >
+              {mealSets.map((set, idx) => (
+                <Card
+                  key={set._id}
+                  sx={{
+                    flex: "1 1 320px",
+                    maxWidth: 380,
+                    textAlign: "center",
+                    borderRadius: "24px",
+                    p: 4,
+                    position: "relative",
+                    backgroundColor: "#FFFFFF",
+                    boxShadow: idx === 1
+                      ? "0 10px 40px rgba(114, 205, 241, 0.3)"
+                      : "0 4px 20px rgba(0, 0, 0, 0.08)",
+                    border: idx === 1 ? "3px solid #72CDF1" : "2px solid #f0f0f0",
+                    transform: idx === 1 ? "scale(1.05)" : "scale(1)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: idx === 1 ? "scale(1.08)" : "scale(1.03)",
+                      boxShadow: "0 12px 45px rgba(114, 205, 241, 0.3)",
+                    },
+                  }}
+                >
+                  {idx === 1 && (
+                    <Chip
+                      label="PHỔ BIẾN NHẤT"
+                      sx={{
+                        position: "absolute",
+                        top: -12,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        backgroundColor: "#72CDF1",
+                        color: "#FFFFFF",
+                        fontWeight: 700,
+                        fontSize: "0.75rem",
+                      }}
+                    />
+                  )}
+
+                  <Typography
+                    variant="h5"
+                    fontWeight="700"
+                    sx={{ mb: 3, color: "#333" }}
+                  >
+                    {set.title}
+                  </Typography>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Typography
+                      variant="h3"
+                      fontWeight="800"
+                      sx={{ color: "#72CDF1", display: "inline" }}
+                    >
+                      {(set.price / 1000).toFixed(0)}K
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#999", display: "inline", ml: 1 }}
+                    >
+                      VND
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    textAlign="left"
+                    sx={{
+                      mb: 4,
+                      backgroundColor: "#F8FCFF",
+                      borderRadius: "16px",
+                      p: 3,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#555",
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          color: "#72CDF1",
+                          fontWeight: 700,
+                          mr: 1.5,
+                          fontSize: "1.2rem",
+                        }}
+                      >
+                        ✓
+                      </Box>
+                      Thời gian: {set.duration} ngày
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 2,
+                        display: "flex",
+                        alignItems: "flex-start",
+                        color: "#555",
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          color: "#72CDF1",
+                          fontWeight: 700,
+                          mr: 1.5,
+                          fontSize: "1.2rem",
+                        }}
+                      >
+                        ✓
+                      </Box>
+                      <span>{set.description}</span>
+                    </Typography>
+                    {set.extraInfo?.map((info, i) => (
+                      <Typography
+                        key={i}
+                        variant="body2"
+                        sx={{
+                          mb: 2,
+                          display: "flex",
+                          alignItems: "flex-start",
+                          color: "#555",
+                        }}
+                      >
+                        <Box
+                          component="span"
+                          sx={{
+                            color: "#72CDF1",
+                            fontWeight: 700,
+                            mr: 1.5,
+                            fontSize: "1.2rem",
+                          }}
+                        >
+                          ✓
+                        </Box>
+                        <span>{info}</span>
+                      </Typography>
+                    ))}
+                  </Box>
+
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    component={Link}
+                    to={`/mealset/${set._id}`}
+                    sx={{
+                      py: 1.5,
+                      borderRadius: "12px",
+                      fontWeight: 600,
+                      fontSize: "1rem",
+                      backgroundColor: idx === 1 ? "#72CDF1" : "#FFFFFF",
+                      color: idx === 1 ? "#FFFFFF" : "#72CDF1",
+                      border: idx === 1 ? "none" : "2px solid #72CDF1",
+                      boxShadow: idx === 1 ? "0 4px 15px rgba(114, 205, 241, 0.4)" : "none",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: "#72CDF1",
+                        color: "#FFFFFF",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 6px 20px rgba(114, 205, 241, 0.4)",
+                      },
+                    }}
+                  >
+                    Mua ngay
+                  </Button>
+                </Card>
+              ))}
+            </Box>
+          )}
+        </Container>
+      </Box>
+
+      {/* Recipes Section - IMPROVED */}
+      <Container maxWidth="lg" sx={{ my: 10 }}>
+        <Box textAlign="center" mb={6}>
+          <Chip
+            label="CÔNG THỨC NẤU ĂN"
+            sx={{
+              backgroundColor: "#B4E7CE",
+              color: "#2D5F4C",
+              fontWeight: 600,
+              mb: 2,
+            }}
+          />
+          <Typography
+            variant="h3"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              color: "#333",
+              fontSize: { xs: "2rem", md: "2.5rem" },
+            }}
+          >
+            Khám phá công thức
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Các công thức nấu ăn bổ dưỡng cho bé yêu
+          </Typography>
+        </Box>
+
+        {loadingRecipes ? (
+          <Box textAlign="center">
+            <CircularProgress sx={{ color: "#72CDF1" }} />
+          </Box>
+        ) : (
+          <>
+            <Grid
+              container
+              spacing={4}
+              sx={{
+                mb: 5,
+                justifyContent: "center",
+              }}
+            >
+              {recipes.map((recipe) => (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  key={recipe._id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Card
+                    sx={{
+                      width: "100%",
+                      maxWidth: 360,
+                      height: 420,
+                      display: "flex",
+                      flexDirection: "column",
+                      borderRadius: "24px",
+                      overflow: "hidden",
+                      boxShadow: "0 6px 25px rgba(180, 231, 206, 0.25)",
+                      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                      cursor: "pointer",
+                      border: "2px solid transparent",
+                      "&:hover": {
+                        transform: "translateY(-12px)",
+                        boxShadow: "0 15px 40px rgba(180, 231, 206, 0.4)",
+                        border: "2px solid #B4E7CE",
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        height: 240,
+                        overflow: "hidden",
+                      }}
+                    >
+                      {recipe.images?.[0] && (
+                        <CardMedia
+                          component="img"
+                          image={recipe.images[0]}
+                          alt={recipe.name}
+                          sx={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            transition: "transform 0.5s ease",
+                            "&:hover": { transform: "scale(1.15)" },
+                          }}
+                        />
+                      )}
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: "50%",
+                          background: "linear-gradient(to top, rgba(180, 231, 206, 0.9) 0%, transparent 100%)",
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 16,
+                          right: 16,
+                          backgroundColor: "#FFB4D6",
+                          width: 48,
+                          height: 48,
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: "0 4px 12px rgba(255, 180, 214, 0.4)",
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "1.5rem" }}>
+                          🍽️
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <CardContent
+                      sx={{
+                        p: 3,
+                        flexGrow: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        backgroundColor: "#FFFFFF",
+                      }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 700,
+                          color: "#2D5F4C",
+                          mb: 2,
+                          lineHeight: 1.4,
+                          height: 56,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {recipe.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Chip
+                          label="Bổ dưỡng"
+                          size="small"
+                          sx={{
+                            backgroundColor: "#FFF4E6",
+                            color: "#E67E22",
+                            fontWeight: 600,
+                            fontSize: "0.75rem",
+                          }}
+                        />
+                        <Chip
+                          label="Dễ làm"
+                          size="small"
+                          sx={{
+                            backgroundColor: "#E8F5E9",
+                            color: "#4CAF50",
+                            fontWeight: 600,
+                            fontSize: "0.75rem",
+                          }}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+
+            <Box textAlign="center">
+              <Button
+                variant="contained"
+                size="large"
+                component={Link}
+                to="/recipes"
+                sx={{
+                  px: 5,
+                  py: 1.5,
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  backgroundColor: "#B4E7CE",
+                  color: "#2D5F4C",
+                  borderRadius: "50px",
+                  boxShadow: "0 6px 20px rgba(180, 231, 206, 0.3)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: "#9DD9B8",
+                    transform: "translateY(-3px)",
+                    boxShadow: "0 10px 28px rgba(180, 231, 206, 0.4)",
+                  },
+                }}
+              >
+                Xem thêm công thức
+              </Button>
+            </Box>
+          </>
+        )}
+      </Container>
+
+      {/* Footer */}
+      <Box
+        sx={{
+          background: "linear-gradient(135deg, #72CDF1 0%, #5AB8E0 100%)",
+          py: 6,
+          textAlign: "center",
+          mt: 8,
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ color: "#FFFFFF", fontWeight: 500 }}
+        >
+          © 2025 Baby Food Blog. All rights reserved.
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ color: "rgba(255, 255, 255, 0.8)", mt: 1 }}
+        >
+          Dinh dưỡng tốt nhất cho bé yêu của bạn
+        </Typography>
+      </Box>
     </Box>
   );
 };

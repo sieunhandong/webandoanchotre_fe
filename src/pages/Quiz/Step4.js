@@ -7,7 +7,14 @@ const Step4 = ({ data, onNext, onPrev }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (data?.sessionId) fetchMenu(data.sessionId);
+        // Nếu đã có mealSuggestions (từ step trước hoặc localStorage) → dùng lại, không gọi lại AI
+        const savedMenu = data?.mealSuggestions || JSON.parse(localStorage.getItem("quiz_mealSuggestions") || "[]");
+
+        if (savedMenu.length > 0) {
+            setMenu(savedMenu);
+        } else if (data?.sessionId) {
+            fetchMenu(data.sessionId);
+        }
     }, [data?.sessionId]);
 
     const fetchMenu = async (sessionId) => {
@@ -15,7 +22,10 @@ const Step4 = ({ data, onNext, onPrev }) => {
         try {
             const res = await step4({ sessionId });
             if (res.data.success && res.data.data.menu) {
-                setMenu(res.data.data.menu);
+                const suggestedMenu = res.data.data.menu;
+                setMenu(suggestedMenu);
+                // Lưu lại localStorage để khi quay lại không cần gọi AI lần nữa
+                localStorage.setItem("quiz_mealSuggestions", JSON.stringify(suggestedMenu));
             } else {
                 alert("Không nhận được dữ liệu thực đơn!");
             }
@@ -27,7 +37,10 @@ const Step4 = ({ data, onNext, onPrev }) => {
         }
     };
 
-    const handleNext = () => onNext && onNext({ menu });
+    const handleNext = () => {
+        // Truyền menu sang bước tiếp theo
+        onNext && onNext({ menu });
+    };
 
     return (
         <div className="step4-wrapper">

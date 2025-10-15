@@ -1,0 +1,92 @@
+.order-container {
+    width: 100%;
+    background-color: #fafafa;
+    padding: 16px 8px;
+    /* Giảm padding trên mobile */
+}
+
+.shipping-paper,
+.order-summary-paper {
+    padding: 16px;
+    /* Giảm padding chung */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shipping-title {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.shipping-icon {
+    margin-right: 8px;
+    color: #1976d2;
+}
+
+.order-summary-title {
+    font-weight: 600;
+}
+
+.summary-section {
+    margin-top: 16px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.summary-total-amount {
+    font-weight: 600;
+    color: #1976d2;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.place-order-button {
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+.empty-cart-paper {
+    padding: 16px;
+    /* Giảm padding */
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.continue-shopping-button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .order-container {
+        padding: 8px 4px;
+        /* Giảm thêm padding trên mobile */
+    }
+
+    .shipping-paper,
+    .order-summary-paper {
+        padding: 12px;
+        /* Giảm padding trên mobile */
+    }
+}

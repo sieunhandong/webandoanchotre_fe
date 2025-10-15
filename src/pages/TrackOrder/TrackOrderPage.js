@@ -24,7 +24,6 @@ const TrackOrderPage = () => {
       }
     })();
   }, []);
-  console.log(orders);
   const calcTotal = (items) =>
     items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

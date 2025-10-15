@@ -64,8 +64,8 @@ const Header = ({
 
           {/* Center Menu */}
           <nav className={`nav-center ${isMobileMenuOpen ? "open" : ""}`}>
-            <Link to="/quiz/start" className="nav-link" onClick={handleMobileLinkClick}>Quiz</Link>
-            <Link to="/about" className="nav-link" onClick={handleMobileLinkClick}>Về chúng tôi</Link>
+            <Link to="/quiz" className="nav-link" onClick={handleMobileLinkClick}>Quiz</Link>
+            <Link to="/about-us" className="nav-link" onClick={handleMobileLinkClick}>Về chúng tôi</Link>
             <Link to="/blog" className="nav-link" onClick={handleMobileLinkClick}>Blog</Link>
           </nav>
 

@@ -12,12 +12,10 @@ import HomeIcon from "@mui/icons-material/Home";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PeopleIcon from "@mui/icons-material/People";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import RateReview from "@mui/icons-material/RateReview";
 import CategoryIcon from "@mui/icons-material/Category";
 import StarIcon from "@mui/icons-material/Star";
-import CampaignIcon from "@mui/icons-material/Campaign";
 
 import "./Sidebar.css";
 
@@ -37,14 +35,14 @@ const Sidebar = ({ isSidebarOpen }) => {
       link: "/admin/orders",
     },
     {
-      text: "Quản lý mã giảm giá",
-      icon: <LocalOfferIcon />,
-      link: "/admin/discounts",
+      text: "Quản lý Set Ăn",
+      icon: <PeopleIcon />,
+      link: "/admin/meal-set",
     },
     {
-      text: "Chiến dịch giảm giá",
-      icon: <CampaignIcon />,
-      link: "/admin/discount-campaigns",
+      text: "Quản lý món ăn",
+      icon: <PeopleIcon />,
+      link: "/admin/foods",
     },
     {
       text: "Quản lý đánh giá",
@@ -57,14 +55,14 @@ const Sidebar = ({ isSidebarOpen }) => {
       link: "/admin/complaints",
     },
     {
-      text: "Quản lý Blog",
+      text: "Quản lý danh mục Blog",
       icon: <RateReview />,
-      link: "/admin/reviews",
+      link: "/admin/blog-categories",
     },
     {
-      text: "Quản lý Set Ăn",
-      icon: <PeopleIcon />,
-      link: "/admin/meal-set",
+      text: "Quản lý Blog",
+      icon: <RateReview />,
+      link: "/admin/blogs",
     },
   ];
 
@@ -88,7 +86,7 @@ const Sidebar = ({ isSidebarOpen }) => {
     >
       <List sx={{ width: "100%", paddingTop: 0 }}>
         <div className="sidebar-header">
-          <h1 className="sidebar-logo">{isSidebarOpen ? "NewBooks" : "NB"}</h1>
+          <h1 className="sidebar-logo">{isSidebarOpen ? "TinnyYummy" : "TY"}</h1>
         </div>
 
         {menuItems.map((item) => (

@@ -83,7 +83,7 @@ function Register({ onLoginSuccess }) {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:9999/auth/send-otp", {
+      await axios.post("https://tinyyummy.onrender.com/auth/send-otp", {
         email: formData.email,
         type: "register",
       });
@@ -108,13 +108,13 @@ function Register({ onLoginSuccess }) {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:9999/auth/verify-otp", {
+      await axios.post("https://tinyyummy.onrender.com/auth/verify-otp", {
         email: formData.email,
         otp,
         type: "register",
       });
 
-      await axios.post("http://localhost:9999/auth/register", formData);
+      await axios.post("https://tinyyummy.onrender.com/auth/register", formData);
 
       setOtpDialogOpen(false);
 
@@ -164,7 +164,7 @@ function Register({ onLoginSuccess }) {
 
           // Gửi accessToken về server để xác thực
           axios
-            .post("http://localhost:9999/auth/facebook-auth", { accessToken })
+            .post("https://tinyyummy.onrender.com/auth/facebook-auth", { accessToken })
             .then((res) => {
               const { accessToken: token, email, role } = res.data;
 

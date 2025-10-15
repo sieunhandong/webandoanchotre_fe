@@ -22,7 +22,6 @@ export const step4 = async (payload) => {
     return response;
 };
 export const step5 = async (payload) => {
-    console.log(payload);
     const response = await axiosInstance.post(`/quiz/step5`, payload);
     return response;
 };
@@ -37,7 +36,6 @@ export const step7 = async (payload) => {
 
 // 🧾 Lấy dữ liệu khi user quay lại bước trước (ví dụ: step 3)
 export const getStepData = async (sessionId, step) => {
-    console.log(sessionId, step);
     const response = await axiosInstance.get(`/quiz/step/${step}`, {
         params: { sessionId },
     });
@@ -58,12 +56,6 @@ export const getCategoriesProducts = async () => {
 
 export const getSets = async () => {
     const response = await axiosInstance.get(`/quiz/sets`);
-    // console.log(response);
-    return response;
-};
-export const getSetById = async () => {
-    const response = await axiosInstance.get(`/quiz/sets`);
-    // console.log(response);
     return response;
 };
 

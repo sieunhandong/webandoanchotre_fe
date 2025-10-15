@@ -152,6 +152,12 @@ const Step7 = ({ data, onPrev }) => {
             const res = await step7({ sessionId, deliveryTime, address });
             if (res.data?.success) {
                 const { paymentUrl } = res.data.data;
+                // ✅ Xóa dữ liệu quiz khỏi localStorage
+                localStorage.removeItem("quiz_sessionId");
+                localStorage.removeItem("quiz_selectedSetId");
+                localStorage.removeItem("quiz_current_step");
+                localStorage.removeItem("quiz_step");
+                localStorage.removeItem("quiz_mealSuggestions");
                 window.location.href = paymentUrl;
             }
         } catch (error) {

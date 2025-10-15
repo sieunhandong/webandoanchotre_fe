@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,321 +8,339 @@ import {
   Box,
   Typography,
   Grid,
-  Chip,
-  TableContainer,
   Paper,
+  TableContainer,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
   Divider,
+  TextField,
+  IconButton,
+  Tooltip,
+  DialogContentText,
 } from "@mui/material";
+import {
+  Edit as EditIcon,
+  Save as SaveIcon,
+  Refresh as RefreshIcon,
+} from "@mui/icons-material";
+import {
+  updateMealMenu,
+  aiSuggestMenu,
+} from "../../../services/AdminService/orderService";
 
-const formatDate = (dateString) => {
-  if (!dateString) return "N/A";
-  try {
-    return new Date(dateString).toLocaleString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch (error) {
-    return "N/A";
-  }
-};
+const formatCurrency = (v) =>
+  v ? `${v.toLocaleString("vi-VN")} VNĐ` : "0 VNĐ";
 
-const formatCurrency = (amount) => {
-  if (!amount && amount !== 0) return "0";
-  return amount.toLocaleString("vi-VN");
-};
+export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editedMenu, setEditedMenu] = useState("");
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [aiMenu, setAiMenu] = useState([]); // dữ liệu thực đơn từ AI
+  const [showAIPopup, setShowAIPopup] = useState(false); // popup xác nhận AI
 
-const InfoRow = ({ label, value }) => (
-  <Box display="flex" justifyContent="space-between" py={1}>
-    <Typography variant="body2" color="text.secondary">
-      {label}:
-    </Typography>
-    <Typography variant="body2" fontWeight="500">
-      {value || "Hà Nội"}
-    </Typography>
-  </Box>
-);
-
-export default function OrderDetailsDialog({ open, order, onClose }) {
   if (!open || !order) return null;
 
-  // Safe calculation with fallbacks
-  const subtotal = Array.isArray(order.items)
-    ? order.items.reduce((sum, item) => {
-        const price = item.price || 0;
-        const quantity = item.quantity || 0;
-        return sum + price * quantity;
-      }, 0)
-    : 0;
+  const delivery = order.delivery || {};
+  const address = delivery.address || {};
+  const baby = order.userId?.userInfo?.babyInfo || {};
+  const items = order.items || [];
+  const menus = order.mealSuggestions || [];
 
-  const discountAmount = order.discountUsed
-    ? order.discountUsed.type === "fixed"
-      ? order.discountUsed.value || 0
-      : (subtotal * (order.discountUsed.value || 0)) / 100
-    : 0;
+  // 🚀 Gọi AI để gợi ý thực đơn mới
+  const handleAISuggest = async () => {
+    try {
+      setLoadingAI(true);
+      const res = await aiSuggestMenu(order._id);
+      if (res.success && res.data) {
+        // Gom 2 bữa thành 1 ngày
+        const rawMenus = res.data;
+        const groupedMenus = [];
 
-  const shippingFee = order.shippingInfo?.fee || 0;
-  const pointsUsed = order.pointUsed || 0;
+        for (let i = 0; i < rawMenus.length; i += 2) {
+          groupedMenus.push({
+            day: groupedMenus.length + 1,
+            menu: [rawMenus[i], rawMenus[i + 1]].filter(Boolean),
+          });
+        }
+        setAiMenu(groupedMenus);
 
-  const total = subtotal - discountAmount - pointsUsed + shippingFee;
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "warning";
-      case "Processing":
-        return "info";
-      case "Shipped":
-        return "secondary";
-      case "Delivered":
-        return "success";
-      case "Cancelled":
-        return "error";
-      default:
-        return "default";
+        setShowAIPopup(true); // mở popup xác nhận
+      } else {
+        alert("❌ AI không trả về dữ liệu hợp lệ");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Lỗi khi gợi ý thực đơn bằng AI");
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+  // 💾 Admin xác nhận dùng thực đơn AI
+  const handleConfirmAI = async () => {
+    try {
+      await updateMealMenu(order._id, aiMenu);
+      alert("✅ Đã cập nhật thực đơn AI vào đơn hàng!");
+      setShowAIPopup(false);
+      refresh();
+    } catch (err) {
+      console.error(err);
+      alert("❌ Lỗi khi cập nhật thực đơn AI");
     }
   };
 
-  const getPaymentMethodText = (method) => {
-    switch (method) {
-      case "COD":
-        return "Thanh toán khi nhận hàng";
-      case "ONLINE":
-        return "Thanh toán trực tuyến";
-      case "BANK_TRANSFER":
-        return "Chuyển khoản ngân hàng";
-      default:
-        return method || "N/A";
+  // 📝 Lưu khi admin sửa menu thủ công
+  const handleSaveMenu = async (menuId) => {
+    try {
+      const updatedMenus = [...menus];
+      updatedMenus[editingIndex].menu = editedMenu;
+      await updateMealMenu(order._id, updatedMenus);
+      alert("✅ Đã cập nhật thực đơn thành công");
+      setEditingIndex(null);
+      refresh();
+    } catch (err) {
+      console.error(err);
+      alert("❌ Lỗi khi cập nhật thực đơn");
     }
   };
-
-  const getPaymentStatusText = (status) => {
-    switch (status) {
-      case "Pending":
-        return "Chưa thanh toán";
-      case "Paid":
-      case "Completed":
-        return "Đã thanh toán";
-      case "Failed":
-        return "Thanh toán thất bại";
-      default:
-        return status || "N/A";
-    }
-  };
-
-  const shippingInfo = order.shippingInfo || {};
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
+    <>
+      {/* --- POPUP CHÍNH: Chi tiết đơn hàng --- */}
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+        <DialogTitle>
           <Typography variant="h6">
             Chi tiết đơn hàng{" "}
-            <Typography
-              component="span"
-              variant="h6"
-              color="primary"
-              fontWeight="600"
-            >
-              #{order.id || order._id || ""}
+            <Typography component="span" color="primary" fontWeight="600">
+              #{order._id}
             </Typography>
           </Typography>
-          <Box display="flex" gap={1}>
-            <Chip
-              label={order.orderStatus || "N/A"}
-              color={getStatusColor(order.orderStatus)}
-              size="small"
-            />
-            <Chip
-              label={getPaymentStatusText(order.paymentStatus)}
-              color={order.paymentStatus === "Pending" ? "warning" : "success"}
-              size="small"
-            />
-          </Box>
-        </Box>
-      </DialogTitle>
+        </DialogTitle>
 
-      <DialogContent>
-        <Grid container spacing={3}>
-          <Grid item size={{ xs: 12, md: 6 }}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="subtitle1" fontWeight="600" gutterBottom>
-                Thông tin khách hàng
-              </Typography>
-              <InfoRow
-                label="Tên khách hàng"
-                value={order.user?.name || order.customerName}
-              />
-              <InfoRow
-                label="Email"
-                value={order.user?.email || order.customerEmail}
-              />
-              <InfoRow
-                label="Ngày đặt hàng"
-                value={formatDate(order.createdAt || order.orderDate)}
-              />
-              {order.trackingNumber && (
-                <InfoRow label="Mã vận đơn" value={order.trackingNumber} />
-              )}
-              <InfoRow
-                label="Phương thức thanh toán"
-                value={getPaymentMethodText(order.paymentMethod)}
-              />
-            </Paper>
-          </Grid>
-
-          <Grid item size={{ xs: 12, md: 6 }}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="subtitle1" fontWeight="600" gutterBottom>
-                Thông tin giao hàng
-              </Typography>
-              <InfoRow
-                label="Địa chỉ "
-                value={shippingInfo.address || shippingInfo.fullAddress}
-              />
-              <InfoRow
-                label="Phường/Xã"
-                value={shippingInfo.wardName || shippingInfo.ward}
-              />
-              <InfoRow
-                label="Quận/Huyện"
-                value={shippingInfo.districtName || shippingInfo.district}
-              />
-              <InfoRow
-                label="Tỉnh/TP"
-                value={
-                  shippingInfo.provinceName ||
-                  shippingInfo.province ||
-                  shippingInfo.city
-                }
-              />
-              <InfoRow
-                label="Số điện thoại"
-                value={shippingInfo.phoneNumber || shippingInfo.phone}
-              />
-              {shippingInfo.note && (
-                <InfoRow label="Ghi chú" value={shippingInfo.note} />
-              )}
-            </Paper>
-          </Grid>
-        </Grid>
-
-        <Box mt={3}>
-          <Paper>
-            <Box p={2} bgcolor="grey.50">
-              <Typography variant="subtitle1" fontWeight="600">
-                Sản phẩm ({Array.isArray(order.items) ? order.items.length : 0}{" "}
-                sản phẩm)
-              </Typography>
-            </Box>
-
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Tên sản phẩm</TableCell>
-                    <TableCell align="center" width="100px">
-                      Số lượng
-                    </TableCell>
-                    <TableCell align="right" width="120px">
-                      Đơn giá
-                    </TableCell>
-                    <TableCell align="right" width="120px">
-                      Thành tiền
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Array.isArray(order.items) && order.items.length > 0 ? (
-                    order.items.map((item, i) => (
-                      <TableRow key={i}>
-                        <TableCell>
-                          {item.book?.title ||
-                            item.productName ||
-                            item.name ||
-                            "N/A"}
-                        </TableCell>
-                        <TableCell align="center">
-                          {item.quantity || 0}
-                        </TableCell>
-                        <TableCell align="right">
-                          {formatCurrency(item.price || 0)} VNĐ
-                        </TableCell>
-                        <TableCell align="right">
-                          {formatCurrency(
-                            (item.price || 0) * (item.quantity || 0)
-                          )}{" "}
-                          VNĐ
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} align="center">
-                        <Typography color="text.secondary">
-                          Không có sản phẩm nào
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <Box p={2} bgcolor="grey.50">
-              <Typography variant="subtitle1" fontWeight="600" gutterBottom>
-                Tổng kết đơn hàng
-              </Typography>
-
-              <InfoRow
-                label="Tạm tính"
-                value={`${formatCurrency(subtotal)} VNĐ`}
-              />
-              <InfoRow
-                label="Phí vận chuyển"
-                value={`${formatCurrency(shippingFee)} VNĐ`}
-              />
-
-              {discountAmount > 0 && (
-                <InfoRow
-                  label="Giảm giá"
-                  value={`-${formatCurrency(discountAmount)} VNĐ`}
-                />
-              )}
-
-              {pointsUsed > 0 && (
-                <InfoRow
-                  label="Điểm tích lũy"
-                  value={`-${formatCurrency(pointsUsed)} VNĐ`}
-                />
-              )}
-
-              <Divider sx={{ my: 1 }} />
-              <Box display="flex" justifyContent="space-between" pt={1}>
-                <Typography variant="h6" fontWeight="600">
-                  Tổng cộng:
+        <DialogContent dividers>
+          <Grid container spacing={2}>
+            {/* Thông tin khách hàng */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 2 }}>
+                <Typography fontWeight={600} mb={1}>
+                  👤 Thông tin khách hàng
                 </Typography>
-                <Typography variant="h6" fontWeight="600" color="primary">
-                  {formatCurrency(total)} VNĐ
+                <Typography>Tên: {order.userId?.name || "N/A"}</Typography>
+                <Typography>Email: {order.userId?.email || "N/A"}</Typography>
+                <Typography>Điện thoại: {order.userId?.phone || "N/A"}</Typography>
+                <Typography>
+                  Ngày đặt: {new Date(order.createdAt).toLocaleString("vi-VN")}
+                </Typography>
+              </Paper>
+            </Grid>
+
+            {/* Địa chỉ giao hàng */}
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 2 }}>
+                <Typography fontWeight={600} mb={1}>
+                  🚚 Địa chỉ giao hàng
+                </Typography>
+                <Typography>
+                  {address.address}, {address.wardName}, {address.districtName},{" "}
+                  {address.provinceName}
+                </Typography>
+                <Typography>Ngày giao dự kiến: {delivery.time}</Typography>
+              </Paper>
+            </Grid>
+
+            {/* Thông tin bé */}
+            <Grid item xs={12}>
+              <Paper sx={{ p: 2 }}>
+                <Typography fontWeight={600} mb={1}>
+                  👶 Thông tin bé
+                </Typography>
+                <Typography>Tuổi: {baby.age || "Chưa cập nhật"} tháng</Typography>
+                <Typography>Cân nặng: {baby.weight || "Chưa cập nhật"} kg</Typography>
+                <Typography>
+                  Phương pháp ăn dặm:{" "}
+                  {baby.feedingMethod === "traditional"
+                    ? "Truyền thống"
+                    : baby.feedingMethod === "blw"
+                      ? "BLW"
+                      : "Kết hợp"}
+                </Typography>
+                <Typography>
+                  Dị ứng:{" "}
+                  {baby.allergies?.length
+                    ? baby.allergies.join(", ")
+                    : "Không có"}
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+
+          {/* Danh sách sản phẩm */}
+          <Box mt={3}>
+            <Paper>
+              <Box p={2} bgcolor="grey.50">
+                <Typography fontWeight="600">
+                  Sản phẩm ({items.length})
                 </Typography>
               </Box>
-            </Box>
-          </Paper>
-        </Box>
-      </DialogContent>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Tên set</TableCell>
+                      <TableCell align="center">Số ngày</TableCell>
+                      <TableCell align="right">Giá</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {items.map((item, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{item.setId?.title || "N/A"}</TableCell>
+                        <TableCell align="center">
+                          {item.duration || "-"}
+                        </TableCell>
+                        <TableCell align="right">
+                          {formatCurrency(item.price)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-      <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose} variant="contained">
-          Đóng
-        </Button>
-      </DialogActions>
-    </Dialog>
+              <Divider />
+              <Box p={2} display="flex" justifyContent="space-between">
+                <Typography fontWeight="bold">Tổng tiền:</Typography>
+                <Typography color="primary" fontWeight="bold">
+                  {formatCurrency(order.total)}
+                </Typography>
+              </Box>
+            </Paper>
+          </Box>
+
+          {/* Thực đơn gợi ý */}
+          <Box mt={3}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={1}
+            >
+              <Typography fontWeight="600">🍱 Thực đơn gợi ý</Typography>
+              <Button
+                variant="outlined"
+                startIcon={<RefreshIcon />}
+                onClick={handleAISuggest}
+                disabled={loadingAI}
+              >
+                {loadingAI ? "Đang gợi ý..." : "Gợi ý lại bằng AI"}
+              </Button>
+            </Box>
+
+            <Paper>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">Ngày</TableCell>
+                      <TableCell>Thực đơn</TableCell>
+                      <TableCell align="center">Hành động</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {menus.map((m, idx) => (
+                      <TableRow key={m._id || idx}>
+                        <TableCell align="center">Ngày {m.day}</TableCell>
+                        <TableCell>
+                          {editingIndex === idx ? (
+                            <TextField
+                              fullWidth
+                              multiline
+                              rows={2}
+                              value={editedMenu}
+                              onChange={(e) => setEditedMenu(e.target.value)}
+                            />
+                          ) : (
+                            Array.isArray(m.menu)
+                              ? m.menu.join(" | ")
+                              : m.menu
+                          )}
+                        </TableCell>
+                        <TableCell align="center">
+                          {editingIndex === idx ? (
+                            <IconButton
+                              color="success"
+                              onClick={() => handleSaveMenu(m._id)}
+                            >
+                              <SaveIcon />
+                            </IconButton>
+                          ) : (
+                            <Tooltip title="Sửa thực đơn">
+                              <IconButton
+                                onClick={() => {
+                                  setEditingIndex(idx);
+                                  setEditedMenu(
+                                    Array.isArray(m.menu)
+                                      ? m.menu.join(" | ")
+                                      : m.menu
+                                  );
+                                }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Box>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={onClose} variant="contained">
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* --- POPUP XÁC NHẬN THỰC ĐƠN AI --- */}
+      <Dialog open={showAIPopup} onClose={() => setShowAIPopup(false)} fullWidth maxWidth="sm">
+        <DialogTitle>🤖 Thực đơn AI đề xuất</DialogTitle>
+        <DialogContent dividers>
+          {aiMenu && aiMenu.length > 0 ? (
+            <Box>
+              {aiMenu.map((m) => (
+                <Box key={m.day} mb={2}>
+                  <Typography fontWeight="bold">Ngày {m.day}</Typography>
+                  <Typography ml={2}>
+                    {m.menu
+                      ? Array.isArray(m.menu)
+                        ? m.menu.join(" | ")
+                        : m.menu
+                      : m.meals?.join(" | ")}
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <DialogContentText>
+              Không có dữ liệu thực đơn từ AI.
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowAIPopup(false)}>Hủy</Button>
+          <Button variant="contained" color="primary" onClick={handleConfirmAI}>
+            Dùng thực đơn này
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

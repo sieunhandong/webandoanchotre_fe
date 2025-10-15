@@ -61,7 +61,7 @@ function Login({ onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:9999/auth/login", {
+      const response = await axios.post("https://tinyyummy.onrender.com/auth/login", {
         email: formData.email,
         password: formData.password,
       },
@@ -70,7 +70,6 @@ function Login({ onLoginSuccess }) {
         });
 
       const token = response.data.accessToken;
-      console.log(token);
       const userRole = response.data.role;
 
       const storageMethod = formData.rememberMe ? localStorage : sessionStorage;
@@ -78,6 +77,8 @@ function Login({ onLoginSuccess }) {
       storageMethod.setItem("access_token", token);
       storageMethod.setItem("userEmail", formData.email);
       storageMethod.setItem("userRole", userRole);
+      storageMethod.setItem("userName", response.data.userName);
+
 
       if (onLoginSuccess) {
         onLoginSuccess(formData.email, userRole);
@@ -88,12 +89,16 @@ function Login({ onLoginSuccess }) {
       setFormData({ email: "", password: "", rememberMe: false });
 
       setTimeout(() => {
+        const redirectTo = location.state?.redirectTo;
         if (userRole === "admin") {
           navigate("/admin/dashboard");
+        } else if (redirectTo) {
+          navigate(redirectTo);
         } else {
           navigate("/");
         }
       }, 1000);
+
     } catch (error) {
       console.error("Login error:", error);
       handleAlert(
@@ -120,6 +125,7 @@ function Login({ onLoginSuccess }) {
         storageMethod.setItem("access_token", result.accessToken);
         storageMethod.setItem("userEmail", result.email); // đảm bảo backend trả về email
         storageMethod.setItem("userRole", result.role);
+        storageMethod.setItem("userName", result.userName);
 
         if (onLoginSuccess) {
           onLoginSuccess(result.email, result.role);
@@ -129,12 +135,16 @@ function Login({ onLoginSuccess }) {
 
         // Chuyển hướng dựa theo role
         setTimeout(() => {
+          const redirectTo = location.state?.redirectTo;
           if (result.role === "admin") {
             navigate("/admin/dashboard");
+          } else if (redirectTo) {
+            navigate(redirectTo);
           } else {
             navigate("/");
           }
         }, 1000);
+        ;
       } else {
         handleAlert(
           "Không thể đăng nhập bằng Google. Dữ liệu trả về không hợp lệ.",
@@ -147,56 +157,6 @@ function Login({ onLoginSuccess }) {
     }
   };
 
-  const handleFacebookLogin = () => {
-    if (!window.FB) {
-      handleAlert("Facebook SDK chưa tải xong.", "error");
-      return;
-    }
-
-    window.FB.login(
-      function (response) {
-        if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
-
-          // Gửi accessToken về server để xác thực
-          axios
-            .post("http://localhost:9999/auth/facebook-auth", { accessToken }, {
-              withCredentials: true
-            })
-            .then((res) => {
-              const { accessTokenLogin: token, email, role } = res.data;
-              const storageMethod = formData.rememberMe
-                ? localStorage
-                : sessionStorage;
-              storageMethod.setItem("access_token", token);
-              storageMethod.setItem("userEmail", email);
-              storageMethod.setItem("userRole", role);
-
-              if (onLoginSuccess) {
-                onLoginSuccess(email, role);
-              }
-
-              handleAlert("Đăng nhập bằng Facebook thành công!", "success");
-
-              setTimeout(() => {
-                if (role === "admin") {
-                  navigate("/admin/dashboard");
-                } else {
-                  navigate("/");
-                }
-              }, 1000);
-            })
-            .catch((err) => {
-              console.error("Facebook auth error:", err);
-              handleAlert("Đăng nhập Facebook thất bại!", "error");
-            });
-        } else {
-          handleAlert("Bạn đã hủy đăng nhập Facebook.", "warning");
-        }
-      },
-      { scope: "email" }
-    );
-  };
   return (
     <Box className="login-container" sx={{ backgroundImage: `url('/loginbg.jpeg')` }}>
       <Box className="login-form-container">
@@ -268,19 +228,6 @@ function Login({ onLoginSuccess }) {
           </Divider>
 
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              variant="outlined"
-              fullWidth
-              onClick={handleFacebookLogin}
-              className="facebook-button"
-            >
-              <img
-                src="https://www.facebook.com/favicon.ico"
-                alt="Facebook icon"
-                className="social-icon"
-              />
-              Facebook
-            </Button>
             <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
           </Box>
         </form>
