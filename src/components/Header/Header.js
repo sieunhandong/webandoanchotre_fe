@@ -1,36 +1,25 @@
-import React, { useState } from "react";
-import "./Header.css";
-import {
-  Typography,
-  Button,
-  Box,
-  MenuItem,
-  Menu,
-  Badge,
-  Popper,
-  Fade,
-  Paper,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import PersonPinOutlinedIcon from "@mui/icons-material/PersonPinOutlined";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import FlagIcon from "@mui/icons-material/Flag";
-import PhoneIcon from "@mui/icons-material/Phone";
+import "./Header.css";
 import AuthService from "../../services/AuthService";
 
 const Header = ({
   userEmail,
   updateUserEmail,
-  wishlistCount = 0,
   updateWishlistCount,
 }) => {
   const navigate = useNavigate();
-  const [anchorEl2, setAnchorEl2] = useState(null);
-  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userName, setUserName] = useState(null);
 
-  const handleOpenMenu = (event) => setAnchorEl2(event.currentTarget);
-  const handleCloseMenu = () => setAnchorEl2(null);
+  // ✅ Lấy userName từ localStorage hoặc sessionStorage
+  useEffect(() => {
+    const storedName =
+      localStorage.getItem("userName") || sessionStorage.getItem("userName");
+    if (storedName) setUserName(storedName);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -41,172 +30,89 @@ const Header = ({
       if (typeof updateWishlistCount === "function") updateWishlistCount(0);
       navigate("/account/login");
     } catch (error) {
-      console.error("Lỗi khi logout:", error);
+      console.error("Logout error:", error);
     }
   };
+  const handleMobileLinkClick = () => {
+    setIsMobileMenuOpen(false);
+    setIsUserMenuOpen(false);
+    setIsMoreMenuOpen(false);
+  };
 
-  const handleUserMenuMouseEnter = (event) => setUserMenuAnchorEl(event.currentTarget);
-  const handleUserMenuMouseLeave = () => setUserMenuAnchorEl(null);
+  const toggleMoreMenu = () => setIsMoreMenuOpen(!isMoreMenuOpen);
+  const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  const userMenuOpen = Boolean(userMenuAnchorEl);
+  // Avatar: chữ cái đầu của userName hoặc 'U' nếu chưa có
+  const firstLetter = userName ? userName.charAt(0).toUpperCase() : "U";
 
   return (
-    <Box className="sticky-header">
+    <header className="sticky-header">
       <div className="nav-bar-container">
-        <Box className="nav-bar">
-          {/* --- Logo --- */}
-          <Box className="nav-logo">
-            <Typography component={Link} to="/" className="logo-text">
-              <img src="/NB (2).png" alt="logo" />
-            </Typography>
-          </Box>
+        <div className="nav-bar">
+          {/* Logo */}
+          <div className="nav-logo">
+            <Link to="/" className="logo-text">
+              <img src="/NB (2).png" alt="Baby Food Logo" />
+            </Link>
+          </div>
 
-          {/* --- Menu giữa --- */}
-          <Box className="nav-center">
-            <Button className="custom-icon-button" component={Link} to="/quiz/start">
-              <Typography variant="body2" className="custom-typography">
-                Quiz
-              </Typography>
-            </Button>
+          {/* Mobile Menu Toggle */}
+          <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? "✕" : "☰"}
+          </button>
 
-            <Button className="custom-icon-button" component={Link} to="/about">
-              <Typography variant="body2" className="custom-typography">
-                Về chúng tôi
-              </Typography>
-            </Button>
-            <Button className="custom-icon-button" component={Link} to="/blog">
-              <Typography variant="body2" className="custom-typography">
-                Blog
-              </Typography>
-            </Button>
-          </Box>
+          {/* Center Menu */}
+          <nav className={`nav-center ${isMobileMenuOpen ? "open" : ""}`}>
+            <Link to="/quiz/start" className="nav-link" onClick={handleMobileLinkClick}>Quiz</Link>
+            <Link to="/about" className="nav-link" onClick={handleMobileLinkClick}>Về chúng tôi</Link>
+            <Link to="/blog" className="nav-link" onClick={handleMobileLinkClick}>Blog</Link>
+          </nav>
 
-          {/* --- Menu phải --- */}
-          <div className="nav-buttons">
+          {/* Right Menu */}
+          <div className={`nav-buttons ${isMobileMenuOpen ? "open" : ""}`}>
             {userEmail ? (
-              <Box
-                className="user-menu-container"
-                onMouseEnter={handleUserMenuMouseEnter}
-                onMouseLeave={handleUserMenuMouseLeave}
-              >
-                <Button className="custom-icon-button">
-                  <PersonPinOutlinedIcon className="custom-icon" />
-                  <Typography
-                    variant="body2"
-                    className="cart-text custom-typography"
-                  >
-                    {userEmail.split("@")[0]}
-                  </Typography>
-                </Button>
-
-                {/* 🔽 Popper menu trượt xuống */}
-                <Popper
-                  open={userMenuOpen}
-                  anchorEl={userMenuAnchorEl}
-                  placement="bottom-start"
-                  transition
-                  className="user-menu-popper"
+              <div className="user-menu-container">
+                <button
+                  className="nav-button user-button"
+                  onClick={toggleUserMenu}
                 >
-                  {({ TransitionProps }) => (
-                    <Fade {...TransitionProps} timeout={250}>
-                      <Paper
-                        className="user-menu-list"
-                        elevation={3}
-                        sx={{
-                          mt: 1,
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          minWidth: 180,
-                        }}
-                      >
-                        <MenuItem
-                          component={Link}
-                          to="/track-order"
-                          className="user-menu-item"
-                        >
-                          Đơn hàng của tôi
-                        </MenuItem>
-                        <MenuItem
-                          component={Link}
-                          to="/user/profile"
-                          className="user-menu-item"
-                        >
-                          Tài khoản của tôi
-                        </MenuItem>
-                        <MenuItem onClick={handleLogout} className="user-menu-item">
-                          Thoát tài khoản
-                        </MenuItem>
-                      </Paper>
-                    </Fade>
-                  )}
-                </Popper>
-              </Box>
+                  <span className="user-avatar">{firstLetter}</span>
+                  <span className="cart-text">{userName || "User"}</span>
+                </button>
+                {isUserMenuOpen && (
+                  <div className="user-menu">
+                    <Link to="/track-order" className="menu-item" onClick={handleMobileLinkClick}>Đơn hàng của tôi</Link>
+                    <Link to="/user/profile" className="menu-item" onClick={handleMobileLinkClick}>Thông tin cá nhân</Link>
+                    <button onClick={handleLogout} className="menu-item">Đăng xuất</button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <Button
-                className="custom-icon-button"
-                component={Link}
-                to="/account/login"
-              >
-                <PersonPinOutlinedIcon className="custom-icon" />
-                <Typography variant="body2" className="cart-text custom-typography">
-                  Đăng nhập
-                </Typography>
-              </Button>
+              <Link to="/account/login" className="nav-button" onClick={handleMobileLinkClick}>
+                <span className="cart-text">Đăng nhập</span>
+              </Link>
             )}
 
-            <Button
-              className="custom-icon-button"
-              component={Link}
-              to="/user/wishlist"
-            >
-              <Badge
-                badgeContent={userEmail ? wishlistCount : 0}
-                color="error"
-                showZero
-              >
-                <FavoriteBorderIcon className="custom-icon" />
-              </Badge>
-            </Button>
-
-            <Box className="more-menu-container">
-              <Button onClick={handleOpenMenu}>
-                <MoreVertIcon className="custom-icon" />
-              </Button>
-
-              <Menu
-                anchorEl={anchorEl2}
-                open={Boolean(anchorEl2)}
-                onClose={handleCloseMenu}
-                className="more-menu"
-              >
-                <MenuItem
-                  onClick={handleCloseMenu}
-                  component={Link}
-                  to="/user/refund"
-                  className="more-menu-item user-menu-item"
-                >
-                  <FlagIcon className="more-menu-icon" />
-                  Hoàn trả
-                </MenuItem>
-                <MenuItem
-                  onClick={handleCloseMenu}
-                  component={Link}
-                  to="/user/complaint"
-                  className="more-menu-item user-menu-item"
-                >
-                  <FlagIcon className="more-menu-icon" />
-                  Khiếu nại
-                </MenuItem>
-                <MenuItem onClick={handleCloseMenu} className="more-menu-item">
-                  <PhoneIcon />
-                  <Typography>0123123123</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
+            <div className="more-menu-container">
+              <button className="nav-button" onClick={toggleMoreMenu}>
+                <span className="more-icon">⋮</span>
+              </button>
+              {isMoreMenuOpen && (
+                <div className="more-menu">
+                  <Link to="/user/refund" className="menu-item" onClick={handleMobileLinkClick}>Refund</Link>
+                  <Link to="/user/complaint" className="menu-item" onClick={handleMobileLinkClick}>Complaint</Link>
+                  <div className="menu-item">
+                    <span className="phone-icon">📞</span>
+                    <span>0969729035</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </Box>
+        </div>
       </div>
-    </Box>
+    </header>
   );
 };
 
