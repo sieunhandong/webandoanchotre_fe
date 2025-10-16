@@ -11,13 +11,17 @@ import {
   Paper,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import { useNavigate, useParams, useLocation, Link } from "react-router-dom";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getMealSetById } from "../../services/MealSetService";
-import { step7 } from "../../services/QuizService";
+import { createOrder } from "../../services/OrderService";
 import { getProvinces, getDistricts, getWards } from "../../services/GHNService";
+import axios from "axios";
 import "./SetDetail.css";
 
 const SetDetail = () => {
@@ -43,6 +47,11 @@ const SetDetail = () => {
   const [paying, setPaying] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "", severity: "success" });
 
+  // popup QR + countdown
+  const [openQr, setOpenQr] = useState(false);
+  const [qrUrl, setQrUrl] = useState("");
+  const [orderCode, setOrderCode] = useState("");
+  const [countdown, setCountdown] = useState(180); // 3 phút
   useEffect(() => {
     const fetchSet = async () => {
       try {
@@ -72,6 +81,23 @@ const SetDetail = () => {
     };
     fetchProvinces();
   }, [id]);
+  console.log("setData", setData);
+  useEffect(() => {
+    let timer;
+    if (openQr) {
+      setCountdown(180); // reset countdown khi mở popup
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            handleCancelOrder(); // hết thời gian hủy order
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [openQr]);
 
   const handleProvinceChange = async (e) => {
     const provinceId = e.target.value;
@@ -139,9 +165,15 @@ const SetDetail = () => {
         message: "Vui lòng đăng nhập trước khi thanh toán.",
         severity: "error",
       });
-      navigate("/account/login", { state: { redirectTo: location.pathname } });
+
+      // Delay 1.5 giây trước khi redirect để người dùng thấy thông báo
+      setTimeout(() => {
+        navigate("/account/login", { state: { redirectTo: location.pathname } });
+      }, 1500);
+
       return;
     }
+
 
     if (!deliveryTime) {
       setAlert({
@@ -162,14 +194,19 @@ const SetDetail = () => {
 
     setPaying(true);
     try {
-      const res = await step7({
-        sessionId: localStorage.getItem("quiz_sessionId"),
+      // Gọi API step7
+      const res = await createOrder({
+        setId: setData._id,
+        duration: setData.duration,
+        price: setData.price,
         deliveryTime,
         address,
       });
       if (res.data?.success) {
-        const { paymentUrl } = res.data.data;
-        window.location.href = paymentUrl;
+        const { paymentUrl, orderCode } = res.data.data;
+        setQrUrl(paymentUrl);
+        setOrderCode(orderCode);
+        setOpenQr(true); // mở popup
       } else {
         setAlert({
           open: true,
@@ -189,8 +226,30 @@ const SetDetail = () => {
     }
   };
 
+  const handleCancelOrder = async () => {
+    try {
+      const token =
+        localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
+      if (!orderCode || !token) return;
+      console.log("orderCode", orderCode)
+      await axios.delete(`${process.env.REACT_APP_API_URL_BACKEND}/order/${orderCode}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.error("❌ Lỗi khi hủy order:", err);
+    } finally {
+      setOpenQr(false);
+      setOrderCode("");
+      setQrUrl("");
+    }
+  };
+
   const handleCloseAlert = () => {
     setAlert({ ...alert, open: false });
+  };
+
+  const handleCloseQr = () => {
+    handleCancelOrder();
   };
 
   if (loading) {
@@ -234,30 +293,48 @@ const SetDetail = () => {
           {alert.message}
         </Alert>
       </Snackbar>
+
+      {/* Popup QR */}
+      <Dialog open={openQr} onClose={handleCloseQr}>
+        <DialogTitle>Thanh toán đơn hàng</DialogTitle>
+        <DialogContent sx={{ textAlign: "center" }}>
+          <Typography>Quét QR để thanh toán</Typography>
+          <img src={qrUrl} alt="QR Payment" style={{ width: "200px", margin: "20px 0" }} />
+          <Typography>Thời gian còn lại: {Math.floor(countdown / 60)}:{('0' + (countdown % 60)).slice(-2)}</Typography>
+          <Typography sx={{ mt: 1, fontSize: "0.9rem", color: "gray" }}>
+            STK chủ tài khoản: 1234567890 - Ngân hàng XYZ
+          </Typography>
+          <Button variant="outlined" color="error" onClick={handleCloseQr} sx={{ mt: 2 }}>
+            Hủy đơn
+          </Button>
+        </DialogContent>
+      </Dialog>
+
       <Box
         className="order-container"
         sx={{
           width: "100%",
           bgcolor: "#fafafa",
-          py: { xs: 2, md: 4 }, // Giảm padding trên mobile
+          py: { xs: 2, md: 4 },
           display: "flex",
           justifyContent: "center",
         }}
       >
         <Grid
           container
-          spacing={{ xs: 1, md: 2 }} // Giảm spacing trên mobile
+          spacing={{ xs: 1, md: 2 }}
           sx={{
             width: "95%",
             maxWidth: "1800px",
             justifyContent: { xs: "flex-start", md: "center" },
           }}
         >
+          {/* Thông tin giao hàng */}
           <Grid item xs={12} md={8}>
             <Box
               className="shipping-paper"
               sx={{
-                p: { xs: 2, md: 3 }, // Giảm padding trên mobile
+                p: { xs: 2, md: 3 },
                 borderRadius: 2,
                 boxShadow: 2,
                 bgcolor: "white",
@@ -282,7 +359,7 @@ const SetDetail = () => {
                 }}
                 label="Ngày giao hàng *"
                 InputLabelProps={{ shrink: true }}
-                sx={{ mb: { xs: 1.5, md: 2 } }} // Giảm margin-bottom trên mobile
+                sx={{ mb: { xs: 1.5, md: 2 } }}
               />
 
               <TextField
@@ -351,6 +428,7 @@ const SetDetail = () => {
             </Box>
           </Grid>
 
+          {/* Thông tin đơn hàng */}
           <Grid item xs={12} md={4}>
             <Box
               className="order-summary-paper"
