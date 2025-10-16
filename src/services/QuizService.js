@@ -42,11 +42,6 @@ export const getStepData = async (sessionId, step) => {
     return response;
 };
 
-// 💳 Kết quả thanh toán sau khi quay về từ VNPay
-export const getPaymentResult = async (params) => {
-    const response = await axiosInstance.get(`/quiz/payment-result`, { params });
-    return response;
-};
 
 // 🛒 Dữ liệu hỗ trợ quiz (ví dụ danh mục / sản phẩm gợi ý)
 export const getCategoriesProducts = async () => {
@@ -62,10 +57,5 @@ export const getSets = async () => {
 // 📦 Đơn hàng của người dùng
 export const getOrders = async () => {
     const response = await axiosInstance.get(`/quiz/orders`);
-    return response;
-};
-
-export const rebuyOrder = async (orderId) => {
-    const response = await axiosInstance.post(`/quiz/rebuy-order`, { orderId });
     return response;
 };

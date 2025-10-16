@@ -53,8 +53,8 @@ const Quiz = () => {
                     const token =
                         localStorage.getItem("access_token") ||
                         sessionStorage.getItem("access_token");
-
-                    if (!token) {
+                    const isFromQuiz = localStorage.getItem("quiz_sessionId");
+                    if (!token && !isFromQuiz) {
                         const redirectUrl = `/quiz/start?step=7&sessionId=${savedSession || ""}`;
                         navigate(`/account/login?redirect=${encodeURIComponent(redirectUrl)}`);
                         return;

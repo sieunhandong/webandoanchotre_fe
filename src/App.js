@@ -34,6 +34,7 @@ import BlogPage from "./pages/BlogReview/BlogPage.js";
 import BlogDetail from "./pages/ReviewDetail/BlogDetail.js";
 import AboutUs from "./components/AboutUs.js";
 import SetDetail from "./pages/SetDetail/SetDetail.js";
+import SocialButtons from "./components/SocialButtons.js";
 const AdminRoute = ({ children }) => {
   const userRole =
     localStorage.getItem("userRole") || sessionStorage.getItem("userRole");
@@ -193,10 +194,12 @@ function App() {
             </UserOnlyRoute>
           }
         />
+
       </Routes>
 
       {!isAdminRoute && !shouldHideFooter && (
         <>
+          <SocialButtons />
           <Footer />
         </>
       )}

@@ -33,7 +33,7 @@ const Step5 = ({ data, onNext, onPrev }) => {
             if (res.data.success) onNext && onNext({ selectedSet });
         } catch (err) {
             console.error(err);
-            alert("Gửi dữ liệu thất bại!");
+            alert("Vui lòng chọn 1 set ăn dặm!");
         } finally {
             setLoading(false);
         }

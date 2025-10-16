@@ -44,7 +44,7 @@ const Header = ({
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   // Avatar: chữ cái đầu của userName hoặc 'U' nếu chưa có
-  const firstLetter = userName ? userName.charAt(0).toUpperCase() : "U";
+  const firstLetter = userEmail ? userEmail.charAt(0).toUpperCase() : "U";
 
   return (
     <header className="sticky-header">
@@ -78,7 +78,7 @@ const Header = ({
                   onClick={toggleUserMenu}
                 >
                   <span className="user-avatar">{firstLetter}</span>
-                  <span className="cart-text">{userName || "User"}</span>
+                  <span className="cart-text">{userEmail || "User"}</span>
                 </button>
                 {isUserMenuOpen && (
                   <div className="user-menu">
