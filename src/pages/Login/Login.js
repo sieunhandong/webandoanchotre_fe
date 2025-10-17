@@ -61,7 +61,7 @@ function Login({ onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:9999/auth/login", {
+      const response = await axios.post("https://tinyyummy.onrender.com/auth/login", {
         email: formData.email,
         password: formData.password,
       },

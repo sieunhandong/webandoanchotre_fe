@@ -83,7 +83,7 @@ function Register({ onLoginSuccess }) {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:9999/auth/send-otp", {
+      await axios.post("https://tinyyummy.onrender.com/auth/send-otp", {
         email: formData.email,
         type: "register",
       });
@@ -108,13 +108,13 @@ function Register({ onLoginSuccess }) {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:9999/auth/verify-otp", {
+      await axios.post("https://tinyyummy.onrender.com/auth/verify-otp", {
         email: formData.email,
         otp,
         type: "register",
       });
 
-      await axios.post("http://localhost:9999/auth/register", formData);
+      await axios.post("https://tinyyummy.onrender.com/auth/register", formData);
 
       setOtpDialogOpen(false);
 
@@ -149,56 +149,6 @@ function Register({ onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     handleSendOTP();
-  };
-
-  const handleFacebookLogin = () => {
-    if (!window.FB) {
-      handleAlert("Facebook SDK chưa tải xong.", "error");
-      return;
-    }
-
-    window.FB.login(
-      function (response) {
-        if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
-
-          // Gửi accessToken về server để xác thực
-          axios
-            .post("http://localhost:9999/auth/facebook-auth", { accessToken })
-            .then((res) => {
-              const { accessToken: token, email, role } = res.data;
-
-              const storageMethod = formData.rememberMe
-                ? localStorage
-                : sessionStorage;
-              storageMethod.setItem("access_token", token);
-              storageMethod.setItem("userEmail", email);
-              storageMethod.setItem("userRole", role);
-
-              if (onLoginSuccess) {
-                onLoginSuccess(email, role);
-              }
-
-              handleAlert("Đăng nhập bằng Facebook thành công!", "success");
-
-              setTimeout(() => {
-                if (role === "admin") {
-                  navigate("/admin/dashboard");
-                } else {
-                  navigate("/");
-                }
-              }, 1000);
-            })
-            .catch((err) => {
-              console.error("Facebook auth error:", err);
-              handleAlert("Đăng nhập Facebook thất bại!", "error");
-            });
-        } else {
-          handleAlert("Bạn đã hủy đăng nhập Facebook.", "warning");
-        }
-      },
-      { scope: "email" }
-    );
   };
 
   const handleError = (error) => {

@@ -97,14 +97,24 @@ export default function ProductList() {
 
   // 🔍 Lọc sản phẩm
   const filtered = products.filter((p) => {
-    const matchName = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchName = p.name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Xử lý linh hoạt cả category và categories
+    const catList = Array.isArray(p.categories)
+      ? p.categories
+      : p.category
+        ? [p.category]
+        : [];
+
     const matchCat =
       !searchCategory ||
-      p.categories.some(
+      catList.some(
         (c) => (typeof c === "object" ? c._id : c) === searchCategory
       );
+
     return matchName && matchCat;
   });
+
 
   const visible = filtered.slice(
     page * rowsPerPage,

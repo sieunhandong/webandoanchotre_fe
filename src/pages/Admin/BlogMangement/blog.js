@@ -148,7 +148,7 @@ export default function AdminBlogs() {
                   </TableCell>
                   <TableCell>{b.title}</TableCell>
                   <TableCell>{b.blogCategoryId?.name || "Chưa chọn"}</TableCell>
-                  <TableCell><Typography variant="body2" color="text.secondary" noWrap>{b.content.replace(/<[^>]+>/g, "").slice(0, 80)}...</Typography></TableCell>
+                  <TableCell><Typography variant="body2" color="text.secondary" noWrap>{b.content.replace(/<[^>]+>/g, "").slice(0, 30)}...</Typography></TableCell>
                   <TableCell align="center">
                     <Tooltip title="Sửa"><IconButton color="primary" onClick={() => { setEditBlog(b); setForm({ title: b.title, content: b.content, blogCategoryId: b.blogCategoryId?._id, images: [] }); setOpenDialog(true); }}><Edit /></IconButton></Tooltip>
                     <Tooltip title="Xóa"><IconButton color="error" onClick={() => setDeleteConfirm(b)}><Delete /></IconButton></Tooltip>

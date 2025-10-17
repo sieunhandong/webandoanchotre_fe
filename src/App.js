@@ -64,7 +64,6 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const [userEmail, setUserEmail] = useState(null);
-  const [userName, setUserName] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
   const noFooterRoutes = [
@@ -80,14 +79,16 @@ function App() {
       location.pathname === route || location.pathname.startsWith(route + "/")
   );
 
+  const noHeaderRoutes = ["/login", "/register"];
+  const shouldHideHeader = isAdminRoute || noHeaderRoutes.includes(location.pathname);
+
+
+
   useEffect(() => {
     const storedEmail =
       localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail");
     const storedRole =
       localStorage.getItem("userRole") || sessionStorage.getItem("userRole");
-    const storedName =
-      localStorage.getItem("userName") || sessionStorage.getItem("userName");
-    setUserName(storedName);
     setUserEmail(storedEmail);
     setUserRole(storedRole);
   }, []);
@@ -108,13 +109,12 @@ function App() {
 
   return (
     <>
-      {!isAdminRoute && (
-        <Header
-          userEmail={userEmail}
-          userName={userName}
-          updateUserEmail={updateUserEmail}
-        />
-      )}
+      {
+        !shouldHideHeader && (
+          <Header userEmail={userEmail} updateUserEmail={updateUserEmail} />
+        )
+      }
+
 
       <ScrollToTop />
       <ToastContainer />
@@ -123,7 +123,7 @@ function App() {
           path="/admin"
           element={
             <AdminRoute>
-              <AdminLayout />
+              <AdminLayout updateUserEmail={updateUserEmail} />
             </AdminRoute>
           }
         >
