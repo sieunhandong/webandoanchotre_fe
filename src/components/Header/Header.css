@@ -1,16 +1,467 @@
-/* ===== HEADER CỐ ĐỊNH ===== */
-.sticky-header {
-  position: sticky;
-  top: 0;
-  background: linear-gradient(135deg, #74D0F5 0%, #5BC0E8 100%);
-  backdrop-filter: blur(10px);
-  color: #FFFFFF;
-  z-index: 1000;
-  box-shadow: 0 4px 20px rgba(116, 208, 245, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* ==================== HEADER STYLES ==================== */
+
+/* AppBar Animation - fade in khi load */
+@keyframes headerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.sticky-header::before {
+.MuiAppBar-root {
+  animation: headerFadeIn 0.6s ease-out !important;
+}
+
+/* Logo hover animation */
+.MuiAppBar-root img {
+  filter: drop-shadow(0 2px 8px rgba(114, 204, 241, 0.3));
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.MuiAppBar-root img:hover {
+  filter: drop-shadow(0 6px 16px rgba(114, 204, 241, 0.5)) !important;
+}
+
+/* Desktop Menu Buttons - shimmer effect */
+.MuiAppBar-root .MuiButton-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.MuiAppBar-root .MuiButton-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.MuiAppBar-root .MuiButton-root:hover::before {
+  left: 100%;
+}
+
+/* User Avatar pulse animation */
+@keyframes avatarPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+  }
+}
+
+.MuiAvatar-root {
+  animation: avatarPulse 2s infinite;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.MuiButton-root:hover .MuiAvatar-root {
+  transform: scale(1.1) rotate(5deg) !important;
+}
+
+/* More Menu IconButton - rotation animation */
+.MuiIconButton-root .MuiSvgIcon-root {
+  transition: transform 0.3s ease !important;
+}
+
+.MuiIconButton-root:hover .MuiSvgIcon-root {
+  transform: rotate(90deg);
+}
+
+/* Desktop Menu - slide down animation */
+@keyframes menuSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.MuiMenu-paper {
+  animation: menuSlideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  border: 2px solid rgba(114, 204, 241, 0.2) !important;
+}
+
+/* Menu Items hover effect */
+.MuiMenuItem-root {
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+}
+
+.MuiMenuItem-root:hover {
+  background: linear-gradient(90deg, rgba(114, 204, 241, 0.1) 0%, rgba(180, 228, 255, 0.1) 100%) !important;
+  transform: translateX(8px);
+  padding-left: 24px !important;
+}
+
+.MuiMenuItem-root:hover .MuiListItemIcon-root {
+  color: #72CCF1 !important;
+  transform: scale(1.2);
+}
+
+.MuiListItemIcon-root {
+  transition: all 0.3s ease !important;
+}
+
+/* ==================== DRAWER STYLES ==================== */
+
+/* Drawer slide animation */
+@keyframes drawerSlideIn {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.MuiDrawer-paper {
+  animation: drawerSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* Drawer backdrop blur effect */
+.MuiBackdrop-root {
+  backdrop-filter: blur(8px) !important;
+  background-color: rgba(114, 204, 241, 0.2) !important;
+}
+
+/* Drawer header decoration - floating circles */
+.MuiDrawer-paper>div:first-child {
+  position: relative;
+  overflow: hidden;
+}
+
+.MuiDrawer-paper>div:first-child::before,
+.MuiDrawer-paper>div:first-child::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  animation: floatCircle 6s ease-in-out infinite;
+}
+
+.MuiDrawer-paper>div:first-child::before {
+  width: 80px;
+  height: 80px;
+  background: #FFE5EC;
+  top: -20px;
+  right: -20px;
+  animation-delay: 0s;
+}
+
+.MuiDrawer-paper>div:first-child::after {
+  width: 60px;
+  height: 60px;
+  background: #FFF4A3;
+  bottom: -15px;
+  left: -15px;
+  animation-delay: 3s;
+}
+
+@keyframes floatCircle {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+}
+
+/* Drawer Avatar animation */
+.MuiDrawer-paper .MuiAvatar-root {
+  animation: avatarBounce 0.8s ease-out;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.4) !important;
+}
+
+@keyframes avatarBounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Drawer username text animation */
+.MuiDrawer-paper .MuiTypography-body1 {
+  animation: textSlideIn 0.6s ease-out 0.2s both;
+}
+
+.MuiDrawer-paper .MuiTypography-caption {
+  animation: textSlideIn 0.6s ease-out 0.3s both;
+}
+
+@keyframes textSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Close button rotation */
+.MuiDrawer-paper .MuiIconButton-root {
+  transition: all 0.3s ease !important;
+}
+
+.MuiDrawer-paper .MuiIconButton-root:hover {
+  transform: rotate(90deg);
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Drawer menu items - staggered animation */
+.MuiDrawer-paper .MuiListItem-root {
+  animation: listItemSlide 0.4s ease-out both;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(5) {
+  animation-delay: 0.3s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(6) {
+  animation-delay: 0.35s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(7) {
+  animation-delay: 0.4s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(8) {
+  animation-delay: 0.45s;
+}
+
+.MuiDrawer-paper .MuiListItem-root:nth-child(9) {
+  animation-delay: 0.5s;
+}
+
+@keyframes listItemSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Drawer menu item hover - glow effect */
+.MuiDrawer-paper .MuiListItemButton-root {
+  position: relative;
+}
+
+.MuiDrawer-paper .MuiListItemButton-root::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 0;
+  background: linear-gradient(180deg, #FFE5EC 0%, #FFF4A3 100%);
+  border-radius: 0 4px 4px 0;
+  transition: height 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.MuiDrawer-paper .MuiListItemButton-root:hover::before {
+  height: 70%;
+}
+
+/* Drawer icons bounce on hover */
+.MuiDrawer-paper .MuiListItemIcon-root {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.MuiDrawer-paper .MuiListItemButton-root:hover .MuiListItemIcon-root {
+  transform: scale(1.2) rotate(10deg);
+}
+
+/* Logout button special effect */
+.MuiDrawer-paper .MuiListItem-root:last-child .MuiListItemButton-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.MuiDrawer-paper .MuiListItem-root:last-child .MuiListItemButton-root::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.MuiDrawer-paper .MuiListItem-root:last-child .MuiListItemButton-root:hover::after {
+  left: 100%;
+}
+
+/* Drawer footer animation */
+.MuiDrawer-paper>div:last-child {
+  animation: footerSlideUp 0.6s ease-out 0.4s both;
+}
+
+@keyframes footerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Phone icon pulse */
+.MuiDrawer-paper>div:last-child .MuiSvgIcon-root {
+  animation: phonePulse 2s ease-in-out infinite;
+}
+
+@keyframes phonePulse {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+/* Divider animation */
+.MuiDrawer-paper .MuiDivider-root {
+  animation: dividerExpand 0.4s ease-out both;
+  transform-origin: left;
+}
+
+@keyframes dividerExpand {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* ==================== MOBILE ENHANCEMENTS ==================== */
+
+/* Mobile hamburger icon animation */
+@media (max-width: 899px) {
+  .MuiToolbar-root .MuiIconButton-root:first-of-type {
+    animation: hamburgerBounce 0.6s ease-out;
+  }
+
+  @keyframes hamburgerBounce {
+    0% {
+      transform: scale(0) rotate(0deg);
+    }
+
+    50% {
+      transform: scale(1.2) rotate(180deg);
+    }
+
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  /* Hamburger hover effect */
+  .MuiToolbar-root .MuiIconButton-root:hover {
+    animation: hamburgerShake 0.5s ease-in-out;
+  }
+
+  @keyframes hamburgerShake {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    25% {
+      transform: translateX(-5px);
+    }
+
+    75% {
+      transform: translateX(5px);
+    }
+  }
+}
+
+/* ==================== SMOOTH TRANSITIONS ==================== */
+
+/* All buttons smooth transition */
+.MuiButton-root,
+.MuiIconButton-root {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Ripple effect enhancement */
+.MuiTouchRipple-root {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.MuiDrawer-paper .MuiTouchRipple-root {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ==================== GRADIENT OVERLAYS ==================== */
+
+/* AppBar gradient overlay */
+.MuiAppBar-root::after {
   content: '';
   position: absolute;
   top: 0;
@@ -21,440 +472,130 @@
   pointer-events: none;
 }
 
-/* ===== CONTAINER ===== */
-.nav-bar-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 3vw, 40px);
-}
-
-/* ===== NAV CHÍNH ===== */
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  position: relative;
-}
-
-/* ===== LOGO ===== */
-.nav-logo {
-  z-index: 10;
-}
-
-.nav-logo img {
-  height: clamp(50px, 8vw, 80px);
-  object-fit: contain;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
-}
-
-.nav-logo img:hover {
-  transform: scale(1.08) rotate(-2deg);
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-}
-
-/* ===== MENU GIỮA ===== */
-.nav-center {
-  display: flex;
-  gap: clamp(12px, 2vw, 24px);
-  align-items: center;
-}
-
-.nav-link {
-  position: relative;
-  color: #FFFFFF;
-  text-decoration: none;
-  font-size: clamp(16px, 1.8vw, 18px);
-  font-weight: 600;
-  padding: 10px 18px;
-  border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.nav-link::before {
+/* Drawer gradient overlay */
+.MuiDrawer-paper::after {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.nav-link:hover::before {
-  left: 100%;
-}
-
-.nav-link:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.nav-link:active {
-  transform: translateY(0);
-}
-
-/* ===== NÚT BÊN PHẢI ===== */
-.nav-buttons {
-  display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.5vw, 16px);
-}
-
-.nav-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: #FFFFFF;
-  font-size: clamp(14px, 1.6vw, 16px);
-  font-weight: 600;
-  cursor: pointer;
-  padding: 10px 16px;
-  border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(5px);
-}
-
-.nav-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-.nav-button:active {
-  transform: translateY(0);
-}
-
-/* ===== AVATAR ===== */
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0F8FF 100%);
-  color: #74D0F5;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.user-button:hover .user-avatar {
-  transform: scale(1.15) rotate(5deg);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* ===== MENU DROPDOWN ===== */
-.user-menu-container,
-.more-menu-container {
-  position: relative;
-}
-
-.user-menu,
-.more-menu {
-  position: absolute;
-  top: calc(100% + 8px);
+  left: 0;
   right: 0;
-  background: #FFFFFF;
-  color: #333;
-  border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-  min-width: 220px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px) scale(0.95);
+  bottom: 0;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
   pointer-events: none;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(116, 208, 245, 0.2);
-  overflow: hidden;
 }
 
-/* Tạo vùng bridge để chuột di chuyển không bị mất menu */
-.user-menu::after,
-.more-menu::after {
-  content: '';
-  position: absolute;
-  top: -30px;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background: transparent;
+/* ==================== SCROLLBAR STYLING ==================== */
+
+.MuiDrawer-paper::-webkit-scrollbar {
+  width: 6px;
 }
 
-.user-menu::before,
-.more-menu::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #74D0F5 0%, #5BC0E8 100%);
-  z-index: 1;
+.MuiDrawer-paper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* Desktop hover - menu hiện khi hover container HOẶC menu */
-@media (hover: hover) and (pointer: fine) {
-
-  .user-menu-container:hover .user-menu,
-  .more-menu-container:hover .more-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-    pointer-events: all;
-  }
-}
-
-
-/* ===== MENU ITEMS ===== */
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 14px 20px;
-  color: #333;
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  background: transparent;
-  width: 100%;
-  text-align: left;
-  border-radius: 0;
-}
-
-.menu-item:first-child {
-  margin-top: 4px;
-}
-
-.menu-item:last-child {
-  border-bottom: none;
-  margin-bottom: 4px;
-}
-
-.menu-item:hover {
-  background: linear-gradient(90deg, #74D0F5 0%, #5BC0E8 100%);
-  color: #FFFFFF;
-  padding-left: 28px;
-  font-weight: 600;
-}
-
-.menu-item .phone-icon {
-  margin-right: 10px;
-  font-size: 18px;
-}
-
-/* ===== MORE ICON ===== */
-.more-icon {
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 1;
-}
-
-/* ===== MOBILE MENU TOGGLE ===== */
-.mobile-menu-toggle {
-  display: none;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: #FFFFFF;
-  font-size: 26px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(5px);
-}
-
-.mobile-menu-toggle:hover {
+.MuiDrawer-paper::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  border-radius: 3px;
 }
 
-.mobile-menu-toggle:active {
-  transform: scale(0.95);
+.MuiDrawer-paper::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
-/* ===== RESPONSIVE - TABLET ===== */
-@media (max-width: 1024px) {
-  .nav-center {
-    gap: 16px;
-  }
+/* ==================== ACCESSIBILITY ==================== */
 
-  .nav-link {
-    font-size: 16px;
-    padding: 8px 14px;
-  }
+/* Focus visible styling */
+.MuiButton-root:focus-visible,
+.MuiIconButton-root:focus-visible,
+.MuiListItemButton-root:focus-visible {
+  outline: 2px solid #FFE5EC !important;
+  outline-offset: 2px;
 }
 
-/* ===== RESPONSIVE - MOBILE ===== */
-@media (max-width: 768px) {
-  .mobile-menu-toggle {
-    display: block;
-  }
-
-  .nav-bar {
-    flex-wrap: wrap;
-  }
-
-  .nav-center,
-  .nav-buttons {
-    display: none;
-  }
-
-  .nav-center.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #74D0F5 0%, #5BC0E8 100%);
-    padding: 20px;
-    gap: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-    animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 999;
-  }
-
-  .nav-buttons.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: calc(100% + 220px);
-    /* Đẩy xuống dưới nav-center */
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #74D0F5 0%, #5BC0E8 100%);
-    padding: 20px;
-    gap: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-    animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 998;
-  }
-
-  .nav-link,
-  .nav-button {
-    width: 100%;
-    justify-content: center;
-    padding: 14px 20px;
-    font-size: 17px;
-    border-radius: 12px;
-  }
-
-  /* Menu dropdown mobile */
-  .user-menu,
-  .more-menu {
-    position: static;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-    min-width: 100%;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    pointer-events: all;
-    border-radius: 12px;
-    margin-top: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-
-  .user-menu::before,
-  .more-menu::before {
-    display: none;
-  }
-
-  .menu-item {
-    color: #FFFFFF;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    font-weight: 600;
-  }
-
-  .menu-item:hover {
-    background: rgba(255, 255, 255, 0.3);
-    padding-left: 24px;
-  }
-
-  .user-avatar {
-    width: 32px;
-    height: 32px;
-    font-size: 15px;
-  }
-
-  .nav-bar {
-    padding: 10px 0;
-  }
-}
-
-/* ===== RESPONSIVE - SMALL MOBILE ===== */
-@media (max-width: 480px) {
-  .nav-logo img {
-    height: 50px;
-  }
-
-  .nav-bar-container {
-    padding: 0 12px;
-  }
-
-  .nav-link,
-  .nav-button {
-    font-size: 16px;
-    padding: 12px 16px;
-  }
-
-  .mobile-menu-toggle {
-    font-size: 24px;
-    padding: 6px 10px;
-  }
-
-  .user-avatar {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-  }
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes slideDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===== SMOOTH SCROLLING ===== */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* ===== ACCESSIBILITY ===== */
+/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  * {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* ===== CART TEXT ===== */
-.cart-text {
-  font-weight: 600;
-  letter-spacing: 0.3px;
+/* ==================== ADDITIONAL POLISH ==================== */
+
+/* Menu item text fade in */
+.MuiListItemText-root {
+  animation: textFadeIn 0.4s ease-out both;
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Toolbar spacing animation */
+.MuiToolbar-root>* {
+  animation: toolbarItemFadeIn 0.5s ease-out both;
+}
+
+.MuiToolbar-root>*:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.MuiToolbar-root>*:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.MuiToolbar-root>*:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes toolbarItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover glow effect for buttons */
+.MuiButton-root:hover,
+.MuiIconButton-root:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Active state animation */
+.MuiButton-root:active,
+.MuiIconButton-root:active {
+  transform: scale(0.95) !important;
+}
+
+/* ==================== THEME COLORS ==================== */
+
+/* Primary color highlights */
+.MuiMenuItem-root[aria-selected="true"] {
+  background: linear-gradient(90deg, rgba(114, 204, 241, 0.15) 0%, rgba(180, 228, 255, 0.15) 100%) !important;
+}
+
+/* Error color for logout */
+.MuiMenuItem-root:has(.MuiListItemIcon-root [color="error"]) {
+  border-left: 3px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.MuiMenuItem-root:has(.MuiListItemIcon-root [color="error"]):hover {
+  border-left-color: #ff6b6b;
 }

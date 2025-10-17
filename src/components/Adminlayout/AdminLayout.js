@@ -14,7 +14,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import "./AdminLayout.css";
 
-export default function AdminLayout() {
+export default function AdminLayout({ updateUserEmail }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userEmail, setUserEmail] = useState(null);
   const navigate = useNavigate();
@@ -31,16 +31,15 @@ export default function AdminLayout() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userRole");
-    sessionStorage.removeItem("access_token");
-    sessionStorage.removeItem("userEmail");
-    sessionStorage.removeItem("userRole");
-
+    localStorage.clear();
+    sessionStorage.clear();
     setUserEmail(null);
+    if (updateUserEmail) updateUserEmail(null);
     navigate("/account/login");
   };
+  useEffect(() => {
+    console.log("userEmail updated:", userEmail);
+  }, [userEmail]);
 
   return (
     <Box className="admin-layout">

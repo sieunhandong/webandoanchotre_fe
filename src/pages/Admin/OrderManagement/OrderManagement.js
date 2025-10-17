@@ -19,16 +19,17 @@ import {
   Alert,
   Tooltip,
   TextField,
-  Checkbox
+  Checkbox,
 } from "@mui/material";
 import { Visibility as VisibilityIcon } from "@mui/icons-material";
 import { getOrders, updateMealDone } from "../../../services/AdminService/orderService";
 import OrderDetailsDialog from "./OrderDetailsDialog";
 
 const statusLabels = {
+  all: "Tất cả",
   pending: "Chưa hoàn thành",
   completed: "Hoàn thành",
-  cancelled: "Đã hủy",
+  undoneToday: "Có món hôm nay chưa làm",
 };
 
 const statusColors = {
@@ -39,7 +40,7 @@ const statusColors = {
 
 export default function OrderManagement() {
   const [orders, setOrders] = useState([]);
-  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
@@ -69,20 +70,49 @@ export default function OrderManagement() {
   }, []);
 
   const filtered = useMemo(() => {
-    return orders
-      .filter(
+    let filteredOrders = orders;
+
+    // --- Lọc theo trạng thái ---
+    if (filterStatus !== "all") {
+      switch (filterStatus) {
+        case "delivered":
+          filteredOrders = filteredOrders.filter(
+            (o) => o.progress?.currentDay > 0 && !o.progress?.isCompleted
+          );
+          break;
+        case "undoneToday":
+          filteredOrders = filteredOrders.filter((o) => {
+            const todayMeal = o.mealSuggestions?.find(
+              (m) => Number(m.day) === Number(o.progress?.currentDay)
+            );
+            return todayMeal && !todayMeal.isDone;
+          });
+          break;
+        default:
+          filteredOrders = filteredOrders.filter(
+            (o) => o.status?.toLowerCase() === filterStatus.toLowerCase()
+          );
+      }
+    }
+
+    // --- Lọc theo tìm kiếm (tên hoặc số điện thoại) ---
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filteredOrders = filteredOrders.filter(
         (o) =>
-          filterStatus === "All" ||
-          o.status?.toLowerCase() === filterStatus.toLowerCase()
-      )
-      .filter((o) =>
-        o.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .sort((a, b) =>
-        sortOrder === "newest"
-          ? new Date(b.createdAt) - new Date(a.createdAt)
-          : new Date(a.createdAt) - new Date(b.createdAt)
+          o.userId?.name?.toLowerCase().includes(term) ||
+          o.userId?.phone?.toLowerCase().includes(term)
       );
+    }
+
+    // --- Sắp xếp ---
+    filteredOrders = filteredOrders.sort((a, b) =>
+      sortOrder === "newest"
+        ? new Date(b.createdAt) - new Date(a.createdAt)
+        : new Date(a.createdAt) - new Date(b.createdAt)
+    );
+
+    return filteredOrders;
   }, [orders, filterStatus, searchTerm, sortOrder]);
 
   return (
@@ -106,20 +136,19 @@ export default function OrderManagement() {
       >
         <TextField
           size="small"
-          label="Tìm khách hàng"
+          label="Tìm khách hàng hoặc số điện thoại"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ flex: 1, minWidth: 200 }}
+          sx={{ flex: 1, minWidth: 250 }}
         />
 
-        <FormControl size="small" sx={{ minWidth: 180 }}>
-          <InputLabel>Trạng thái</InputLabel>
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <InputLabel>Lọc theo</InputLabel>
           <Select
-            label="Trạng thái"
+            label="Lọc theo"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <MenuItem value="All">Tất cả</MenuItem>
             {Object.entries(statusLabels).map(([key, label]) => (
               <MenuItem key={key} value={key}>
                 {label}
@@ -148,6 +177,7 @@ export default function OrderManagement() {
             <TableRow>
               {[
                 "Khách hàng",
+                "Số điện thoại",
                 "Ngày đặt",
                 "Trạng thái",
                 "Ngày giao bắt đầu",
@@ -168,6 +198,7 @@ export default function OrderManagement() {
               .map((order) => (
                 <TableRow key={order._id}>
                   <TableCell>{order.userId?.name || "N/A"}</TableCell>
+                  <TableCell>{order.userId?.phone || "N/A"}</TableCell>
                   <TableCell>
                     {new Date(order.createdAt).toLocaleDateString("vi-VN")}
                   </TableCell>
@@ -206,7 +237,6 @@ export default function OrderManagement() {
                           ))}
                         </Box>
 
-                        {/* ✅ Checkbox trạng thái hoàn thành */}
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <Checkbox
                             checked={
@@ -217,11 +247,11 @@ export default function OrderManagement() {
                             onChange={async (e) => {
                               const day = order.progress?.currentDay;
                               const current =
-                                order.mealSuggestions?.find((m) => m.day === day)?.isDone ||
-                                false;
+                                order.mealSuggestions?.find((m) => m.day === day)
+                                  ?.isDone || false;
                               try {
                                 await updateMealDone(order._id, day, !current);
-                                await fetchOrders(); // refresh lại list sau khi cập nhật
+                                await fetchOrders();
                                 showAlert("Đã cập nhật trạng thái món hôm nay", "success");
                               } catch (err) {
                                 console.error("❌ updateMealDone error:", err);
@@ -269,7 +299,6 @@ export default function OrderManagement() {
         />
       </TableContainer>
 
-      {/* Dialog chi tiết đơn hàng */}
       <OrderDetailsDialog
         open={!!selectedOrder}
         order={selectedOrder}
@@ -277,7 +306,6 @@ export default function OrderManagement() {
         refresh={fetchOrders}
       />
 
-      {/* Snackbar */}
       <Snackbar
         open={alert.open}
         autoHideDuration={4000}

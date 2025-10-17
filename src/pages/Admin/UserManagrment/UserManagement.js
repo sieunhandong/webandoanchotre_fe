@@ -17,6 +17,7 @@ import {
   Switch,
   FormControlLabel,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -35,74 +36,76 @@ import {
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchEmail, setSearchEmail] = useState("");
   const [filterActive, setFilterActive] = useState("all");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // ✅ Hàm tải dữ liệu từ API
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchAllUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error("Lỗi tải danh sách user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const all = await fetchAllUsers();
-        let filtered = all;
+    loadUsers();
+  }, []);
 
-        if (searchEmail) {
-          filtered = filtered.filter((u) =>
-            u.email.toLowerCase().includes(searchEmail.toLowerCase())
-          );
-        }
-        if (filterActive !== "all") {
-          const isActive = filterActive === "active";
-          filtered = filtered.filter((u) => u.isActivated === isActive);
-        }
-        filtered.sort((a, b) =>
-          a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-        );
-        setUsers(filtered);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [searchEmail, filterActive]);
+  // ✅ Bộ lọc & tìm kiếm
+  const filteredUsers = users
+    .filter((u) =>
+      u.email?.toLowerCase().includes(searchEmail.toLowerCase().trim())
+    )
+    .filter((u) => {
+      if (filterActive === "all") return true;
+      return filterActive === "active" ? u.isActivated : !u.isActivated;
+    })
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+    );
 
+  // ✅ Bật/tắt trạng thái
   const handleActiveStatusChange = async (user) => {
     try {
       await changeUserStatus(user._id);
       setUsers((prev) =>
-        prev
-          .map((u) =>
-            u._id === user._id ? { ...u, isActivated: !u.isActivated } : u
-          )
-          .sort((a, b) =>
-            a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-          )
+        prev.map((u) =>
+          u._id === user._id ? { ...u, isActivated: !u.isActivated } : u
+        )
       );
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error("Lỗi đổi trạng thái user:", error);
     }
   };
 
-  const handleRoleChange = async (id, role) => {
+  // ✅ Đổi vai trò
+  const handleRoleChange = async (id, newRole) => {
     try {
-      await updateUserRole(id, role);
+      await updateUserRole(id, newRole);
       setUsers((prev) =>
-        prev
-          .map((u) => (u._id === id ? { ...u, role } : u))
-          .sort((a, b) =>
-            a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-          )
+        prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
       );
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error("Lỗi đổi vai trò user:", error);
     }
   };
 
+  // ✅ Giao diện
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto", p: 2 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
         Quản lý Người Dùng
       </Typography>
 
+      {/* Thanh tìm kiếm & lọc */}
       <Box
         sx={{
           display: "flex",
@@ -150,116 +153,135 @@ export default function UserManagement() {
         </Select>
       </Box>
 
-      <TableContainer
-        component={Paper}
-        sx={{ borderRadius: 2, boxShadow: 3, overflow: "hidden" }}
-      >
-        <Table>
-          <TableHead sx={{ backgroundColor: "#2c3e50" }}>
-            <TableRow>
-              {[
-                "STT",
-                <>
-                  <PersonIcon fontSize="small" /> Tên
-                </>,
-                <>
-                  <EmailIcon fontSize="small" /> Email
-                </>,
-                <>
-                  <PhoneIcon fontSize="small" /> SĐT
-                </>,
-                "Vai trò",
-                "Trạng thái",
-              ].map((head, i) => (
-                <TableCell key={i} sx={{ color: "#fff", fontWeight: 700 }}>
-                  {head}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {users
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((u, idx) => (
-                <TableRow
-                  key={u._id}
-                  sx={{
-                    "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
-                    "&:hover": { backgroundColor: "#f0f0f0" },
-                  }}
-                >
-                  <TableCell>{page * rowsPerPage + idx + 1}</TableCell>
-                  <TableCell>{u.name}</TableCell>
-                  <TableCell>{u.email}</TableCell>
-                  <TableCell>{u.phone}</TableCell>
-                  <TableCell>
-                    <Select
-                      size="small"
-                      value={u.role}
-                      onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                      sx={{
-                        minWidth: 120,
-                        "& .MuiSelect-icon": { color: "#5D4037" },
-                      }}
-                    >
-                      <MenuItem value="user">
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <PersonIcon fontSize="small" /> User
-                        </Box>
-                      </MenuItem>
-                      <MenuItem value="admin">
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <AdminIcon fontSize="small" /> Admin
-                        </Box>
-                      </MenuItem>
-                    </Select>
+      {/* Bảng danh sách người dùng */}
+      {loading ? (
+        <Box sx={{ textAlign: "center", py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <TableContainer
+          component={Paper}
+          sx={{ borderRadius: 2, boxShadow: 3, overflow: "hidden" }}
+        >
+          <Table>
+            <TableHead sx={{ backgroundColor: "#2c3e50" }}>
+              <TableRow>
+                {[
+                  "STT",
+                  <>
+                    <PersonIcon fontSize="small" /> Tên
+                  </>,
+                  <>
+                    <EmailIcon fontSize="small" /> Email
+                  </>,
+                  <>
+                    <PhoneIcon fontSize="small" /> SĐT
+                  </>,
+                  "Vai trò",
+                  "Trạng thái",
+                ].map((head, i) => (
+                  <TableCell key={i} sx={{ color: "#fff", fontWeight: 700 }}>
+                    {head}
                   </TableCell>
-                  <TableCell>
-                    <FormControlLabel
-                      control={
-                        <Tooltip
-                          title={u.isActivated ? "Vô hiệu hóa" : "Kích hoạt"}
-                        >
-                          <Switch
-                            size="small"
-                            checked={u.isActivated}
-                            onChange={() => handleActiveStatusChange(u)}
-                          />
-                        </Tooltip>
-                      }
-                      label={u.isActivated ? "Hoạt động" : "Vô hiệu"}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+                ))}
+              </TableRow>
+            </TableHead>
 
-        <TablePagination
-          component="div"
-          count={users.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={(_, p) => setPage(p)}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(+e.target.value);
-            setPage(0);
-          }}
-          rowsPerPageOptions={[5, 10, 25]}
-          sx={{
-            borderTop: "1px solid #e0e0e0",
-            "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
+            <TableBody>
+              {filteredUsers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((u, idx) => (
+                  <TableRow
+                    key={u._id}
+                    sx={{
+                      "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
+                      "&:hover": { backgroundColor: "#f0f0f0" },
+                    }}
+                  >
+                    <TableCell>{page * rowsPerPage + idx + 1}</TableCell>
+                    <TableCell>{u.name}</TableCell>
+                    <TableCell>{u.email}</TableCell>
+                    <TableCell>{u.phone || "-"}</TableCell>
+                    <TableCell>
+                      <Select
+                        size="small"
+                        value={u.role}
+                        onChange={(e) =>
+                          handleRoleChange(u._id, e.target.value)
+                        }
+                        sx={{
+                          minWidth: 120,
+                          "& .MuiSelect-icon": { color: "#5D4037" },
+                        }}
+                      >
+                        <MenuItem value="user">
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <PersonIcon fontSize="small" /> User
+                          </Box>
+                        </MenuItem>
+                        <MenuItem value="admin">
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <AdminIcon fontSize="small" /> Admin
+                          </Box>
+                        </MenuItem>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <FormControlLabel
+                        control={
+                          <Tooltip
+                            title={
+                              u.isActivated ? "Vô hiệu hóa" : "Kích hoạt lại"
+                            }
+                          >
+                            <Switch
+                              size="small"
+                              checked={u.isActivated}
+                              onChange={() => handleActiveStatusChange(u)}
+                            />
+                          </Tooltip>
+                        }
+                        label={u.isActivated ? "Hoạt động" : "Vô hiệu"}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+
+          <TablePagination
+            component="div"
+            count={filteredUsers.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={(_, p) => setPage(p)}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(+e.target.value);
+              setPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 25]}
+            sx={{
+              borderTop: "1px solid #e0e0e0",
+              "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
               {
                 fontWeight: 500,
               },
-          }}
-        />
-      </TableContainer>
+            }}
+          />
+        </TableContainer>
+      )}
     </Box>
   );
 }

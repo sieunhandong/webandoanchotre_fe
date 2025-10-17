@@ -259,7 +259,7 @@ function Register({ onLoginSuccess }) {
   };
 
   return (
-    <Box className="register-container" sx={{ backgroundImage: `url('/loginbg.jpeg')` }}>
+    <Box className="register-container" sx={{ backgroundImage: `url('/loginbg.jpg')` }}>
       <Box className="register-form-container">
         <Typography variant="h4" className="register-title" gutterBottom>
           Đăng ký
@@ -343,20 +343,6 @@ function Register({ onLoginSuccess }) {
           </Divider>
 
           <Box className="social-buttons-container">
-            <Button
-              variant="outlined"
-              onClick={handleFacebookLogin}
-              fullWidth
-              className="facebook-button"
-              disabled={loading}
-            >
-              <img
-                src="https://www.facebook.com/favicon.ico"
-                alt="Facebook icon"
-                className="social-icon"
-              />
-              Facebook
-            </Button>
             <GoogleLogin onSuccess={handleGoogleLogin} onError={handleError} />
           </Box>
         </form>

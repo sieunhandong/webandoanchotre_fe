@@ -77,7 +77,6 @@ function Login({ onLoginSuccess }) {
       storageMethod.setItem("access_token", token);
       storageMethod.setItem("userEmail", formData.email);
       storageMethod.setItem("userRole", userRole);
-      storageMethod.setItem("userName", response.data.userName);
 
 
       if (onLoginSuccess) {
@@ -125,7 +124,6 @@ function Login({ onLoginSuccess }) {
         storageMethod.setItem("access_token", result.accessToken);
         storageMethod.setItem("userEmail", result.email); // đảm bảo backend trả về email
         storageMethod.setItem("userRole", result.role);
-        storageMethod.setItem("userName", result.userName);
 
         if (onLoginSuccess) {
           onLoginSuccess(result.email, result.role);
@@ -158,7 +156,7 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <Box className="login-container" sx={{ backgroundImage: `url('/loginbg.jpeg')` }}>
+    <Box className="login-container" sx={{ backgroundImage: `url('/loginbg.jpg')` }}>
       <Box className="login-form-container">
         <Typography variant="h4" className="login-title" gutterBottom>
           Đăng nhập
@@ -227,9 +225,14 @@ function Login({ onLoginSuccess }) {
             </Typography>
           </Divider>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+            <GoogleLogin
+              onSuccess={handleSuccess}
+              onError={handleError}
+              className="google-login-button"
+            />
           </Box>
+
         </form>
 
         <Snackbar
