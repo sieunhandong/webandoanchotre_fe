@@ -1,4 +1,15 @@
 import React, { useEffect, useState } from "react";
+import {
+    IconButton,
+    Button,
+    CircularProgress,
+    Snackbar,
+    Alert,
+    Box,
+    Typography,
+} from "@mui/material";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { getCategoriesProducts, step3, getStepData } from "../../services/QuizService";
 import "./step3.css";
 
@@ -7,9 +18,10 @@ const Step3 = ({ data, onNext, onPrev }) => {
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
     const sessionId = data?.sessionId;
 
-    // ✅ Lấy danh mục & sản phẩm
     useEffect(() => {
         getCategoriesProducts().then((res) => {
             const { categories, products } = res.data.data;
@@ -18,7 +30,6 @@ const Step3 = ({ data, onNext, onPrev }) => {
             if (categories.length > 0) setSelectedCategory(categories[0]._id);
         });
 
-        // ✅ Lấy dữ liệu đã chọn nếu có
         if (sessionId) {
             getStepData(sessionId, 3).then((res) => {
                 if (res.data.success && res.data.data.selectedProducts)
@@ -27,7 +38,6 @@ const Step3 = ({ data, onNext, onPrev }) => {
         }
     }, [sessionId]);
 
-    // ✅ Toggle chọn sản phẩm
     const toggleProduct = (id) => {
         setSelectedProducts((prev) =>
             prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
@@ -35,31 +45,49 @@ const Step3 = ({ data, onNext, onPrev }) => {
     };
 
     const handleNext = async () => {
-        if (selectedProducts.length === 0)
-            return alert("Vui lòng chọn ít nhất 1 nguyên liệu!");
-        const res = await step3({ sessionId, selectedProducts });
-        if (res.data.success) onNext();
+        if (selectedProducts.length === 0) {
+            setSnackbar({ open: true, message: "Vui lòng chọn ít nhất 1 nguyên liệu!", severity: "warning" });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await step3({ sessionId, selectedProducts });
+            if (res.data.success) {
+                // setSnackbar({ open: true, message: "Đã lưu thành công!", severity: "success" });
+                setTimeout(onNext, 800);
+            } else {
+                setSnackbar({ open: true, message: "Đã có lỗi xảy ra!", severity: "error" });
+            }
+        } catch (err) {
+            setSnackbar({ open: true, message: "Lỗi kết nối máy chủ!", severity: "error" });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="step3-wrapper">
-            <div className="step3-container">
-                <h2 className="step3-title">Bước 3: Chọn nguyên liệu sẵn có</h2>
+        <Box className="step3-wrapper">
+            <Box className="step3-container">
+                <Typography
+                    variant="h4"
+                    className="step3-title"
+                    sx={{ fontWeight: 700, color: "#72CCF1", mb: 5 }}
+                >
+                    Bước 3: Chọn nguyên liệu sẵn có
+                </Typography>
+
 
                 {/* Danh mục */}
-                <div className="step3-category-list">
+                <Box className="step3-category-list">
                     {categories.map((cat) => (
-                        <div
+                        <Box
                             key={cat._id}
                             className={`step3-category-item ${selectedCategory === cat._id ? "active" : ""}`}
                             onClick={() => setSelectedCategory(cat._id)}
                         >
-                            <div className="step3-category-header">
-                                <span>{cat.name}</span>
-                            </div>
-
-                            {/* Ảnh sản phẩm đã chọn thuộc category này */}
-                            <div className="step3-category-selected">
+                            <Typography className="step3-category-header" sx={{ fontSize: "20px", mb: 1 }}>{cat.name}</Typography>
+                            <Box className="step3-category-selected">
                                 {selectedProducts
                                     .map((id) => products.find((p) => p._id === id))
                                     .filter((p) => p && p.category?._id === cat._id)
@@ -71,40 +99,62 @@ const Step3 = ({ data, onNext, onPrev }) => {
                                             className="step3-selected-thumb"
                                         />
                                     ))}
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
                     ))}
-                </div>
+                </Box>
 
                 {/* Sản phẩm */}
-                <div className="step3-products-grid">
+                <Box className="step3-products-grid">
                     {products
                         .filter((p) => p.category?._id === selectedCategory)
                         .map((p) => (
-                            <div
+                            <Box
                                 key={p._id}
                                 className={`step3-product-card ${selectedProducts.includes(p._id) ? "selected" : ""}`}
                                 onClick={() => toggleProduct(p._id)}
                             >
-                                <div className="step3-product-img">
+                                <Box className="step3-product-img">
                                     <img src={p.image || "/no-image.jpg"} alt={p.name} />
-                                </div>
-                                <div className="step3-product-name">{p.name}</div>
-                            </div>
+                                </Box>
+                                <Typography className="step3-product-name">{p.name}</Typography>
+                            </Box>
                         ))}
-                </div>
+                </Box>
 
                 {/* Nút điều hướng */}
-                <div className="step3-btn-group">
-                    <button onClick={onPrev} className="step3-btn step3-btn-back">
-                        ← Quay lại
+                <div className="step4-btn-group">
+                    <button onClick={onPrev} className="step4-btn step4-btn-back" aria-label="Quay lại">
+                        <ArrowBackIosNewRoundedIcon />
                     </button>
-                    <button onClick={handleNext} className="step3-btn step3-btn-next">
-                        Tiếp tục →
+                    <button
+                        onClick={handleNext}
+                        className="step4-btn step4-btn-next"
+                        disabled={loading}
+                        aria-label="Tiếp tục"
+                    >
+                        <ArrowForwardIosRoundedIcon />
                     </button>
                 </div>
-            </div>
-        </div>
+
+            </Box>
+
+            {/* Snackbar */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={2500}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert
+                    severity={snackbar.severity}
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
+        </Box>
     );
 };
 

@@ -1,131 +1,160 @@
-/* ========== Bố cục tổng thể ========== */
-.step2-wrapper {
+/* Tổng thể giống Step1 */
+.step2-container {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 40px 15px;
-}
-
-.step2-container {
-    background: #fff;
-    border: 1px solid #f8cdda;
-    border-radius: 24px;
-    box-shadow: 0 6px 16px rgba(255, 182, 193, 0.2);
-    padding: 30px;
+    background: linear-gradient(180deg, #fafdff, #e8f7fe);
+    padding: 60px 20px;
+    position: relative;
     width: 100%;
+
 }
 
-/* ========== Tiêu đề & mô tả ========== */
+.step2-form {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 50px 40px;
+    box-shadow: 0 8px 24px rgba(114, 204, 241, 0.25);
+    border: 1px solid #b8e7fa;
+    width: 100%;
+    max-width: 1600px;
+    box-sizing: border-box;
+}
+
 .step2-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #d6336c;
     text-align: center;
-    margin-bottom: 10px;
+    font-size: 26px;
+    color: #72ccf1;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
 
 .step2-desc {
     text-align: center;
     color: #555;
-    font-size: 15px;
-    margin-bottom: 25px;
+    font-size: 16px;
+    margin-bottom: 40px;
 }
 
-/* ========== Lưới lựa chọn ========== */
+/* Các lựa chọn ăn dặm */
 .step2-option-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 25px;
 }
 
 .step2-card {
-    border: 2px solid #f8cdda;
-    border-radius: 16px;
-    background-color: #fff;
-    padding: 20px;
+    flex: 1 1 30%;
+    min-width: 400px;
+    max-width: 400px;
+    border: 2px solid #d6f2fd;
+    border-radius: 18px;
+    padding: 40px 20px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    background: #f7fcfe;
+    transition: all 0.25s ease;
+    user-select: none;
 }
 
 .step2-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 10px rgba(255, 182, 193, 0.3);
+    border-color: #72ccf1;
+    background: #e8f7fe;
+    color: #2196f3;
+    transform: scale(1.03);
 }
 
-.step2-card.active {
-    border-color: #ff80ab;
-    background: #fff0f6;
-    box-shadow: 0 0 8px rgba(255, 128, 171, 0.6);
+.step2-card.selected {
+    background: linear-gradient(135deg, #72ccf1, #bde8f8);
+    color: #fff;
+    border-color: #72ccf1;
+    transform: scale(1.05);
+    box-shadow: 0 6px 14px rgba(114, 204, 241, 0.4);
 }
 
 .step2-card-title {
-    font-size: 16px;
     font-weight: 600;
-    color: #d6336c;
-    margin-bottom: 8px;
+    font-size: 20px;
+    margin-bottom: 12px;
 }
 
 .step2-card-desc {
-    font-size: 14px;
-    color: #666;
+    font-size: 15px;
+    opacity: 0.9;
 }
 
-/* ========== Nút điều hướng ========== */
-.step2-btn-group {
+/* BUTTONS */
+.step3-btn-group {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.97);
+    border-top: none;
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
+    align-items: center;
+    padding: 20px 40px;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
 }
 
-.step2-btn {
-    padding: 12px 22px;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.step2-btn-back {
-    background: #f1f1f1;
-    color: #555;
-}
-
-.step2-btn-back:hover {
-    background: #e0e0e0;
-}
-
-.step2-btn-next {
-    background: #ff80ab;
-    color: #fff;
-}
-
-.step2-btn-next:hover {
-    background: #ff6699;
-}
-
-/* ========== Responsive ========== */
-@media (max-width: 600px) {
-    .step2-container {
-        padding: 20px;
+/* Responsive */
+@media (max-width: 1024px) {
+    .step2-card {
+        flex: 1 1 45%;
+        min-width: 260px;
     }
+}
 
-    .step2-title {
-        font-size: 20px;
+@media (max-width: 768px) {
+    .step2-form {
+        padding: 30px 22px;
     }
 
     .step2-card {
-        padding: 16px;
+        flex: 1 1 100%;
+        min-width: 100%;
+        padding: 30px 18px;
     }
 
     .step2-card-title {
-        font-size: 15px;
+        font-size: 18px;
     }
 
-    .step2-btn {
+    .floating-next,
+    .floating-prev {
+        width: 52px;
+        height: 52px;
+        bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .step2-title {
+        font-size: 22px;
+    }
+
+    .step2-card {
+        padding: 24px 14px;
+    }
+
+    .step2-card-title {
+        font-size: 17px;
+    }
+
+    .step2-card-desc {
         font-size: 14px;
-        padding: 10px 16px;
+    }
+
+    .floating-next {
+        right: 20px;
+    }
+
+    .floating-prev {
+        left: 20px;
     }
 }

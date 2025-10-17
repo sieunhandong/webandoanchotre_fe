@@ -5,17 +5,17 @@ import {
   Send,
   Cancel,
   Login,
+  EmojiEmotions,
 } from "@mui/icons-material";
 import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
-import "./ComplaintPage.css";
 import {
   cancelComplaint,
   getComplaints,
   getProfile,
   submitComplaint,
 } from "../../services/UserService";
+import "./ComplaintPage.css";
 
 const ComplaintPage = () => {
   const navigate = useNavigate();
@@ -36,8 +36,8 @@ const ComplaintPage = () => {
       try {
         const decoded = jwtDecode(token);
         setUser({ name: decoded.name || "Tài khoản" });
-      } catch (err) {
-        console.error("Token không hợp lệ:", err);
+      } catch {
+        console.error("Token không hợp lệ");
       }
     }
   }, []);
@@ -87,10 +87,9 @@ const ComplaintPage = () => {
     try {
       await submitComplaint(formData);
       setFormData({ type: "", description: "" });
-      setSuccess("Phản ánh đã được gửi thành công!");
+      setSuccess("Phản ánh của mẹ đã được gửi thành công 💕");
       fetchComplaints();
-    } catch (err) {
-      console.error("Lỗi khi gửi phản ánh:", err);
+    } catch {
       setError("Không thể gửi phản ánh. Vui lòng thử lại sau.");
     } finally {
       setShowSnackbar(true);
@@ -102,8 +101,7 @@ const ComplaintPage = () => {
       await cancelComplaint(id);
       setSuccess("Đã hủy phản ánh thành công!");
       fetchComplaints();
-    } catch (err) {
-      console.error("Lỗi khi hủy phản ánh:", err);
+    } catch {
       setError("Không thể hủy phản ánh. Vui lòng thử lại sau.");
     } finally {
       setShowSnackbar(true);
@@ -122,9 +120,9 @@ const ComplaintPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Đang chờ xử lý":
-        return "#f57c00";
+        return "#f5a623";
       case "Đã tiếp nhận":
-        return "#2196f3";
+        return "#72CDF1";
       case "Đã giải quyết":
         return "#4caf50";
       case "Đã hủy":
@@ -134,17 +132,17 @@ const ComplaintPage = () => {
     }
   };
 
-  if (isLoading) return <div className="container">Loading...</div>;
+  if (isLoading) return <div className="loading">Đang tải...</div>;
 
   if (!isAuthenticated)
     return (
       <div className="container">
-        <div className="card">
+        <div className="card login-card">
           <h2 className="title">
-            <Login style={{ color: "#1976d2" }} /> Vui lòng đăng nhập
+            <Login style={{ color: "#72CDF1" }} /> Vui lòng đăng nhập
           </h2>
           <p>Bạn cần đăng nhập để gửi phản ánh</p>
-          <Link to="/account/login" className="button">
+          <Link to="/account/login" className="button primary">
             Đăng nhập
           </Link>
         </div>
@@ -153,17 +151,22 @@ const ComplaintPage = () => {
 
   return (
     <div className="container">
-      <h1 className="title">Phản ánh khiếu nại</h1>
+      <h1 className="main-title">
+        <EmojiEmotions style={{ color: "#72CDF1" }} /> Phản ánh & Hỗ trợ TinyYummy
+      </h1>
+      <p className="subtitle">
+        TinyYummy luôn lắng nghe để phục vụ mẹ và bé tốt hơn 💕
+      </p>
 
       <div className="grid">
         <div className="left">
           <div className="card">
             <h3 className="title">
-              <ReportProblem style={{ color: "#C49A6C" }} /> Gửi phản ánh
+              <ReportProblem style={{ color: "#72CDF1" }} /> Gửi phản ánh
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Loại phản ánh</label>
+                <label>Chủ đề phản ánh</label>
                 <select
                   name="type"
                   value={formData.type}
@@ -173,8 +176,9 @@ const ComplaintPage = () => {
                   required
                 >
                   <option value="">-- Chọn --</option>
-                  <option value="Web">Website</option>
-                  <option value="Đơn hàng">Đơn hàng</option>
+                  <option value="Đơn hàng">Vấn đề về đơn hàng</option>
+                  <option value="Thanh toán">Thanh toán</option>
+                  <option value="Website">Giao diện / Website</option>
                   <option value="Khác">Khác</option>
                 </select>
               </div>
@@ -184,6 +188,7 @@ const ComplaintPage = () => {
                 <textarea
                   name="description"
                   rows={4}
+                  placeholder="Mẹ hãy mô tả chi tiết vấn đề để TinyYummy hỗ trợ nhanh nhất nhé 💙"
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
@@ -192,12 +197,12 @@ const ComplaintPage = () => {
                 />
               </div>
 
-              <p>
-                Sau khi gửi, chúng tôi sẽ liên hệ bạn qua email. Cảm ơn bạn đã
-                góp ý!
+              <p className="note">
+                💌 Sau khi gửi, TinyYummy sẽ liên hệ lại qua Zalo hoặc email để
+                hỗ trợ sớm nhất.
               </p>
 
-              <button type="submit" className="button">
+              <button type="submit" className="button primary">
                 <Send fontSize="small" /> Gửi phản ánh
               </button>
             </form>
@@ -207,29 +212,28 @@ const ComplaintPage = () => {
         <div className="right">
           <div className="card">
             <h3 className="title">
-              <History style={{ color: "#C49A6C" }} /> Lịch sử phản ánh
+              <History style={{ color: "#72CDF1" }} /> Lịch sử phản ánh
             </h3>
             {complaints.length > 0 ? (
               complaints.map((item) => (
-                <div key={item._id} className="card">
+                <div key={item._id} className="complaint-card">
                   <div className="status-row">
                     <strong>{item.type}</strong>
                     <span
                       className="status-badge"
                       style={{
-                        backgroundColor: `${getStatusColor(item.status)}20`,
+                        backgroundColor: `${getStatusColor(item.status)}22`,
                         color: getStatusColor(item.status),
                       }}
                     >
                       {item.status}
                     </span>
                   </div>
-                  <p>{formatDate(item.createdAt)}</p>
+                  <p className="time">{formatDate(item.createdAt)}</p>
                   <p>{item.description}</p>
                   {item.status === "Đang chờ xử lý" && (
                     <button
-                      className="button"
-                      style={{ backgroundColor: "#f44336" }}
+                      className="button danger"
                       onClick={() => handleCancel(item._id)}
                     >
                       <Cancel fontSize="small" /> Hủy phản ánh
@@ -238,7 +242,7 @@ const ComplaintPage = () => {
                 </div>
               ))
             ) : (
-              <p>Bạn chưa có phản ánh nào.</p>
+              <p className="empty">Mẹ chưa có phản ánh nào.</p>
             )}
           </div>
         </div>

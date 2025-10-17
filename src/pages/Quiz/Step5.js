@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getSets, step5, getStepData } from "../../services/QuizService";
 import "./step5.css";
-
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import { Alert, Snackbar } from "@mui/material";
 const Step5 = ({ data, onNext, onPrev }) => {
     const [sets, setSets] = useState([]);
     const [selectedSet, setSelectedSet] = useState(null);
     const [loading, setLoading] = useState(false);
     const sessionId = data?.sessionId;
+    const [alert, setAlert] = useState({ open: false, message: "", severity: "info" });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,16 +27,23 @@ const Step5 = ({ data, onNext, onPrev }) => {
         };
         fetchData();
     }, [sessionId]);
+    const handleAlert = (message, severity = "info") => {
+        setAlert({ open: true, message, severity });
+    };
 
+    const handleCloseAlert = (_, reason) => {
+        if (reason === "clickaway") return;
+        setAlert({ ...alert, open: false });
+    };
     const handleNext = async () => {
-        if (!selectedSet) return alert("Vui lòng chọn 1 set ăn dặm!");
+        if (!selectedSet) return handleAlert("Vui lòng chọn 1 set ăn dặm!", "info");
         setLoading(true);
         try {
             const res = await step5({ sessionId, selectedSet });
             if (res.data.success) onNext && onNext({ selectedSet });
         } catch (err) {
             console.error(err);
-            alert("Vui lòng chọn 1 set ăn dặm!");
+            handleAlert("Vui lòng chọn 1 set ăn dặm!", "error");
         } finally {
             setLoading(false);
         }
@@ -56,11 +66,17 @@ const Step5 = ({ data, onNext, onPrev }) => {
                                     }`}
                                 onClick={() => setSelectedSet(s._id)}
                             >
-                                <h3>{s.title}</h3>
-                                <p className="step5-card-desc">{s.description}</p>
+                                <h3 style={{ display: "flex", justifyContent: "center" }}>{s.title}</h3>
+                                <h1 style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    fontSize: "40px"
+                                }}>{(s.price).toLocaleString('vi-VN')}</h1>
+                                <p className="step5-card-desc" >{s.description}</p>
                                 <div className="step5-info">
                                     <span>⏱ {s.duration} ngày</span>
-                                    <span>💰 {s.price.toLocaleString()}đ</span>
+                                    <span>✓ Dinh dưỡng</span>
+                                    <span>✓ Tiện lợi</span>
                                 </div>
                             </div>
                         ))
@@ -70,18 +86,41 @@ const Step5 = ({ data, onNext, onPrev }) => {
                 </div>
             </div>
 
-            <div className="step5-btn-group">
-                <button onClick={onPrev} className="step5-btn step5-btn-back">
-                    ← Quay lại
+            <div className="step4-btn-group">
+                <button onClick={onPrev} className="step4-btn step4-btn-back" aria-label="Quay lại">
+                    <ArrowBackIosNewRoundedIcon />
                 </button>
                 <button
                     onClick={handleNext}
-                    className="step5-btn step5-btn-next"
+                    className="step4-btn step4-btn-next"
                     disabled={loading}
+                    aria-label="Tiếp tục"
                 >
-                    {loading ? "Đang xử lý..." : "Tiếp tục →"}
+                    <ArrowForwardIosRoundedIcon />
                 </button>
             </div>
+            <Snackbar
+                open={alert.open}
+                autoHideDuration={3000}
+                onClose={handleCloseAlert}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert severity={alert.severity} variant="filled" onClose={handleCloseAlert} sx={{
+                    bgcolor:
+                        alert.severity === "error"
+                            ? "#FFD6D6"
+                            : alert.severity === "info"
+                                ? "#E3F7FF"
+                                : "#D6FFE3",
+                    color: "#333",
+                    fontWeight: 600,
+                    borderRadius: "14px",
+                    boxShadow: "0 6px 16px rgba(114,204,241,0.25)",
+                    px: 2,
+                }}>
+                    {alert.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

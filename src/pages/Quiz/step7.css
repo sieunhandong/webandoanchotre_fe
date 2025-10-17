@@ -1,19 +1,19 @@
 .step7-layout {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
-    background: linear-gradient(to bottom, #fff5f8, #ffffff);
+    background: linear-gradient(to bottom, #e6f7ff, #ffffff);
     padding: 40px 20px 100px;
     min-height: 100vh;
-    justify-content: center;
 }
 
 .step7-left,
 .step7-right {
     background: #fff;
     border-radius: 20px;
-    padding: 25px 30px;
-    box-shadow: 0 5px 16px rgba(255, 182, 193, 0.25);
+    padding: 30px;
+    box-shadow: 0 5px 18px rgba(114, 204, 241, 0.25);
 }
 
 .step7-left {
@@ -30,13 +30,13 @@
 }
 
 .step7-title {
-    color: #e85a82;
+    color: #209edc;
+    font-size: 1.6rem;
     margin-bottom: 10px;
-    font-size: 1.5rem;
 }
 
 .step7-subtitle {
-    color: #777;
+    color: #555;
     margin-bottom: 25px;
 }
 
@@ -52,16 +52,16 @@
 .form-section select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #f8cdda;
+    border: 1px solid #c8ebfa;
     border-radius: 10px;
     outline: none;
-    font-size: 0.95rem;
+    font-size: 1rem;
 }
 
 .select-row {
     display: flex;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 10px;
     margin-top: 10px;
 }
 
@@ -70,88 +70,110 @@
     min-width: 150px;
 }
 
-/* --- BÊN PHẢI --- */
-.payment-summary h3 {
-    color: #e85a82;
-    margin-bottom: 15px;
+.payment-summary {
     text-align: center;
 }
 
-.price-breakdown {
-    margin-top: 20px;
-    border-top: 1px dashed #ffd5e1;
-    padding-top: 10px;
+.payment-summary h3 {
+    color: #209edc;
+    margin-bottom: 15px;
 }
 
-.price-row,
+.button-payment {
+    margin-top: 24px;
+    width: 100%;
+    background: linear-gradient(135deg, #72cdf1, #5ab8e0);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 16px rgba(255, 95, 142, 0.25);
+}
+
+.button-payment:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #72cdf1, #b4e7ce);
+    box-shadow: 0 8px 20px rgba(255, 95, 142, 0.3);
+}
+
+.button-payment:disabled {
+    background: #b4e7ce;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 .price-total {
     display: flex;
     justify-content: space-between;
-    margin: 8px 0;
-    font-size: 1rem;
-}
-
-.price-total {
-    border-top: 1px solid #ffd5e1;
+    border-top: 1px solid #c8ebfa;
+    margin-top: 10px;
     padding-top: 8px;
-    font-size: 1.1rem;
-    color: #d94a6f;
+    color: #007cbf;
+    font-weight: 600;
 }
 
-.button-row {
+/* --- Nút giống step4 --- */
+.step4-btn-group {
     margin-top: 25px;
     display: flex;
     justify-content: space-between;
-    gap: 15px;
 }
 
-.btn-primary {
-    background: #e85a82;
+.step4-btn {
+    background: #72ccf1;
+    border: none;
     color: #fff;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 50%;
     cursor: pointer;
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-secondary {
-    background: #ffe6ed;
-    color: #d94a6f;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+.step4-btn-back {
+    background: #b5e7fa;
 }
 
-.btn-primary:hover {
-    background: #ff7fa3;
+.step4-btn:hover {
+    transform: scale(1.1);
 }
 
-.btn-secondary:hover {
-    background: #ffdbe6;
-}
-
+/* --- QR hiển thị --- */
 .qr-section {
     text-align: center;
-    padding: 40px;
+    padding: 50px;
 }
 
 .qr-image {
-    width: 250px;
-    height: 250px;
-    margin: 20px auto;
+    width: 260px;
+    height: 260px;
+    margin: 25px auto;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
 }
 
-.qr-note {
-    font-size: 15px;
-    color: #555;
-    margin-top: 10px;
+.btn-primary {
+    background: #72ccf1;
+    color: white;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 4px 4px;
+}
+
+.btn-primary:hover {
+    background: #45b8e3;
 }
 
 @media (max-width: 900px) {
@@ -159,18 +181,16 @@
     .step7-left,
     .step7-right {
         max-width: 100%;
-    }
-
-    .step7-right {
         position: static;
-        width: 100%;
     }
 
-    .button-row {
-        flex-direction: column;
+    .step4-btn-group {
+        justify-content: center;
+        gap: 20px;
     }
 
-    .button-row button {
-        width: 100%;
+    .button-payment {
+        font-size: 1rem;
+        padding: 12px 0;
     }
 }

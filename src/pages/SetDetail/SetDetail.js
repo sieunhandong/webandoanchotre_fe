@@ -271,61 +271,120 @@ const SetDetail = () => {
         <DialogContent sx={{ textAlign: "center" }}>
           <Typography>Quét QR để thanh toán</Typography>
           <img src={qrUrl} alt="QR Payment" style={{ width: "200px", margin: "20px 0" }} />
+          <Typography>STK: VQRQAEQNT2617</Typography>
+          <Typography>QUACH THI MINH HUONG</Typography>
           <Typography>Thời gian còn lại: {Math.floor(countdown / 60)}:{('0' + (countdown % 60)).slice(-2)}</Typography>
           <Button variant="outlined" color="error" onClick={handleCloseQr} sx={{ mt: 2 }}>Hủy đơn</Button>
         </DialogContent>
       </Dialog>
 
       {/* Giao hàng & đơn hàng */}
-      <Box className="order-container" sx={{ width: "100%", bgcolor: "#fafafa", py: { xs: 2, md: 4 }, display: "flex", justifyContent: "center" }}>
-        <Grid container spacing={{ xs: 1, md: 2 }} sx={{ width: "95%", maxWidth: "1800px", justifyContent: { xs: "flex-start", md: "center" } }}>
+      <Box className="order-container" sx={{ width: "100%", background: "linear-gradient(135deg, #f5f9ff 0%, #fff5f8 100%)", py: { xs: 3, md: 5 }, display: "flex", justifyContent: "center" }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} sx={{ width: "95%", maxWidth: "1400px", justifyContent: { xs: "flex-start", md: "center" } }}>
           {/* Thông tin giao hàng */}
           <Grid item xs={12} md={8}>
-            <Box sx={{ p: { xs: 2, md: 3 }, borderRadius: 2, boxShadow: 2, bgcolor: "white", width: "100%" }}>
-              <Typography variant="h6" gutterBottom><LocationOnIcon sx={{ verticalAlign: "middle", mr: 1 }} />Thông tin giao hàng</Typography>
-              <TextField fullWidth type="date" value={deliveryTime} onChange={(e) => setDeliveryTime(e.target.value)} inputProps={{ min: new Date().toISOString().split("T")[0] }} label="Ngày giao hàng *" InputLabelProps={{ shrink: true }} sx={{ mb: { xs: 1.5, md: 2 } }} />
-              <TextField fullWidth label="Địa chỉ cụ thể *" value={address.address} onChange={(e) => setAddress({ ...address, address: e.target.value })} sx={{ mb: { xs: 1.5, md: 2 } }} />
-              <Grid container spacing={{ xs: 0.5, md: 1 }}>
+            <Box className="shipping-box" sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 3, boxShadow: "0 8px 32px rgba(114, 204, 241, 0.15)", bgcolor: "white", width: "100%", transition: "all 0.3s ease", "&:hover": { boxShadow: "0 12px 40px rgba(114, 204, 241, 0.25)", transform: "translateY(-4px)" } }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3, pb: 2, borderBottom: "2px solid #72CCF1" }}>
+                <LocationOnIcon sx={{ fontSize: 32, color: "#72CCF1", mr: 1.5, animation: "bounce 2s infinite" }} />
+                <Typography variant="h5" fontWeight="700" sx={{ color: "#2c3e50" }}>Thông tin giao hàng</Typography>
+              </Box>
+
+              {/* Trust badges */}
+              <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
+                <Box className="trust-badge" sx={{ display: "flex", alignItems: "center", bgcolor: "#E8F6FC", px: 2, py: 1, borderRadius: 2, flex: "1 1 auto", minWidth: "fit-content" }}>
+                  <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#72CCF1", mr: 1, animation: "pulse 2s infinite" }} />
+                  <Typography variant="body2" sx={{ color: "#2c3e50", fontWeight: 600 }}>✓ Giao hàng nhanh</Typography>
+                </Box>
+                <Box className="trust-badge" sx={{ display: "flex", alignItems: "center", bgcolor: "#FFF0F5", px: 2, py: 1, borderRadius: 2, flex: "1 1 auto", minWidth: "fit-content" }}>
+                  <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#FFB6C1", mr: 1, animation: "pulse 2s infinite" }} />
+                  <Typography variant="body2" sx={{ color: "#2c3e50", fontWeight: 600 }}>✓ Bảo đảm an toàn</Typography>
+                </Box>
+                <Box className="trust-badge" sx={{ display: "flex", alignItems: "center", bgcolor: "#F0FFF4", px: 2, py: 1, borderRadius: 2, flex: "1 1 auto", minWidth: "fit-content" }}>
+                  <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#90EE90", mr: 1, animation: "pulse 2s infinite" }} />
+                  <Typography variant="body2" sx={{ color: "#2c3e50", fontWeight: 600 }}>✓ Hoàn tiền 100%</Typography>
+                </Box>
+              </Box>
+
+              <TextField fullWidth type="date" value={deliveryTime} onChange={(e) => setDeliveryTime(e.target.value)} inputProps={{ min: new Date().toISOString().split("T")[0] }} label="Ngày giao hàng *" InputLabelProps={{ shrink: true }} sx={{ mb: { xs: 2, md: 2.5 }, "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" } }} />
+              <TextField fullWidth label="Địa chỉ cụ thể *" value={address.address} onChange={(e) => setAddress({ ...address, address: e.target.value })} placeholder="Số nhà, tên đường..." sx={{ mb: { xs: 2, md: 2.5 }, "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" } }} />
+              <Grid container spacing={{ xs: 1, md: 2 }}>
                 <Grid item xs={12} sm={4}>
-                  <TextField select fullWidth label="Tỉnh/Thành phố *" value={address.provinceId} onChange={handleProvinceChange} sx={{ minWidth: { xs: "100%", sm: "200px" } }}>
+                  <TextField select fullWidth label="Tỉnh/Thành phố *" value={address.provinceId} onChange={handleProvinceChange} sx={{ "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" }, minWidth: { xs: "100%", sm: "200px" } }}>
                     <MenuItem value="">-- Chọn tỉnh/thành phố --</MenuItem>
                     {provinces.map((p) => (<MenuItem key={p.ProvinceID} value={p.ProvinceID}>{p.ProvinceName}</MenuItem>))}
                   </TextField>
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <TextField select fullWidth label="Quận/Huyện *" value={address.districtId} onChange={handleDistrictChange} disabled={!address.provinceId} sx={{ minWidth: { xs: "100%", sm: "200px" } }}>
+                  <TextField select fullWidth label="Quận/Huyện *" value={address.districtId} onChange={handleDistrictChange} disabled={!address.provinceId} sx={{ "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" }, minWidth: { xs: "100%", sm: "200px" } }}>
                     <MenuItem value="">-- Chọn quận/huyện --</MenuItem>
                     {districts.map((d) => (<MenuItem key={d.DistrictID} value={d.DistrictID}>{d.DistrictName}</MenuItem>))}
                   </TextField>
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <TextField select fullWidth label="Phường/Xã *" value={address.wardCode} onChange={handleWardChange} disabled={!address.districtId} sx={{ minWidth: { xs: "100%", sm: "200px" } }}>
+                  <TextField select fullWidth label="Phường/Xã *" value={address.wardCode} onChange={handleWardChange} disabled={!address.districtId} sx={{ "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" }, minWidth: { xs: "100%", sm: "200px" } }}>
                     <MenuItem value="">-- Chọn phường/xã --</MenuItem>
                     {wards.map((w) => (<MenuItem key={w.WardCode} value={w.WardCode}>{w.WardName}</MenuItem>))}
                   </TextField>
                 </Grid>
               </Grid>
+
+              {/* Security note */}
+              <Box sx={{ mt: 3, p: 2, bgcolor: "#FFF9E6", borderRadius: 2, borderLeft: "4px solid #FFD93D" }}>
+                <Typography variant="body2" sx={{ color: "#856404", display: "flex", alignItems: "center" }}>
+                  <span style={{ marginRight: "8px", fontSize: "18px" }}>🔒</span>
+                  Thông tin của bạn được bảo mật tuyệt đối và chỉ dùng cho mục đích giao hàng
+                </Typography>
+              </Box>
             </Box>
           </Grid>
 
           {/* Thông tin đơn hàng */}
           <Grid item xs={12} md={4}>
-            <Box sx={{ p: { xs: 2, md: 3 }, borderRadius: 2, boxShadow: 2, bgcolor: "white", width: "100%" }}>
-              <Typography variant="h6" gutterBottom>Đơn hàng (1 sản phẩm)</Typography>
-              <Typography variant="h6" fontWeight="bold" mb={1}>{setData.title}</Typography>
-              <Typography color="text.secondary" mb={2}>{setData.description}</Typography>
-              <Typography>⏱ Thời gian: {setData.duration} ngày</Typography>
-              <Typography variant="h4" fontWeight="bold" color="primary" mt={2}>{setData.price.toLocaleString("vi-VN")}₫</Typography>
-              <Box mt={4} pt={2} borderTop="1px solid #ddd">
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="body1">Tổng cộng</Typography>
-                  <Typography variant="body1">{setData.price.toLocaleString("vi-VN")}₫</Typography>
+            <Box className="order-summary-box" sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 3, boxShadow: "0 8px 32px rgba(255, 182, 193, 0.15)", bgcolor: "white", width: "100%", position: "sticky", top: 20, transition: "all 0.3s ease", "&:hover": { boxShadow: "0 12px 40px rgba(255, 182, 193, 0.25)" } }}>
+              <Box sx={{ background: "linear-gradient(135deg, #72CCF1 0%, #FFB6C1 100%)", color: "white", px: 2, py: 1.5, borderRadius: 2, mb: 3, textAlign: "center" }}>
+                <Typography variant="h6" fontWeight="700">Đơn hàng (1 sản phẩm)</Typography>
+              </Box>
+
+              <Box sx={{ bgcolor: "#F8FCFF", p: 2, borderRadius: 2, mb: 2, border: "2px dashed #72CCF1" }}>
+                <Typography variant="h6" fontWeight="bold" mb={1} sx={{ color: "#2c3e50" }}>{setData.title}</Typography>
+                <Typography color="text.secondary" mb={2} sx={{ fontSize: "0.9rem" }}>{setData.description}</Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, bgcolor: "white", px: 2, py: 1, borderRadius: 1 }}>
+                  <span style={{ fontSize: "20px" }}>⏱</span>
+                  <Typography fontWeight="600" sx={{ color: "#72CCF1" }}>Thời gian: {setData.duration} ngày</Typography>
                 </Box>
               </Box>
-              <Box mt={3}>
-                <Button variant="contained" color="primary" fullWidth onClick={handlePay} disabled={paying}>
-                  {paying ? <CircularProgress size={24} /> : "Đặt hàng"}
-                </Button>
+
+              <Box sx={{ textAlign: "center", my: 3, py: 2, background: "linear-gradient(135deg, #E8F6FC 0%, #FFF0F5 100%)", borderRadius: 2 }}>
+                <Typography variant="body2" color="text.secondary" mb={1}>Tổng thanh toán</Typography>
+                <Typography variant="h3" fontWeight="bold" sx={{ background: "linear-gradient(135deg, #72CCF1 0%, #FF69B4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "glow 2s ease-in-out infinite" }}>{setData.price.toLocaleString("vi-VN")}₫</Typography>
+              </Box>
+
+              <Box sx={{ bgcolor: "#F0FFF4", p: 2, borderRadius: 2, mb: 3 }}>
+                <Typography variant="body2" fontWeight="600" mb={1} sx={{ color: "#2c3e50" }}>✨ Ưu đãi đặc biệt:</Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568", mb: 0.5 }}>• Tư vấn miễn phí</Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568", mb: 0.5 }}>• Tặng kèm hướng dẫn sử dụng</Typography>
+                <Typography variant="body2" sx={{ color: "#4a5568" }}>• Hỗ trợ 24/7 qua hotline</Typography>
+              </Box>
+
+              <Button variant="contained" fullWidth onClick={handlePay} disabled={paying} sx={{ py: 1.5, fontSize: "1.1rem", fontWeight: 700, background: "linear-gradient(135deg, #72CCF1 0%, #5AB9EA 100%)", boxShadow: "0 4px 15px rgba(114, 204, 241, 0.4)", transition: "all 0.3s ease", "&:hover": { background: "linear-gradient(135deg, #5AB9EA 0%, #72CCF1 100%)", boxShadow: "0 6px 20px rgba(114, 204, 241, 0.6)", transform: "translateY(-2px)" }, "&:disabled": { background: "#ccc" } }}>
+                {paying ? <CircularProgress size={24} sx={{ color: "white" }} /> : "🛒 Đặt hàng ngay"}
+              </Button>
+
+              <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
+                <Box sx={{ textAlign: "center" }}>
+                  <Typography variant="caption" sx={{ color: "#72CCF1", fontWeight: 700 }}>100+</Typography>
+                  <Typography variant="caption" display="block" color="text.secondary">Đơn hàng</Typography>
+                </Box>
+                <Box sx={{ width: "1px", bgcolor: "#ddd" }} />
+                <Box sx={{ textAlign: "center" }}>
+                  <Typography variant="caption" sx={{ color: "#72CCF1", fontWeight: 700 }}>4.8★</Typography>
+                  <Typography variant="caption" display="block" color="text.secondary">Đánh giá</Typography>
+                </Box>
+                <Box sx={{ width: "1px", bgcolor: "#ddd" }} />
+                <Box sx={{ textAlign: "center" }}>
+                  <Typography variant="caption" sx={{ color: "#72CCF1", fontWeight: 700 }}>99%</Typography>
+                  <Typography variant="caption" display="block" color="text.secondary">Hài lòng</Typography>
+                </Box>
               </Box>
             </Box>
           </Grid>

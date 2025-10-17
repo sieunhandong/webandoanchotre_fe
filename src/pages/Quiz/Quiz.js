@@ -1,4 +1,3 @@
-// src/pages/Quiz/Quiz.js
 import React, { useEffect, useState } from "react";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
@@ -10,7 +9,20 @@ import Step7 from "./Step7";
 import * as QuizService from "../../services/QuizService";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./Quiz.css";
+
+// 🩵 MUI imports
+import {
+    Box,
+    Stepper,
+    Step,
+    StepLabel,
+    Typography,
+    CircularProgress,
+    useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
 const Quiz = () => {
     const [step, setStep] = useState(1);
@@ -20,8 +32,9 @@ const Quiz = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    // ✅ Load dữ liệu từ localStorage hoặc URL khi mở trang
     useEffect(() => {
         const initQuiz = async () => {
             try {
@@ -32,11 +45,9 @@ const Quiz = () => {
                 const stepParam = parseInt(params.get("step"));
                 const sessionParam = params.get("sessionId");
 
-                // Ưu tiên param trên URL hơn localStorage
                 if (stepParam) savedStep = stepParam;
                 if (sessionParam) savedSession = sessionParam;
 
-                // Nếu chưa có sessionId thì gọi API khởi tạo
                 if (!savedSession) {
                     const res = await QuizService.startQuiz();
                     if (res.data?.data?.sessionId) {
@@ -48,7 +59,6 @@ const Quiz = () => {
                 setSessionId(savedSession);
                 setStep(savedStep);
 
-                // ✅ Nếu ở bước 7 mà chưa đăng nhập → redirect đến login
                 if (savedStep === 7) {
                     const token =
                         localStorage.getItem("access_token") ||
@@ -70,18 +80,16 @@ const Quiz = () => {
     }, [location.search, navigate]);
 
     const totalSteps = 7;
-
     const stepLabels = [
-        "Thông tin bé",
-        "Phương pháp dịch vụ",
-        "Thực phẩm mong muốn",
-        "AI gợi ý thực đơn",
-        "Set ăn dặm",
+        "Bé",
+        "Phương pháp",
+        "Thực phẩm",
+        "AI",
+        "Set ăn",
         "Thông tin",
-        "Xác nhận & thanh toán",
+        "Thanh toán",
     ];
 
-    // ✅ Khi chuyển bước → lưu lại vào localStorage
     const handleNext = (data) => {
         setFormData((prev) => ({ ...prev, ...data }));
         setStep((prev) => {
@@ -109,50 +117,157 @@ const Quiz = () => {
 
     if (loading)
         return (
-            <div className="quiz-loading">
-                <div className="spinner"></div>
-                <p>Đang khởi tạo bài quiz...</p>
-            </div>
+            <Box
+                sx={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "#E0F7FA33",
+                }}
+            >
+                <CircularProgress sx={{ color: "#72CCF1", mb: 2 }} />
+                <Typography color="#72CCF1" fontWeight={600}>
+                    Đang khởi tạo bài quiz...
+                </Typography>
+            </Box>
         );
 
     if (!sessionId)
         return (
-            <div className="quiz-error">
-                <p>Không thể khởi tạo quiz. Vui lòng thử lại sau.</p>
-            </div>
+            <Box
+                sx={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "#FFF5F7",
+                }}
+            >
+                <Typography color="#FF6F91" fontWeight={600}>
+                    Không thể khởi tạo quiz. Vui lòng thử lại sau.
+                </Typography>
+            </Box>
         );
 
-    const progressPercent = ((step - 1) / (totalSteps - 1)) * 100;
+    // 🟢 Custom step icon
+    const StepIcon = ({ active, completed, icon }) => {
+        const number = Number(icon);
+        const activeColor = "#72CCF1";
+        const completeColor = "#A3E4DB";
+        const defaultColor = "#C8E8F3";
+
+        return (
+            <Box
+                sx={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: completed
+                        ? completeColor
+                        : active
+                            ? activeColor
+                            : defaultColor,
+                    color: "#fff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontWeight: 700,
+                    fontSize: 20,
+                    boxShadow: active
+                        ? "0 0 10px rgba(114,204,241,0.5)"
+                        : "0 0 6px rgba(200,232,243,0.3)",
+                    transition: "all 0.3s ease",
+                }}
+            >
+                {completed ? <CheckCircleRoundedIcon /> : number}
+            </Box>
+        );
+    };
 
     return (
-        <div className="quiz-container">
-            <div className="quiz-box">
-                {/* ===== Thanh tiến trình ===== */}
-                <div className="quiz-progress">
-                    <div className="progress-line">
-                        <div
-                            className="progress-fill"
-                            style={{ width: `${progressPercent}%` }}
-                        ></div>
-                    </div>
-                    <div className="progress-steps">
-                        {stepLabels.map((label, index) => {
-                            const stepNumber = index + 1;
-                            const isActive = step >= stepNumber;
-                            return (
-                                <div
-                                    key={label}
-                                    className={`progress-step ${isActive ? "active" : ""}`}
-                                >
-                                    <div className="circle">{stepNumber}</div>
-                                    <span className="label">{label}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                bgcolor: "linear-gradient(to bottom, #E6F7FF, #FFF)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+            }}
+        >
+            {/* 🩵 Thanh tiến trình cố định */}
+            <Box
+                sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1200,
+                    bgcolor: "rgba(255,255,255,0.96)",
+                    backdropFilter: "blur(8px)",
+                    borderBottom: "1px solid #D0F0FA",
+                    py: 2,
+                    overflowX: "auto",
+                    width: "100%",
+                    "&::-webkit-scrollbar": { display: "none" },
+                }}
+            >
+                <Box
+                    sx={{
+                        display: "inline-flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        minWidth: "100%",
+                        px: { xs: 2, md: 6 },
+                    }}
+                >
+                    <Stepper
+                        alternativeLabel
+                        activeStep={step - 1}
+                        connector={null}
+                        sx={{
+                            flexWrap: "nowrap",
+                            minWidth: isMobile ? 700 : "100%",
+                        }}
+                    >
+                        {stepLabels.map((label, i) => (
+                            <Step key={label}>
+                                <StepLabel StepIconComponent={StepIcon}>
+                                    <Typography
+                                        variant="subtitle2"
+                                        sx={{
+                                            mt: 1,
+                                            fontSize: { xs: 11, sm: 13, md: 14 },
+                                            fontWeight: step === i + 1 ? 700 : 500,
+                                            color:
+                                                step === i + 1
+                                                    ? "#72CCF1"
+                                                    : "rgba(0,0,0,0.5)",
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        {label}
+                                    </Typography>
+                                </StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                </Box>
+            </Box>
 
-                {/* ===== Nội dung các bước ===== */}
+            {/* 🧩 Nội dung các bước */}
+            <Box
+                sx={{
+                    flex: 1,
+                    width: "100%",
+                    maxWidth: "1400px",
+                    bgcolor: "#fff",
+                    borderRadius: { xs: "16px 16px 0 0", md: "24px" },
+                    boxShadow: "0 6px 20px rgba(114,204,241,0.2)",
+                    p: { xs: 2, sm: 4, md: 6 },
+                    mt: 3,
+                    mb: 6,
+                }}
+            >
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={step}
@@ -170,8 +285,8 @@ const Quiz = () => {
                         {step === 7 && <Step7 {...commonProps} />}
                     </motion.div>
                 </AnimatePresence>
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 

@@ -3,8 +3,11 @@ import { step7 } from "../../services/QuizService";
 import { getMealSetById } from "../../services/MealSetService";
 import { getProvinces, getDistricts, getWards } from "../../services/GHNService";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./step7.css";
 import { deleteOrder, getOrderStatus } from "../../services/OrderService";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import "./step7.css";
+import { Alert, Snackbar } from "@mui/material";
 
 const Step7 = ({ data, onPrev }) => {
     const navigate = useNavigate();
@@ -18,7 +21,7 @@ const Step7 = ({ data, onPrev }) => {
     const [deliveryTime, setDeliveryTime] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const [qrUrl, setQrUrl] = useState(null); // ✅ QR Sepay
+    const [qrUrl, setQrUrl] = useState(null);
     const [orderCode, setOrderCode] = useState(null);
     const [countdown, setCountdown] = useState(180);
     const [polling, setPolling] = useState(false);
@@ -26,7 +29,7 @@ const Step7 = ({ data, onPrev }) => {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
-
+    const [alert, setAlert] = useState({ open: false, message: "", severity: "info" })
     const [address, setAddress] = useState({
         address: "",
         provinceId: "",
@@ -79,7 +82,16 @@ const Step7 = ({ data, onPrev }) => {
         }
     }, [selectedSetId]);
 
-    // ===== Chọn tỉnh / huyện / xã =====
+
+    const handleAlert = (message, severity = "info") => {
+        setAlert({ open: true, message, severity });
+    };
+
+    const handleCloseAlert = (_, reason) => {
+        if (reason === "clickaway") return;
+        setAlert({ ...alert, open: false });
+    };
+    // ===== Xử lý chọn địa chỉ =====
     const handleProvinceChange = async (e) => {
         const provinceId = e.target.value;
         const provinceName = provinces.find((p) => p.ProvinceID == provinceId)?.ProvinceName || "";
@@ -137,22 +149,22 @@ const Step7 = ({ data, onPrev }) => {
         setAddress({ ...address, wardCode, wardName });
     };
 
-    // ===== Xử lý thanh toán =====
+    // ===== Thanh toán =====
     const handleConfirm = async () => {
         const token =
             localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
         if (!token) {
-            alert("Vui lòng đăng nhập trước khi thanh toán.");
+            handleAlert("Vui lòng đăng nhập trước khi thanh toán.", "info");
             navigate("/account/login", { state: { redirectTo: location.pathname } });
             return;
         }
 
         if (!deliveryTime) {
-            alert("Vui lòng chọn ngày giao hàng mong muốn.");
+            handleAlert("Vui lòng chọn ngày giao hàng mong muốn.", "info");
             return;
         }
         if (!address.address || !address.provinceId || !address.districtId || !address.wardCode) {
-            alert("Vui lòng nhập đầy đủ địa chỉ giao hàng.");
+            handleAlert("Vui lòng nhập đầy đủ địa chỉ giao hàng.", "info");
             return;
         }
 
@@ -165,18 +177,16 @@ const Step7 = ({ data, onPrev }) => {
                 setOrderCode(orderCode);
                 setCountdown(180);
                 setPolling(true);
-
-
-
             }
         } catch (error) {
-            alert("Thanh toán thất bại, vui lòng thử lại.");
+            handleAlert("Thanh toán thất bại, vui lòng thử lại.", "error");
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
-    // ===== Countdown
+
+    // ===== Countdown + Polling =====
     useEffect(() => {
         if (!qrUrl) return;
         const timer = setInterval(() => {
@@ -191,19 +201,13 @@ const Step7 = ({ data, onPrev }) => {
         return () => clearInterval(timer);
     }, [qrUrl]);
 
-    // ===== Polling order status
     useEffect(() => {
         if (!polling || !orderCode) return;
         const interval = setInterval(async () => {
             try {
                 const res = await getOrderStatus(orderCode);
                 if (res.data?.paymentStatus === "completed") {
-                    // ✅ Xóa dữ liệu quiz khỏi localStorage
-                    localStorage.removeItem("quiz_sessionId");
-                    localStorage.removeItem("quiz_selectedSetId");
-                    localStorage.removeItem("quiz_current_step");
-                    localStorage.removeItem("quiz_step");
-                    localStorage.removeItem("quiz_mealSuggestions");
+                    localStorage.clear();
                     clearInterval(interval);
                     setPolling(false);
                     setQrUrl(null);
@@ -218,18 +222,10 @@ const Step7 = ({ data, onPrev }) => {
 
     const handleCancelOrder = async () => {
         try {
-            console.log("orderCode", orderCode);
             if (!orderCode) return;
-            const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-            if (!orderCode || !token) return;
-            // ✅ Xóa dữ liệu quiz khỏi localStorage
-            localStorage.removeItem("quiz_sessionId");
-            localStorage.removeItem("quiz_selectedSetId");
-            localStorage.removeItem("quiz_current_step");
-            localStorage.removeItem("quiz_step");
-            localStorage.removeItem("quiz_mealSuggestions");
-            await deleteOrder(orderCode); // gọi API xóa order
-            navigate("/")
+            await deleteOrder(orderCode);
+            localStorage.clear();
+            navigate("/");
         } catch (err) {
             console.error(err);
         } finally {
@@ -239,14 +235,11 @@ const Step7 = ({ data, onPrev }) => {
         }
     };
 
+    const today = new Date().toISOString().split("T")[0];
 
-    const subtotal = selectedSet?.price || 0;
-
-    // ======= GIAO DIỆN =======
     return (
         <div className="quiz-step step7-layout">
             {!qrUrl ? (
-                // ========= GIAO DIỆN NHẬP THÔNG TIN =========
                 <>
                     <div className="step7-left">
                         <h2 className="step7-title">Bước 7: Xác nhận thanh toán 💳</h2>
@@ -258,6 +251,7 @@ const Step7 = ({ data, onPrev }) => {
                                 type="date"
                                 value={deliveryTime}
                                 onChange={(e) => setDeliveryTime(e.target.value)}
+                                min={today}
                             />
 
                             <label>🏠 Địa chỉ cụ thể:</label>
@@ -273,7 +267,7 @@ const Step7 = ({ data, onPrev }) => {
                                     <label>Tỉnh / Thành phố:</label>
                                     <select value={address.provinceId} onChange={handleProvinceChange}>
                                         <option value="">-- Chọn tỉnh --</option>
-                                        {provinces?.map((p) => (
+                                        {provinces.map((p) => (
                                             <option key={p.ProvinceID} value={p.ProvinceID}>
                                                 {p.ProvinceName}
                                             </option>
@@ -289,7 +283,7 @@ const Step7 = ({ data, onPrev }) => {
                                         disabled={!address.provinceId}
                                     >
                                         <option value="">-- Chọn huyện --</option>
-                                        {districts?.map((d) => (
+                                        {districts.map((d) => (
                                             <option key={d.DistrictID} value={d.DistrictID}>
                                                 {d.DistrictName}
                                             </option>
@@ -305,7 +299,7 @@ const Step7 = ({ data, onPrev }) => {
                                         disabled={!address.districtId}
                                     >
                                         <option value="">-- Chọn xã --</option>
-                                        {wards?.map((w) => (
+                                        {wards.map((w) => (
                                             <option key={w.WardCode} value={w.WardCode}>
                                                 {w.WardName}
                                             </option>
@@ -325,35 +319,63 @@ const Step7 = ({ data, onPrev }) => {
                                     <p>{selectedSet.description}</p>
                                     <div className="price-total">
                                         <strong>Giá:</strong>
-                                        <strong>{subtotal.toLocaleString("vi-VN")}₫</strong>
+                                        <strong>{(selectedSet.price || 0).toLocaleString("vi-VN")}₫</strong>
                                     </div>
                                 </>
                             ) : (
                                 <p>Đang tải thông tin gói...</p>
                             )}
-
-                            <div className="button-row">
-                                <button onClick={onPrev} className="btn-secondary">← Quay lại</button>
-                                <button
-                                    onClick={handleConfirm}
-                                    disabled={loading}
-                                    className="btn-primary"
-                                >
-                                    {loading ? "Đang xử lý..." : "💳 Thanh toán ngay"}
-                                </button>
-                            </div>
                         </div>
+                        <button
+                            onClick={handleConfirm}
+                            className="button-payment"
+                            disabled={loading}
+                            aria-label="Thanh toán"
+                        >
+                            Thanh toán
+                        </button>
+
+                    </div>
+                    <div className="step4-btn-group">
+                        <button onClick={onPrev} className="step4-btn step4-btn-back" aria-label="Quay lại">
+                            <ArrowBackIosNewRoundedIcon />
+                        </button>
+
                     </div>
                 </>
             ) : (
-                // ========= GIAO DIỆN HIỂN THỊ QR =========
                 <div className="qr-section">
                     <h2>Quét mã QR để thanh toán</h2>
                     <img src={qrUrl} alt="QR" className="qr-image" />
-                    <p>Thời gian còn lại: {Math.floor(countdown / 60)}:{("0" + (countdown % 60)).slice(-2)}</p>
+                    <p style={{ marginTop: "5px" }}>STK: VQRQAEQNT2617</p>
+                    <p style={{ marginTop: "5px" }}>QUACH THI MINH HƯƠNG</p>
+                    <p style={{ marginTop: "5px" }}>Thời gian còn lại: {Math.floor(countdown / 60)}:{("0" + (countdown % 60)).slice(-2)}</p>
                     <button className="btn-primary" onClick={handleCancelOrder}>Hủy đơn</button>
                 </div>
             )}
+
+            <Snackbar
+                open={alert.open}
+                autoHideDuration={3000}
+                onClose={handleCloseAlert}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert severity={alert.severity} variant="filled" onClose={handleCloseAlert} sx={{
+                    bgcolor:
+                        alert.severity === "error"
+                            ? "#FFD6D6"
+                            : alert.severity === "info"
+                                ? "#E3F7FF"
+                                : "#D6FFE3",
+                    color: "#333",
+                    fontWeight: 600,
+                    borderRadius: "14px",
+                    boxShadow: "0 6px 16px rgba(114,204,241,0.25)",
+                    px: 2,
+                }}>
+                    {alert.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

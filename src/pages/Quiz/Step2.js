@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from "react";
+import {
+    Box,
+    Paper,
+    Typography,
+    CircularProgress,
+    Snackbar,
+    Alert,
+    IconButton,
+    Grid,
+    Button,
+} from "@mui/material";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { step2, getStepData } from "../../services/QuizService";
 import "./step2.css";
 
 const Step2 = ({ data, onNext, onPrev }) => {
     const [feedingMethod, setFeedingMethod] = useState("");
     const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState({ open: false, message: "", severity: "info" });
 
     useEffect(() => {
         if (data?.sessionId) {
@@ -16,23 +30,31 @@ const Step2 = ({ data, onNext, onPrev }) => {
         }
     }, [data]);
 
+    const handleAlert = (message, severity = "info") => {
+        setAlert({ open: true, message, severity });
+    };
+
+    const handleCloseAlert = (_, reason) => {
+        if (reason === "clickaway") return;
+        setAlert({ ...alert, open: false });
+    };
+
     const handleSubmit = async () => {
         if (!feedingMethod) {
-            alert("Vui lòng chọn phương pháp ăn dặm phù hợp!");
+            handleAlert("Vui lòng chọn phương pháp ăn dặm phù hợp!", "info");
             return;
         }
         setLoading(true);
         try {
-            const res = await step2({
-                sessionId: data.sessionId,
-                feedingMethod,
-            });
+            const res = await step2({ sessionId: data.sessionId, feedingMethod });
             if (res.data?.success) {
                 onNext({ feedingMethod });
+            } else {
+                handleAlert("Có lỗi xảy ra, vui lòng thử lại!", "error");
             }
         } catch (err) {
             console.error("Lỗi gửi dữ liệu:", err);
-            alert("Gửi dữ liệu thất bại. Vui lòng thử lại!");
+            handleAlert("Gửi dữ liệu thất bại. Vui lòng thử lại!", "error");
         } finally {
             setLoading(false);
         }
@@ -57,41 +79,73 @@ const Step2 = ({ data, onNext, onPrev }) => {
     ];
 
     return (
-        <div className="step2-wrapper">
-            <div className="step2-container">
-                <h2 className="step2-title">Bước 2: Chọn phương pháp ăn dặm của bé</h2>
-                <p className="step2-desc">
-                    Mỗi bé sẽ phù hợp với một phương pháp khác nhau — mẹ chọn cách mình
-                    đang hoặc muốn áp dụng nhé!
-                </p>
+        <Box className="step2-container">
+            <Paper elevation={0} className="step2-form">
+                <Typography
+                    variant="h4"
+                    className="step3-title"
+                    sx={{ fontWeight: 700, color: "#72CCF1", mb: 5 }}
+                >
+                    Bước 2: Phương pháp ăn dặm của bé
+                </Typography>
+                <Typography className="step2-desc">
+                    Mỗi bé sẽ phù hợp với một phương pháp khác nhau — mẹ hãy chọn cách mình đang hoặc muốn áp dụng nhé!
+                </Typography>
 
-                <div className="step2-option-grid">
+                <Grid container spacing={3} className="step2-option-grid">
                     {options.map((item) => (
-                        <div
-                            key={item.id}
-                            className={`step2-card ${feedingMethod === item.id ? "active" : ""}`}
-                            onClick={() => setFeedingMethod(item.id)}
-                        >
-                            <div className="step2-card-title">{item.label}</div>
-                            <p className="step2-card-desc">{item.desc}</p>
-                        </div>
+                        <Grid item xs={12} sm={6} md={4} key={item.id}>
+                            <Box
+                                className={`step2-card ${feedingMethod === item.id ? "selected" : ""}`}
+                                onClick={() => setFeedingMethod(item.id)}
+                            >
+                                <Typography className="step2-card-title" sx={{ fontWeight: 700, fontSize: "20px" }}>{item.label}</Typography>
+                                <Typography className="step2-card-desc">{item.desc}</Typography>
+                            </Box>
+                        </Grid>
                     ))}
-                </div>
+                </Grid>
+            </Paper>
 
-                <div className="step2-btn-group">
-                    <button onClick={onPrev} className="step2-btn step2-btn-back">
-                        ← Quay lại
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className="step2-btn step2-btn-next"
-                    >
-                        {loading ? "Đang gửi..." : "Tiếp tục →"}
-                    </button>
-                </div>
+            {/* Nút quay lại và tiếp tục */}
+            <div className="step4-btn-group">
+                <button onClick={onPrev} className="step4-btn step4-btn-back" aria-label="Quay lại">
+                    <ArrowBackIosNewRoundedIcon />
+                </button>
+                <button
+                    onClick={handleSubmit}
+                    className="step4-btn step4-btn-next"
+                    disabled={loading}
+                    aria-label="Tiếp tục"
+                >
+                    <ArrowForwardIosRoundedIcon />
+                </button>
             </div>
-        </div>
+
+            {/* Snackbar Alert */}
+            <Snackbar
+                open={alert.open}
+                autoHideDuration={3000}
+                onClose={handleCloseAlert}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert severity={alert.severity} variant="filled" onClose={handleCloseAlert} sx={{
+                    bgcolor:
+                        alert.severity === "error"
+                            ? "#FFD6D6"
+                            : alert.severity === "info"
+                                ? "#E3F7FF"
+                                : "#D6FFE3",
+                    color: "#333",
+                    fontWeight: 600,
+                    borderRadius: "14px",
+                    boxShadow: "0 6px 16px rgba(114,204,241,0.25)",
+                    px: 2,
+                }}>
+                    {alert.message}
+                </Alert>
+            </Snackbar>
+        </Box>
     );
 };
 

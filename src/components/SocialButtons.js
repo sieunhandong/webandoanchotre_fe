@@ -7,7 +7,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 export default function SocialButtons() {
     // 👉 Hàm xử lý khi bấm Zalo
     const handleZaloClick = () => {
-        const phone = "0389848201"; // thay bằng số của bạn
+        const phone = "0969729035"; // thay bằng số của bạn
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
         if (isMobile) {

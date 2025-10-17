@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { step4 } from "../../services/QuizService";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import "./step4.css";
 
 const Step4 = ({ data, onNext, onPrev }) => {
@@ -7,8 +9,9 @@ const Step4 = ({ data, onNext, onPrev }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Nếu đã có mealSuggestions (từ step trước hoặc localStorage) → dùng lại, không gọi lại AI
-        const savedMenu = data?.mealSuggestions || JSON.parse(localStorage.getItem("quiz_mealSuggestions") || "[]");
+        const savedMenu =
+            data?.mealSuggestions ||
+            JSON.parse(localStorage.getItem("quiz_mealSuggestions") || "[]");
 
         if (savedMenu.length > 0) {
             setMenu(savedMenu);
@@ -24,8 +27,10 @@ const Step4 = ({ data, onNext, onPrev }) => {
             if (res.data.success && res.data.data.menu) {
                 const suggestedMenu = res.data.data.menu;
                 setMenu(suggestedMenu);
-                // Lưu lại localStorage để khi quay lại không cần gọi AI lần nữa
-                localStorage.setItem("quiz_mealSuggestions", JSON.stringify(suggestedMenu));
+                localStorage.setItem(
+                    "quiz_mealSuggestions",
+                    JSON.stringify(suggestedMenu)
+                );
             } else {
                 alert("Không nhận được dữ liệu thực đơn!");
             }
@@ -38,7 +43,6 @@ const Step4 = ({ data, onNext, onPrev }) => {
     };
 
     const handleNext = () => {
-        // Truyền menu sang bước tiếp theo
         onNext && onNext({ menu });
     };
 
@@ -46,6 +50,7 @@ const Step4 = ({ data, onNext, onPrev }) => {
         <div className="step4-wrapper">
             <div className="step4-container">
                 <h2 className="step4-title">Bước 4: Gợi ý thực đơn cho bé 🍽️</h2>
+                <div style={{ display: "flex", textAlign: "center", justifyContent: "center", marginBottom: "20px", fontSize: "20px" }}>Đây chỉ là mẫu gợi ý thực đơn cho bé.</div>
 
                 {loading ? (
                     <p className="step4-loading">Đang tạo thực đơn phù hợp cho bé... 🍲</p>
@@ -74,15 +79,16 @@ const Step4 = ({ data, onNext, onPrev }) => {
             </div>
 
             <div className="step4-btn-group">
-                <button onClick={onPrev} className="step4-btn step4-btn-back">
-                    ← Quay lại
+                <button onClick={onPrev} className="step4-btn step4-btn-back" aria-label="Quay lại">
+                    <ArrowBackIosNewRoundedIcon />
                 </button>
                 <button
                     onClick={handleNext}
                     className="step4-btn step4-btn-next"
                     disabled={loading}
+                    aria-label="Tiếp tục"
                 >
-                    Tiếp tục →
+                    <ArrowForwardIosRoundedIcon />
                 </button>
             </div>
         </div>

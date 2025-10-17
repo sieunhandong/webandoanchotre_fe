@@ -534,7 +534,7 @@ const HomePage = () => {
       </Container>
 
       {/* FEATURED IMAGE SECTION - ĐÃ THÊM MỚI */}
-      <Box className="section-featured">
+      {/* <Box className="section-featured">
         <Container maxWidth="xl">
           <Box className="featured-content">
             <Box className="featured-image-wrapper">
@@ -549,7 +549,7 @@ const HomePage = () => {
             </Box>
           </Box>
         </Container>
-      </Box>
+      </Box> */}
 
       {/* REVIEWS SECTION */}
       <Box
@@ -659,7 +659,7 @@ const HomePage = () => {
               variant="outlined"
               size="large"
               component={Link}
-              to="/contact"
+              to="/"
               className="btn-cta-outline"
             >
               Liên hệ tư vấn 📞

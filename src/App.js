@@ -72,6 +72,7 @@ function App() {
     "/user/complaint",
     "/user/refund",
     "/track-order",
+    "/quiz",
   ];
 
   const shouldHideFooter = noFooterRoutes.some(
@@ -200,7 +201,7 @@ function App() {
       {!isAdminRoute && !shouldHideFooter && (
         <>
           <SocialButtons />
-          <Footer />
+          {/* <Footer /> */}
         </>
       )}
     </>

@@ -1,57 +1,73 @@
+/* --- Toàn bộ layout --- */
 .step4-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: linear-gradient(180deg, #f9fdff 0%, #e8f7ff 100%);
+    min-height: 100vh;
 }
 
 .step4-container {
     width: 100%;
-    padding: 32px 20px 100px;
+    max-width: 1300px;
+    /* full rộng hơn trước */
+    padding: 60px 40px 140px;
     text-align: center;
 }
 
+/* --- Tiêu đề --- */
 .step4-title {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     font-weight: 700;
-    color: #ff6f91;
-    margin-bottom: 24px;
+    color: #259ddf;
+    /* xanh đậm hơn để nổi bật */
+    margin-bottom: 36px;
 }
 
+/* --- Trạng thái --- */
 .step4-loading {
-    color: #888;
+    color: #68bde4;
     font-style: italic;
+    margin-top: 20px;
 }
 
 .step4-empty {
-    color: #999;
+    color: #aaa;
+    font-size: 1rem;
 }
 
+/* --- Danh sách thực đơn --- */
 .step4-menu-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+    justify-content: center;
 }
 
+/* --- Thẻ ngày --- */
 .step4-day-card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    padding: 20px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 6px 18px rgba(114, 204, 241, 0.2);
+    padding: 32px 28px;
     transition: all 0.3s ease;
 }
 
 .step4-day-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 24px rgba(114, 204, 241, 0.3);
 }
 
+/* --- Tiêu đề ngày --- */
 .step4-day-title {
     font-weight: 600;
-    color: #f57b9d;
-    margin-bottom: 12px;
-    font-size: 1.1rem;
+    color: #259ddf;
+    margin-bottom: 18px;
+    font-size: 1.25rem;
 }
 
+/* --- Danh sách món --- */
 .step4-meal-list {
     list-style: none;
     padding: 0;
@@ -59,117 +75,106 @@
 }
 
 .step4-meal-item {
-    background: #fff8f9;
-    border: 1px solid #ffe1eb;
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    font-size: 0.95rem;
-    color: #444;
+    background: #f0faff;
+    border: 1px solid #c7ecfb;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+    color: #333;
     text-align: left;
+    transition: background 0.2s;
 }
 
-/* --- Cố định nút ở cuối màn hình --- */
+.step4-meal-item:hover {
+    background: #e2f5ff;
+}
+
+/* --- Nhóm nút cố định cuối màn hình --- */
 .step4-btn-group {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    border-top: 1px solid #ffd3df;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 -4px 14px rgba(114, 204, 241, 0.25);
+    /* pastel shadow */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 24px;
+    padding: 18px 36px;
     z-index: 1000;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
 }
 
+/* --- Nút icon tròn --- */
 .step4-btn {
-    padding: 12px 24px;
-    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     border: none;
     cursor: pointer;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
     transition: all 0.3s ease;
-    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(114, 204, 241, 0.25);
 }
 
+/* Nút quay lại */
 .step4-btn-back {
-    background: #fff;
-    border: 1px solid #f4b4c4;
-    color: #e75480;
+    background: #ffffff;
+    border: 2px solid #aee4fb;
+    color: #2babe8;
 }
 
+.step4-btn-back:hover {
+    background: #e7f6ff;
+}
+
+/* Nút tiếp tục */
 .step4-btn-next {
-    background: #ff7aa2;
-    color: white;
+    background: #72ccf1;
+    color: #fff;
 }
 
 .step4-btn-next:hover {
-    background: #ff5f8e;
+    background: #5bbbe4;
 }
 
-/* ---------------------- Responsive ---------------------- */
-
-/* Tablet */
-@media (max-width: 768px) {
+/* --- Responsive --- */
+@media (max-width: 1024px) {
     .step4-container {
-        padding: 24px 16px 100px;
-    }
-
-    .step4-title {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
+        padding: 40px 28px 120px;
     }
 
     .step4-menu-list {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
-    }
-
-    .step4-day-card {
-        padding: 16px;
-    }
-
-    .step4-btn-group {
-        flex-direction: row;
-        padding: 10px 16px;
-    }
-
-    .step4-btn {
-        padding: 10px 18px;
-        font-size: 0.95rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
     }
 }
 
-/* Mobile */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .step4-container {
-        padding: 20px 12px 90px;
+        padding: 28px 16px 100px;
     }
 
     .step4-title {
-        font-size: 1.3rem;
-        line-height: 1.4;
+        font-size: 1.6rem;
     }
 
     .step4-menu-list {
         grid-template-columns: 1fr;
     }
 
-    .step4-day-card {
-        padding: 14px;
-    }
-
     .step4-btn-group {
-        flex-direction: column;
-        gap: 8px;
-        padding: 10px;
+        justify-content: space-around;
+        padding: 14px 20px;
     }
 
     .step4-btn {
-        width: 100%;
-        font-size: 1rem;
+        width: 54px;
+        height: 54px;
     }
 }
