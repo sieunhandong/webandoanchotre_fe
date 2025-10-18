@@ -5,7 +5,7 @@ import { getProvinces, getDistricts, getWards } from "../../services/GHNService"
 import { useNavigate, useLocation } from "react-router-dom";
 import { deleteOrder, getOrderStatus } from "../../services/OrderService";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import "./step7.css";
 import { Alert, Snackbar } from "@mui/material";
 
@@ -344,14 +344,16 @@ const Step7 = ({ data, onPrev }) => {
                     </div>
                 </>
             ) : (
-                <div className="qr-section">
-                    <h2>Quét mã QR để thanh toán</h2>
-                    <img src={qrUrl} alt="QR" className="qr-image" />
-                    <p style={{ marginTop: "5px" }}>STK: VQRQAEQNT2617</p>
-                    <p style={{ marginTop: "5px" }}>QUACH THI MINH HƯƠNG</p>
-                    <p style={{ marginTop: "5px" }}>Thời gian còn lại: {Math.floor(countdown / 60)}:{("0" + (countdown % 60)).slice(-2)}</p>
-                    <button className="btn-primary" onClick={handleCancelOrder}>Hủy đơn</button>
-                </div>
+                <Dialog open={!!qrUrl} onClose={handleCancelOrder}>
+                    <DialogTitle>Quét mã QR để thanh toán</DialogTitle>
+                    <DialogContent sx={{ textAlign: "center" }}>
+                        <img src={qrUrl} alt="QR" className="qr-image" />
+                        <p style={{ marginTop: "5px" }}>STK: VQRQAEQNT2617</p>
+                        <p style={{ marginTop: "5px" }}>QUACH THI MINH HƯƠNG</p>
+                        <p style={{ marginTop: "5px" }}>Thời gian còn lại: {Math.floor(countdown / 60)}:{("0" + (countdown % 60)).slice(-2)}</p>
+                        <button className="btn-primary" onClick={handleCancelOrder}>Hủy đơn</button>
+                    </DialogContent>
+                </Dialog>
             )}
 
             <Snackbar

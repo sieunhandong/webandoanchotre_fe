@@ -81,13 +81,13 @@ const Quiz = () => {
 
     const totalSteps = 7;
     const stepLabels = [
-        "Bé",
-        "Phương pháp",
-        "Thực phẩm",
-        "AI",
-        "Set ăn",
-        "Thông tin",
-        "Thanh toán",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
     ];
 
     const handleNext = (data) => {

@@ -1,0 +1,973 @@
+import React, { useEffect, useRef, useState } from 'react';
+
+const AboutUs = () => {
+    const [visibleSections, setVisibleSections] = useState(new Set());
+    const observerRef = useRef(null);
+
+    useEffect(() => {
+        observerRef.current = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const section = entry.target.dataset.section;
+                        const cardId = entry.target.dataset.cardId;
+
+                        if (section) {
+                            setVisibleSections(prev => new Set([...prev, section]));
+                        }
+
+                        if (cardId) {
+                            setAnimatedCards(prev => new Set([...prev, cardId]));
+                        }
+                    }
+                });
+            },
+            {
+                threshold: 0.15,
+                rootMargin: '0px 0px -50px 0px'
+            }
+        );
+
+        const elements = document.querySelectorAll('[data-section], [data-card-id]');
+        elements.forEach(element => observerRef.current.observe(element));
+
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+        };
+    }, []);
+
+    const [animatedCards, setAnimatedCards] = useState(new Set());
+
+    const values = [
+        {
+            title: "Dinh dưỡng khoa học",
+            description: "Đội ngũ chuyên gia dinh dưỡng và đầu bếp của TinyYummy nghiên cứu và phát triển thực đơn ăn dặm cân bằng, đáp ứng nhu cầu dinh dưỡng theo từng độ tuổi của bé."
+        },
+        {
+            title: "Nguyên liệu sạch - An toàn",
+            description: "Chúng tôi cam kết sử dụng 100% nguyên liệu organic, nguồn gốc rõ ràng, không chất bảo quản, không hóa chất độc hại, đảm bảo an toàn tuyệt đối cho bé yêu."
+        },
+        {
+            title: "Quy trình chuẩn HACCP",
+            description: "Nhà bếp TinyYummy tuân thủ nghiêm ngặt quy trình HACCP quốc tế, từ khâu chọn nguyên liệu, chế biến đến đóng gói, đảm bảo vệ sinh an toàn thực phẩm."
+        }
+    ];
+
+    const products = [
+        {
+            name: "Cháo dinh dưỡng",
+            image: "/banner1.jpg"
+        },
+        {
+            name: "Bột ăn dặm",
+            image: "/bot.jpg"
+        },
+        {
+            name: "Snack healthy",
+            image: "/snack.jpg"
+        }
+    ];
+
+    const materials = [
+        {
+            name: "Gạo lứt hữu cơ",
+            description: "Gạo lứt organic giàu chất xơ và vitamin, giúp bé phát triển hệ tiêu hóa khỏe mạnh. Nguồn gốc từ các nông trại hữu cơ được chứng nhận.",
+            image: "/gaolut.jpg"
+        },
+        {
+            name: "Rau củ tươi",
+            description: "Rau củ quả tươi mỗi ngày từ vườn, giàu vitamin và khoáng chất thiết yếu. Được thu hoạch vào buổi sáng sớm để đảm bảo độ tươi ngon tối đa.",
+            image: "/raucu.jpg"
+        },
+        {
+            name: "Thịt cá sạch",
+            description: "Thịt, cá tươi sống được chọn lọc kỹ càng, cung cấp protein chất lượng cao. Nguồn cung ứng uy tín, đảm bảo không hormone, không kháng sinh.",
+            image: "/thitca.jpg"
+        }
+    ];
+
+    const stats = [
+        { number: "5+", label: "Năm kinh nghiệm" },
+        { number: "10K+", label: "Bé yêu tin dùng" },
+        { number: "50+", label: "Thực đơn đa dạng" }
+    ];
+
+    const philosophyItems = [
+        { text: "Dinh dưỡng cân bằng", bg: "#E6E6FA", color: "#666" },
+        { text: "", bg: "", image: "/aboutus1.jpg" },
+        { text: "Đảm bảo an toàn", bg: "#95caf5ff", color: "#fff" },
+        { text: "", bg: "", image: "/aboutus2.jpg" },
+        { text: "HEALTHY & YUMMY\nBổ dưỡng và ngon miệng", bg: "#FFDAB9", color: "#fff" },
+        { text: "", bg: "", image: "/raucu.jpg" },
+        { text: "An toàn - Sạch - Tươi", bg: "#A8E6CF", color: "#fff" },
+        { text: "", bg: "", image: "/thitca.jpg" },
+        { text: "Phát triển toàn diện", bg: "#FFB6D9", color: "#fff" }
+    ];
+
+    return (
+        <div style={styles.wrapper}>
+            {/* Hero Section */}
+            <section style={styles.heroSection}>
+                <div style={styles.heroBgElements}>
+                    <div style={{ ...styles.floatingShape, ...styles.shape1 }}></div>
+                    <div style={{ ...styles.floatingShape, ...styles.shape2 }}></div>
+                    <div style={{ ...styles.floatingShape, ...styles.shape3 }}></div>
+                </div>
+
+                <div style={styles.container}>
+                    <div style={styles.heroContent}>
+                        <div style={styles.heroImages}>
+                            <img
+                                src="/model_1.png"
+                                alt="Baby food 1"
+                                style={styles.heroImg}
+                            />
+                            <img
+                                src="/aboutus2.jpg"
+                                alt="Baby food 2"
+                                style={{ ...styles.heroImg, animationDelay: '0.2s' }}
+                            />
+                        </div>
+
+                        <h1 style={styles.mainTitle}>
+                            TinyYummy
+                            <span style={styles.mainTitleSpan}>Dinh dưỡng từ tình yêu thương</span>
+                        </h1>
+
+                        <p style={styles.heroSubtitle}>
+                            Mỗi bữa ăn dặm là <span>hành trình khám phá thế giới vị giác</span>
+                        </p>
+
+                        <p style={styles.heroDescription}>
+                            Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
+                            TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn, mà là nền tảng
+                            cho sự phát triển toàn diện của bé. Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng,
+                            an toàn và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Values Section */}
+            <section
+                style={styles.valuesSection}
+                data-section="values"
+            >
+                <div style={styles.container}>
+                    <h2 style={{ ...styles.sectionTitle, color: '#72CCF1' }}>Cam Kết Của TinyYummy</h2>
+                    <div style={styles.valuesGrid}>
+                        {values.map((value, index) => (
+                            <div
+                                key={index}
+                                data-card-id={`value-${index}`}
+                                className="value-card"
+                                style={{
+                                    ...styles.valueCard,
+                                    opacity: animatedCards.has(`value-${index}`) ? 1 : 0,
+                                    transform: animatedCards.has(`value-${index}`) ? 'translateY(0)' : 'translateY(50px)',
+                                    transition: 'all 0.8s ease-out',
+                                    transitionDelay: `${index * 0.15}s`
+                                }}
+                            >
+                                <h3 style={styles.valueCardTitle}>{value.title}</h3>
+                                <p style={styles.valueCardText}>{value.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Philosophy Section */}
+            <section style={styles.philosophySection} data-section="philosophy">
+                <div style={styles.container}>
+                    <h2 style={styles.sectionTitle}>TRIẾT LÝ DINH DƯỠNG</h2>
+                    <div style={styles.philosophyGrid}>
+                        {philosophyItems.map((item, index) => (
+                            <div
+                                key={index}
+                                data-card-id={`philosophy-${index}`}
+                                className="philosophy-item"
+                                style={{
+                                    ...styles.philosophyItem,
+                                    background: item.image
+                                        ? `url(${item.image}) center/cover`
+                                        : item.bg,
+                                    color: item.color || '#fff',
+                                    opacity: animatedCards.has(`philosophy-${index}`) ? 1 : 0,
+                                    transform: animatedCards.has(`philosophy-${index}`) ? 'scale(1)' : 'scale(0.8)',
+                                    transition: 'all 0.6s ease-out',
+                                    transitionDelay: `${index * 0.1}s`
+                                }}
+                            >
+                                {item.text && item.text.split('\n').map((line, i) => (
+                                    <React.Fragment key={i}>
+                                        {line}
+                                        {i < item.text.split('\n').length - 1 && <br />}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Products Section */}
+            <section
+                style={styles.productsSection}
+                data-section="products"
+            >
+                <div style={styles.container}>
+                    <h2
+                        data-card-id="products-title"
+                        style={{
+                            ...styles.sectionTitle,
+                            color: '#72CCF1',
+                            opacity: animatedCards.has('products-title') ? 1 : 0,
+                            transform: animatedCards.has('products-title') ? 'translateY(0)' : 'translateY(30px)',
+                            transition: 'all 0.8s ease-out'
+                        }}
+                    >
+                        Sản Phẩm TinyYummy
+                    </h2>
+                    <p
+                        data-card-id="products-subtitle"
+                        style={{
+                            ...styles.productsSubtitle,
+                            opacity: animatedCards.has('products-subtitle') ? 1 : 0,
+                            transform: animatedCards.has('products-subtitle') ? 'translateY(0)' : 'translateY(30px)',
+                            transition: 'all 0.8s ease-out',
+                            transitionDelay: '0.2s'
+                        }}
+                    >
+                        "Chúng tôi tự hào mang đến thực đơn ăn dặm đa dạng, phù hợp với từng giai đoạn phát triển của bé,
+                        từ 6 tháng tuổi cho đến 3 tuổi."
+                    </p>
+                    <div style={styles.productsGrid}>
+                        {products.map((product, index) => (
+                            <div
+                                key={index}
+                                data-card-id={`product-${index}`}
+                                className="product-card"
+                                style={{
+                                    ...styles.productCard,
+                                    opacity: animatedCards.has(`product-${index}`) ? 1 : 0,
+                                    transform: animatedCards.has(`product-${index}`) ? 'translateY(0)' : 'translateY(50px)',
+                                    transition: 'all 0.8s ease-out',
+                                    transitionDelay: `${index * 0.15}s`
+                                }}
+                            >
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    style={styles.productImg}
+                                />
+                                <span style={styles.productName}>{product.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Materials Section */}
+            <section
+                style={styles.materialsSection}
+                data-section="materials"
+            >
+                <div style={styles.container}>
+                    <h2
+                        data-card-id="materials-title"
+                        style={{
+                            ...styles.sectionTitle,
+                            opacity: animatedCards.has('materials-title') ? 1 : 0,
+                            transform: animatedCards.has('materials-title') ? 'translateY(0)' : 'translateY(30px)',
+                            transition: 'all 0.8s ease-out'
+                        }}
+                    >
+                        NGUYÊN LIỆU CHỌN LỌC
+                    </h2>
+                    <p
+                        data-card-id="materials-subtitle"
+                        style={{
+                            ...styles.materialsSubtitle,
+                            opacity: animatedCards.has('materials-subtitle') ? 1 : 0,
+                            transform: animatedCards.has('materials-subtitle') ? 'translateY(0)' : 'translateY(30px)',
+                            transition: 'all 0.8s ease-out',
+                            transitionDelay: '0.2s'
+                        }}
+                    >
+                        100% nguyên liệu hữu cơ, tươi sạch mỗi ngày
+                    </p>
+                    <div style={styles.materialsGrid}>
+                        {materials.map((material, index) => (
+                            <div
+                                key={index}
+                                data-card-id={`material-${index}`}
+                                style={{
+                                    ...styles.materialCard,
+                                    opacity: animatedCards.has(`material-${index}`) ? 1 : 0,
+                                    transform: animatedCards.has(`material-${index}`) ? 'translateX(0)' : 'translateX(-50px)',
+                                    transition: 'all 0.8s ease-out',
+                                    transitionDelay: `${index * 0.15}s`
+                                }}
+                            >
+                                <img
+                                    src={material.image}
+                                    alt={material.name}
+                                    style={styles.materialImg}
+                                />
+                                <div style={styles.materialContent}>
+                                    <h3 style={styles.materialTitle}>
+                                        <span style={styles.materialSpan}>{material.name}</span>
+                                    </h3>
+                                    <p style={styles.materialText}>{material.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Stats Section */}
+            <section
+                style={styles.statsSection}
+                data-section="stats"
+            >
+                <div style={styles.container}>
+                    <h2
+                        data-card-id="stats-title"
+                        style={{
+                            ...styles.sectionTitle,
+                            color: '#72CCF1',
+                            opacity: animatedCards.has('stats-title') ? 1 : 0,
+                            transform: animatedCards.has('stats-title') ? 'translateY(0)' : 'translateY(30px)',
+                            transition: 'all 0.8s ease-out'
+                        }}
+                    >
+                        TinyYummy Trong Con Số
+                    </h2>
+                    <div style={styles.statsGrid}>
+                        {stats.map((stat, index) => (
+                            <div
+                                key={index}
+                                data-card-id={`stat-${index}`}
+                                style={{
+                                    ...styles.statItem,
+                                    opacity: animatedCards.has(`stat-${index}`) ? 1 : 0,
+                                    transform: animatedCards.has(`stat-${index}`) ? 'scale(1)' : 'scale(0.5)',
+                                    transition: 'all 0.8s ease-out',
+                                    transitionDelay: `${index * 0.2}s`
+                                }}
+                            >
+                                <div style={styles.statNumber}>{stat.number}</div>
+                                <div style={styles.statLabel}>{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <style>{`
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0) rotate(0deg); 
+          }
+          25% {
+            transform: translateY(-20px) rotate(5deg);
+          }
+          50% { 
+            transform: translateY(-30px) rotate(10deg); 
+          }
+          75% {
+            transform: translateY(-20px) rotate(5deg);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes scaleIn {
+          0% {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          50% {
+            transform: scale(1.05);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes countUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px) scale(0.5); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+          }
+        }
+
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes bounceIn {
+          0% {
+            opacity: 0;
+            transform: scale(0.3);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+          70% {
+            transform: scale(0.9);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @keyframes fadeInScale {
+          0% {
+            opacity: 0;
+            transform: scale(0.8) rotate(-5deg);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes rotateIn {
+          0% {
+            opacity: 0;
+            transform: rotate(-200deg) scale(0);
+          }
+          100% {
+            opacity: 1;
+            transform: rotate(0) scale(1);
+          }
+        }
+
+        @keyframes flipIn {
+          0% {
+            transform: perspective(400px) rotateX(90deg);
+            opacity: 0;
+          }
+          40% {
+            transform: perspective(400px) rotateX(-10deg);
+          }
+          70% {
+            transform: perspective(400px) rotateX(10deg);
+          }
+          100% {
+            transform: perspective(400px) rotateX(0deg);
+            opacity: 1;
+          }
+        }
+
+        /* Hover Effects */
+        .value-card:hover {
+          animation: pulse 0.6s ease-in-out;
+        }
+
+        .philosophy-item:hover {
+          animation: pulse 0.5s ease-in-out;
+        }
+
+        .product-card:hover img {
+          transform: scale(1.1) rotate(2deg);
+        }
+
+        .material-card:hover {
+          transform: translateY(-15px) rotate(1deg);
+          box-shadow: 0 25px 70px rgba(114, 204, 241, 0.4);
+        }
+
+        /* Shimmer Effect on Hover */
+        .hero-img:hover {
+          animation: shimmer 1.5s infinite;
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.3) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          background-size: 1000px 100%;
+        }
+
+        /* Parallax Effect */
+        @keyframes parallaxFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+
+        .floating-shape {
+          animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 {
+          animation: float 15s infinite ease-in-out;
+        }
+
+        .shape-2 {
+          animation: float 20s infinite ease-in-out reverse;
+        }
+
+        .shape-3 {
+          animation: float 18s infinite ease-in-out;
+        }
+
+        /* Text Gradient Animation */
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        .main-title span {
+          background: linear-gradient(90deg, #FFB6D9, #FFDAB9, #FFB6D9);
+          background-size: 200% auto;
+          animation: gradientShift 3s ease infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        /* Stagger Animation for Grid Items */
+        .philosophy-item {
+          animation: fadeInScale 0.8s ease-out backwards;
+        }
+
+        .philosophy-item:nth-child(1) { animation-delay: 0.1s; }
+        .philosophy-item:nth-child(2) { animation-delay: 0.2s; }
+        .philosophy-item:nth-child(3) { animation-delay: 0.3s; }
+        .philosophy-item:nth-child(4) { animation-delay: 0.4s; }
+        .philosophy-item:nth-child(5) { animation-delay: 0.5s; }
+        .philosophy-item:nth-child(6) { animation-delay: 0.6s; }
+        .philosophy-item:nth-child(7) { animation-delay: 0.7s; }
+        .philosophy-item:nth-child(8) { animation-delay: 0.8s; }
+        .philosophy-item:nth-child(9) { animation-delay: 0.9s; }
+
+        /* Smooth Scroll Behavior */
+        html {
+          scroll-behavior: smooth;
+        }
+
+        /* Loading State */
+        @keyframes skeletonLoading {
+          0% {
+            background-position: -200px 0;
+          }
+          100% {
+            background-position: calc(200px + 100%) 0;
+          }
+        }
+
+        /* Glow Effect */
+        @keyframes glow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(114, 204, 241, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 40px rgba(114, 204, 241, 0.8);
+          }
+        }
+
+        .stat-number {
+          animation: countUp 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+          .philosophy-grid, .products-grid, .stats-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .hero-img {
+            width: 150px !important;
+            height: 150px !important;
+          }
+
+          .main-title {
+            font-size: 2rem !important;
+          }
+
+          .section-title {
+            font-size: 1.8rem !important;
+          }
+
+          .stat-number {
+            font-size: 3rem !important;
+          }
+        }
+
+        /* Reduce Motion for Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+
+        /* Custom Easing Functions */
+        .value-card {
+          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .product-card {
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .material-card {
+          transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+      `}</style>
+        </div>
+    );
+};
+
+const styles = {
+    wrapper: {
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        overflowX: 'hidden',
+        background: '#fff',
+        color: '#333'
+    },
+    container: {
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 20px'
+    },
+    heroSection: {
+        position: 'relative',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #fdbbfdff 0%, #a0ecffff 100%)',
+        overflow: 'hidden'
+    },
+    heroBgElements: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden'
+    },
+    floatingShape: {
+        position: 'absolute',
+        opacity: 0.1,
+        animation: 'float 20s infinite ease-in-out'
+    },
+    shape1: {
+        width: '300px',
+        height: '300px',
+        background: '#FFB6D9',
+        borderRadius: '50%',
+        top: '10%',
+        left: '-100px',
+        animationDelay: '0s'
+    },
+    shape2: {
+        width: '200px',
+        height: '200px',
+        background: '#FFDAB9',
+        borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+        top: '60%',
+        right: '-50px',
+        animationDelay: '3s'
+    },
+    shape3: {
+        width: '150px',
+        height: '150px',
+        background: '#E6E6FA',
+        borderRadius: '50%',
+        bottom: '20%',
+        left: '10%',
+        animationDelay: '6s'
+    },
+    heroContent: {
+        position: 'relative',
+        zIndex: 10,
+        textAlign: 'center',
+        animation: 'fadeInUp 1s ease-out'
+    },
+    heroImages: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '20px',
+        marginBottom: '40px',
+        flexWrap: 'wrap'
+    },
+    heroImg: {
+        width: '400px',
+        height: '400px',
+        borderRadius: '20px',
+        objectFit: 'cover',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+        animation: 'scaleIn 0.8s ease-out',
+        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden'
+    },
+    mainTitle: {
+        fontSize: '3.5rem',
+        fontWeight: 700,
+        color: '#fff',
+        marginBottom: '20px',
+        textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+    },
+    mainTitleSpan: {
+        display: 'block',
+        background: 'linear-gradient(90deg, #FFB6D9, #FFDAB9)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text'
+    },
+    heroSubtitle: {
+        fontSize: '1.5rem',
+        color: '#fff',
+        marginBottom: '30px',
+        opacity: 0.95
+    },
+    heroDescription: {
+        maxWidth: '800px',
+        margin: '0 auto',
+        fontSize: '1.1rem',
+        lineHeight: 1.8,
+        color: '#fff',
+        opacity: 0.9
+    },
+    valuesSection: {
+        padding: '100px 0',
+        background: '#f8f9fa'
+    },
+    sectionTitle: {
+        textAlign: 'center',
+        fontSize: '2.5rem',
+        color: '#fff',
+        marginBottom: '60px',
+        textTransform: 'uppercase',
+        letterSpacing: '2px'
+    },
+    valuesGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '40px',
+        marginTop: '60px'
+    },
+    valueCard: {
+        background: '#fff',
+        padding: '40px 30px',
+        borderRadius: '20px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden'
+    },
+    valueCardTitle: {
+        fontSize: '1.5rem',
+        color: '#72CCF1',
+        marginBottom: '15px'
+    },
+    valueCardText: {
+        lineHeight: 1.8,
+        color: '#666'
+    },
+    philosophySection: {
+        padding: '100px 0',
+        background: 'linear-gradient(135deg, #FFB6D9 0%, #FFDAB9 100%)'
+    },
+    philosophyGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '20px'
+    },
+    philosophyItem: {
+        aspectRatio: '1',
+        borderRadius: '20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '1.1rem',
+        fontWeight: 600,
+        textAlign: 'center',
+        padding: '20px',
+        transition: 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 5px 20px rgba(0,0,0,0.1)'
+    },
+    productsSection: {
+        padding: '100px 0',
+        background: '#fff'
+    },
+    productsSubtitle: {
+        textAlign: 'center',
+        fontSize: '1.2rem',
+        color: '#666',
+        marginBottom: '40px'
+    },
+    productsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '30px',
+        marginTop: '60px'
+    },
+    productCard: {
+        textAlign: 'center',
+        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        cursor: 'pointer',
+        position: 'relative'
+    },
+    productImg: {
+        width: '100%',
+        height: '250px',
+        objectFit: 'cover',
+        borderRadius: '20px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+        transition: 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+    },
+    productName: {
+        display: 'block',
+        marginTop: '20px',
+        fontSize: '1.2rem',
+        fontWeight: 600,
+        color: '#72CCF1'
+    },
+    materialsSection: {
+        padding: '100px 0',
+        background: 'linear-gradient(135deg, #A8E6CF 0%, #72CCF1 100%)'
+    },
+    materialsSubtitle: {
+        textAlign: 'center',
+        fontSize: '1.2rem',
+        color: '#fff',
+        marginBottom: '40px'
+    },
+    materialsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '30px',
+        marginTop: '60px'
+    },
+    materialCard: {
+        background: '#fff',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+        transition: 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        cursor: 'pointer',
+        position: 'relative'
+    },
+    materialImg: {
+        width: '100%',
+        height: '200px',
+        objectFit: 'cover'
+    },
+    materialContent: {
+        padding: '30px'
+    },
+    materialTitle: {
+        fontSize: '1.5rem',
+        color: '#72CCF1',
+        marginBottom: '15px'
+    },
+    materialSpan: {
+        fontWeight: 600,
+        color: '#72CCF1'
+    },
+    materialText: {
+        lineHeight: 1.8,
+        color: '#666'
+    },
+    statsSection: {
+        padding: '100px 0',
+        background: '#fff'
+    },
+    statsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '50px',
+        margin: '60px 0'
+    },
+    statItem: {
+        textAlign: 'center'
+    },
+    statNumber: {
+        fontSize: '4rem',
+        fontWeight: 700,
+        color: '#72CCF1',
+        marginBottom: '10px',
+        animation: 'countUp 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
+        textShadow: '2px 2px 10px rgba(114, 204, 241, 0.3)'
+    },
+    statLabel: {
+        fontSize: '1.2rem',
+        color: '#666'
+    }
+};
+
+export default AboutUs;

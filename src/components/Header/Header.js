@@ -298,7 +298,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                 sx={{
                   color: "#fff",
                   fontWeight: 600,
-                  fontSize: "1rem",
+                  fontSize: "1.2rem",
                   px: 2.5,
                   py: 1,
                   borderRadius: 2,
@@ -316,7 +316,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                 sx={{
                   color: "#fff",
                   fontWeight: 600,
-                  fontSize: "1rem",
+                  fontSize: "1.2rem",
                   px: 2.5,
                   py: 1,
                   borderRadius: 2,
@@ -334,7 +334,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                 sx={{
                   color: "#fff",
                   fontWeight: 600,
-                  fontSize: "1rem",
+                  fontSize: "1.2rem",
                   px: 2.5,
                   py: 1,
                   borderRadius: 2,
@@ -401,7 +401,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                     >
                       {firstLetter}
                     </Avatar>
-                    <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: "1.2rem" }}>
                       {userEmail.slice(0, 8)}...
                     </Typography>
                   </Button>
@@ -416,6 +416,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                       py: 1,
                       borderRadius: 2,
                       fontWeight: 600,
+                      fontSize: "1.2rem",
                       textTransform: "none",
                       "&:hover": {
                         bgcolor: "rgba(255, 255, 255, 0.25)",

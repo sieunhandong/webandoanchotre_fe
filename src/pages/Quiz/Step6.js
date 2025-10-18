@@ -42,7 +42,7 @@ const Step6 = ({ data, onNext, onPrev }) => {
 
     return (
         <div className="step6-wrapper">
-            <h1 className="step6-header">Bước 6: Kết quả gợi ý cho bé 🎉</h1>
+            <h1 className="step6-header">Bước 6: Kiểm tra thông tin trước khi hoàn tất 🎯</h1>
 
             <div className="step6-content">
                 {/* --- Cột trái --- */}
@@ -51,7 +51,7 @@ const Step6 = ({ data, onNext, onPrev }) => {
                         <h3>👶 Thông tin bé</h3>
                         <ul>
                             <li><strong>Tháng tuổi:</strong> {childInfo?.age}</li>
-                            <li><strong>Cân nặng:</strong> {childInfo?.weight} kg</li>
+                            <li><strong>Cân nặng:</strong> {childInfo?.weight}</li>
                             <li><strong>Phương pháp ăn dặm:</strong> {getFeedingMethodLabel(childInfo?.feedingMethod)}</li>
                             <li>
                                 <strong>Dị ứng:</strong>{" "}
@@ -63,7 +63,7 @@ const Step6 = ({ data, onNext, onPrev }) => {
                     </div>
 
                     <div className="step6-card">
-                        <h3>🥦 Nguyên đã chọn</h3>
+                        <h3>🥦 Thực phẩm bé thích</h3>
                         <div className="step6-ingredients">
                             {selectedProducts?.length ? (
                                 selectedProducts.map((p, i) => (

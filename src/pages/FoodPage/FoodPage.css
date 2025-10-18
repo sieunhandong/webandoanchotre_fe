@@ -1,0 +1,223 @@
+/* Toàn trang */
+.foodPage {
+    background-color: #fffaf8;
+    font-family: "Quicksand", sans-serif;
+    padding-bottom: 60px;
+    min-height: 100vh;
+}
+
+/* Banner */
+.foodPage__banner {
+    text-align: center;
+    background: linear-gradient(135deg, #fcd5ce, #fae1dd, #fde2e4);
+    padding: 80px 20px 100px;
+    border-bottom-left-radius: 70px;
+    border-bottom-right-radius: 70px;
+    box-shadow: 0 4px 25px rgba(255, 190, 190, 0.4);
+}
+
+.foodPage__banner h1 {
+    color: #6b3e26;
+    font-size: 2.6rem;
+    font-weight: 700;
+}
+
+.foodPage__banner p {
+    color: #7a6453;
+    margin-top: 10px;
+    font-size: 1.1rem;
+}
+
+/* Ô tìm kiếm */
+.foodPage__searchBox {
+    margin: -40px auto 40px;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+}
+
+.foodPage__searchBox input {
+    width: 100%;
+    padding: 14px 22px;
+    border-radius: 50px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.foodPage__searchBox input:focus {
+    box-shadow: 0 0 0 3px rgba(242, 132, 130, 0.3);
+}
+
+/* Grid món ăn */
+.foodPage__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 90%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* Card */
+.foodCard {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(255, 180, 180, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeInUp 0.5s ease forwards;
+    height: 100%;
+}
+
+.foodCard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(255, 170, 170, 0.35);
+}
+
+/* Hình ảnh */
+.foodCard__imageWrapper {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    /* Giữ tỷ lệ đồng đều */
+    overflow: hidden;
+}
+
+.foodCard__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.foodCard:hover .foodCard__image {
+    transform: scale(1.05);
+}
+
+/* Nội dung card */
+.foodCard__content {
+    padding: 1rem 1.2rem;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.foodCard__content h3 {
+    color: #5a2a27;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    min-height: 2.8rem;
+}
+
+/* Tag */
+.foodCard__tags {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.tag {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-weight: 500;
+}
+
+.tag--pink {
+    background: #fde2e4;
+    color: #b23a48;
+}
+
+.tag--green {
+    background: #d8e2dc;
+    color: #386641;
+}
+
+/* Loading + Empty */
+.foodPage__loading,
+.foodPage__empty {
+    text-align: center;
+    color: #555;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+}
+
+/* Phân trang */
+.foodPage__pagination {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pageBtn {
+    background: #fff;
+    border: 2px solid #f4a3a3;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pageBtn:hover {
+    background: #f4a3a3;
+    color: white;
+}
+
+.pageBtn.active {
+    background: #f28482;
+    border-color: #f28482;
+    color: #fff;
+}
+
+/* Back button */
+.foodPage__back {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.backBtn {
+    text-decoration: none;
+    color: #f28482;
+    border: 2px solid #f28482;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.backBtn:hover {
+    background: #f28482;
+    color: #fff;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .foodPage__banner h1 {
+        font-size: 1.8rem;
+    }
+
+    .foodPage__banner p {
+        font-size: 1rem;
+    }
+}

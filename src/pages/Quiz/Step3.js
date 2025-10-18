@@ -74,7 +74,7 @@ const Step3 = ({ data, onNext, onPrev }) => {
                     className="step3-title"
                     sx={{ fontWeight: 700, color: "#72CCF1", mb: 5 }}
                 >
-                    Bước 3: Chọn nguyên liệu sẵn có
+                    Bước 3: Thực phẩm bé thích
                 </Typography>
 
 

@@ -1,21 +1,26 @@
+// Profile.js
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import {
   Person as PersonIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
   Edit as EditIcon,
-  Login as LoginIcon,
-  Home as HomeIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
 import { getProfile, updateProfile } from "../../services/UserService";
-import "./Profile.css";
 import AccountLayout from "../../components/BreadCrumb/AccountLayout";
+import "./Profile.css";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // editData contains also babyInfo object
   const [editData, setEditData] = useState({
     name: "",
     email: "",
@@ -23,24 +28,18 @@ export default function Profile() {
     babyInfo: {
       age: "",
       weight: "",
-      allergies: [],
+      allergies: [], // array of strings
       feedingMethod: "traditional",
     },
   });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [editError, setEditError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
+    let mounted = true;
     (async () => {
       try {
+        setLoading(true);
         const res = await getProfile();
-        if (res.data?.user) {
+        if (res?.data?.user && mounted) {
           const u = res.data.user;
           setUser(u);
 
@@ -48,267 +47,301 @@ export default function Profile() {
             name: u.name || "",
             email: u.email || "",
             phone: u.phone || "",
-            babyInfo: u.userInfo?.babyInfo || {
-              age: "",
-              weight: "",
-              allergies: [],
-              feedingMethod: "traditional",
+            babyInfo: {
+              age: u.userInfo?.babyInfo?.age || "",
+              weight: u.userInfo?.babyInfo?.weight || "",
+              allergies: Array.isArray(u.userInfo?.babyInfo?.allergies)
+                ? u.userInfo.userInfo?.babyInfo?.allergies // fallback safe
+                : u.userInfo?.babyInfo?.allergies || [],
+              // above line defensive; ensure array
+              feedingMethod: u.userInfo?.babyInfo?.feedingMethod || "traditional",
             },
           });
-
-          setIsAuthenticated(true);
-        } else {
-          setError("Dữ liệu người dùng không hợp lệ");
         }
       } catch (err) {
         console.error(err);
-        if (err.response?.status === 401) {
-          localStorage.removeItem("access_token");
-          navigate("/login");
-        } else {
-          setError("Không thể kết nối đến server");
-        }
+        setErrorMessage("Không thể lấy thông tin người dùng.");
       } finally {
         setLoading(false);
       }
     })();
-  }, [navigate]);
+    return () => (mounted = false);
+  }, []);
 
-  const handleEditChange = (e) => {
+  const startEdit = () => {
+    setIsEditing(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
+
+  const cancelEdit = () => {
+    // revert to user data
+    setIsEditing(false);
+    setErrorMessage("");
+    setSuccessMessage("");
+    if (user) {
+      setEditData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        babyInfo: {
+          age: user.userInfo?.babyInfo?.age || "",
+          weight: user.userInfo?.babyInfo?.weight || "",
+          allergies: Array.isArray(user.userInfo?.babyInfo?.allergies)
+            ? user.userInfo.userInfo?.babyInfo?.allergies // defensive
+            : user.userInfo?.babyInfo?.allergies || [],
+          feedingMethod: user.userInfo?.babyInfo?.feedingMethod || "traditional",
+        },
+      });
+    }
+  };
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-
+    // baby fields: age, weight, allergies, feedingMethod
     if (["age", "weight", "feedingMethod"].includes(name)) {
       setEditData((prev) => ({
         ...prev,
         babyInfo: { ...prev.babyInfo, [name]: value },
       }));
     } else if (name === "allergies") {
-      // Phân tách chuỗi thành mảng, ví dụ: "trứng,sữa"
+      // user types comma-separated string
+      const arr = value
+        .split(",")
+        .map((it) => it.trim())
+        .filter(Boolean);
       setEditData((prev) => ({
         ...prev,
-        babyInfo: { ...prev.babyInfo, allergies: value.split(",") },
+        babyInfo: { ...prev.babyInfo, allergies: arr },
       }));
     } else {
       setEditData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const startEdit = () => {
-    setIsEditing(true);
-    setEditError("");
-    setSuccess(false);
-  };
-
-  const cancelEdit = () => {
-    setIsEditing(false);
-    setEditData({
-      name: user.name || "",
-      email: user.email || "",
-      phone: user.phone || "",
-      babyInfo: user.userInfo?.babyInfo || {
-        age: "",
-        weight: "",
-        allergies: [],
-        feedingMethod: "traditional",
-      },
-    });
-    setEditError("");
-  };
-
-  const saveEdit = async () => {
+  const saveProfile = async () => {
     setSaving(true);
-    setEditError("");
+    setErrorMessage("");
+    setSuccessMessage("");
     try {
+      // call updateProfile with the structure you backend expects
+      // Here we pass editData; adjust if your API expects nested userInfo
       await updateProfile(editData);
-      // cập nhật state local
-      setUser({ ...user, ...editData, userInfo: { babyInfo: editData.babyInfo } });
-      setSuccess(true);
+      // optimistic update
+      setUser((prev) => ({
+        ...prev,
+        name: editData.name,
+        email: editData.email,
+        phone: editData.phone,
+        userInfo: { ...prev?.userInfo, babyInfo: { ...editData.babyInfo } },
+      }));
       setIsEditing(false);
-      setTimeout(() => setSuccess(false), 3000);
+      setSuccessMessage("Cập nhật thông tin thành công!");
+      setTimeout(() => setSuccessMessage(""), 3500);
     } catch (err) {
-      setEditError(
-        err.response?.data?.message ||
-        "Cập nhật thất bại. Vui lòng thử lại sau."
+      console.error(err);
+      setErrorMessage(
+        err?.response?.data?.message || "Cập nhật thất bại. Vui lòng thử lại."
       );
     } finally {
       setSaving(false);
     }
   };
 
+  const getFeedingLabel = (val) => {
+    const map = {
+      traditional: "Truyền thống",
+      blw: "Tự chỉ huy (BLW)",
+      japanese: "Kiểu Nhật",
+    };
+    return map[val] || "Chưa cập nhật";
+  };
+
   if (loading) {
     return (
-      <div className="centered">
-        <div className="spinner" />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="login-prompt">
-        <div className="login-box">
-          <div className="avatar-large">
-            <LoginIcon fontSize="large" />
-          </div>
-          <h2>Vui lòng đăng nhập để tiếp tục</h2>
-          <p>Bạn cần đăng nhập để xem thông tin tài khoản của mình.</p>
-          <div className="login-actions">
-            <Link className="btn primary" to="/login">
-              <LoginIcon /> Đăng nhập
-            </Link>
-            <Link className="btn" to="/">
-              <HomeIcon /> Trang chủ
-            </Link>
-          </div>
-        </div>
+      <div className="tiny_profilepage__centered">
+        <div className="tiny_profilepage__spinner" />
       </div>
     );
   }
 
   return (
     <AccountLayout user={user}>
-      <div className="profile-header">
-        <h1>THÔNG TIN TÀI KHOẢN</h1>
-        {!isEditing ? (
-          <button className="btn-edit" onClick={startEdit}>
-            <EditIcon /> Chỉnh sửa
-          </button>
-        ) : (
-          <div className="edit-actions">
+      <div className="tiny_profilepage__root">
+        <div className="tiny_profilepage__header">
+          <h1 className="tiny_profilepage__header_title">THÔNG TIN TÀI KHOẢN</h1>
+
+          {!isEditing ? (
             <button
-              className="btn btn-cancel"
-              onClick={cancelEdit}
-              disabled={saving}
+              className="tiny_profilepage__btn_edit"
+              onClick={startEdit}
+              aria-label="Chỉnh sửa thông tin"
             >
-              <CancelIcon /> Hủy
+              <EditIcon /> Chỉnh sửa
             </button>
-            <button
-              className="btn btn-save primary"
-              onClick={saveEdit}
-              disabled={saving}
-            >
-              {saving ? <div className="spinner-small" /> : <><SaveIcon /> Lưu</>}
-            </button>
-          </div>
+          ) : (
+            <div className="tiny_profilepage__edit_actions">
+              <button
+                className="tiny_profilepage__btn_cancel"
+                onClick={cancelEdit}
+                disabled={saving}
+              >
+                <CancelIcon /> Hủy
+              </button>
+              <button
+                className="tiny_profilepage__btn_save"
+                onClick={saveProfile}
+                disabled={saving}
+              >
+                {saving ? <div className="tiny_profilepage__spinner_small" /> : <><SaveIcon /> Lưu</>}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {errorMessage && (
+          <div className="tiny_profilepage__error_message">{errorMessage}</div>
         )}
-      </div>
+        {successMessage && (
+          <div className="tiny_profilepage__success_message">{successMessage}</div>
+        )}
 
-      {editError && <div className="error-message">{editError}</div>}
-      {success && <div className="success-message">Cập nhật thông tin thành công!</div>}
-
-      {/* Thông tin account */}
-      <div className="info-row">
-        <div className="info-label"><PersonIcon /> Họ tên:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <input
-              className="field-input"
-              name="name"
-              value={editData.name}
-              onChange={handleEditChange}
-              placeholder="Nhập họ và tên"
-            />
-          ) : user.name || "Chưa cập nhật"}
+        {/* Account info */}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">
+            <PersonIcon /> Họ tên:
+          </div>
+          <div className="tiny_profilepage__value">
+            {isEditing ? (
+              <input
+                name="name"
+                value={editData.name}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+                placeholder="Nhập họ và tên"
+              />
+            ) : (
+              user?.name || "Chưa cập nhật"
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="info-row">
-        <div className="info-label"><EmailIcon /> Email:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <input
-              className="field-input"
-              name="email"
-              type="email"
-              value={editData.email}
-              onChange={handleEditChange}
-              placeholder="Nhập email"
-              disabled
-            />
-          ) : user.email || "Chưa cập nhật"}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">
+            <EmailIcon /> Email:
+          </div>
+          <div className="tiny_profilepage__value">
+            {/* email often not editable */}
+            {isEditing ? (
+              <input
+                name="email"
+                value={editData.email}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+                type="email"
+                placeholder="Nhập email"
+                disabled
+                aria-disabled
+              />
+            ) : (
+              user?.email || "Chưa cập nhật"
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="info-row">
-        <div className="info-label"><PhoneIcon /> Số điện thoại:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <input
-              className="field-input"
-              name="phone"
-              value={editData.phone}
-              onChange={handleEditChange}
-              placeholder="Nhập số điện thoại"
-            />
-          ) : user.phone || "Chưa cập nhật"}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">
+            <PhoneIcon /> Số điện thoại:
+          </div>
+          <div className="tiny_profilepage__value">
+            {isEditing ? (
+              <input
+                name="phone"
+                value={editData.phone}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+                placeholder="Nhập số điện thoại"
+              />
+            ) : (
+              user?.phone || "Chưa cập nhật"
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Thông tin babyInfo */}
-      <h2>THÔNG TIN TRẺ</h2>
+        {/* Baby info section */}
+        <h2 className="tiny_profilepage__baby_section_title">THÔNG TIN TRẺ</h2>
 
-      <div className="info-row">
-        <div className="info-label">Tuổi:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <input
-              className="field-input"
-              name="age"
-              value={editData.babyInfo.age}
-              onChange={handleEditChange}
-              placeholder="Ví dụ: 8 tháng"
-            />
-          ) : editData.babyInfo.age || "Chưa cập nhật"}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">🍼 Tuổi:</div>
+          <div className="tiny_profilepage__value">
+            {isEditing ? (
+              <input
+                name="age"
+                value={editData.babyInfo.age}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+                placeholder="Ví dụ: 8 tháng"
+              />
+            ) : (
+              editData.babyInfo.age || "Chưa cập nhật"
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="info-row">
-        <div className="info-label">Cân nặng:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <input
-              className="field-input"
-              name="weight"
-              value={editData.babyInfo.weight}
-              onChange={handleEditChange}
-              placeholder="Ví dụ: 8kg"
-            />
-          ) : editData.babyInfo.weight || "Chưa cập nhật"}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">⚖️ Cân nặng:</div>
+          <div className="tiny_profilepage__value">
+            {isEditing ? (
+              <input
+                name="weight"
+                value={editData.babyInfo.weight}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+                placeholder="Ví dụ: 8kg"
+              />
+            ) : (
+              editData.babyInfo.weight || "Chưa cập nhật"
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="info-row">
-        <div className="info-label">Dị ứng:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <input
-              className="field-input"
-              name="allergies"
-              value={editData.babyInfo.allergies.join(",")}
-              onChange={handleEditChange}
-              placeholder="Nhập, phân cách bằng dấu ,"
-            />
-          ) : editData.babyInfo.allergies.length > 0
-            ? editData.babyInfo.allergies.join(", ")
-            : "Chưa cập nhật"}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">🚫 Dị ứng:</div>
+          <div className="tiny_profilepage__value">
+            {isEditing ? (
+              <input
+                name="allergies"
+                value={(editData.babyInfo.allergies || []).join(", ")}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+                placeholder="Nhập, phân cách bằng dấu ,"
+              />
+            ) : (editData.babyInfo.allergies && editData.babyInfo.allergies.length > 0 ? (
+              editData.babyInfo.allergies.join(", ")
+            ) : (
+              "Chưa cập nhật"
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="info-row">
-        <div className="info-label">Phương pháp ăn:</div>
-        <div className="info-value">
-          {isEditing ? (
-            <select
-              className="field-input"
-              name="feedingMethod"
-              value={editData.babyInfo.feedingMethod}
-              onChange={handleEditChange}
-            >
-              <option value="traditional">Truyền thống</option>
-              <option value="blw">BLW</option>
-              <option value="japanese">Nhật</option>
-            </select>
-          ) : editData.babyInfo.feedingMethod || "Chưa cập nhật"}
+        <div className="tiny_profilepage__info_row">
+          <div className="tiny_profilepage__label">🍽️ Phương pháp ăn:</div>
+          <div className="tiny_profilepage__value">
+            {isEditing ? (
+              <select
+                name="feedingMethod"
+                value={editData.babyInfo.feedingMethod}
+                onChange={handleChange}
+                className="tiny_profilepage__field_input"
+              >
+                <option value="traditional">Truyền thống</option>
+                <option value="blw">Tự chỉ huy (BLW)</option>
+                <option value="japanese">Kiểu Nhật</option>
+              </select>
+            ) : (
+              getFeedingLabel(editData.babyInfo.feedingMethod)
+            )}
+          </div>
         </div>
       </div>
     </AccountLayout>

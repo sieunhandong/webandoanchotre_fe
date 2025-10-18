@@ -219,7 +219,7 @@ export default function ComplaintManagement() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((c) => (
                 <TableRow key={c._id} hover>
-                  <TableCell>{c.user.email}</TableCell>
+                  <TableCell>{c.user?.email}</TableCell>
                   <TableCell>{c.type}</TableCell>
                   <TableCell>{c.description}</TableCell>
                   <TableCell>
@@ -256,9 +256,9 @@ export default function ComplaintManagement() {
           sx={{
             borderTop: "1px solid #e0e0e0",
             "& .MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows":
-              {
-                fontWeight: 500,
-              },
+            {
+              fontWeight: 500,
+            },
           }}
         />
       </TableContainer>

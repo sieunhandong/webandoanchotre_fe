@@ -348,6 +348,10 @@ const SetDetail = () => {
               <Box sx={{ bgcolor: "#F8FCFF", p: 2, borderRadius: 2, mb: 2, border: "2px dashed #72CCF1" }}>
                 <Typography variant="h6" fontWeight="bold" mb={1} sx={{ color: "#2c3e50" }}>{setData.title}</Typography>
                 <Typography color="text.secondary" mb={2} sx={{ fontSize: "0.9rem" }}>{setData.description}</Typography>
+                <Typography color="text.secondary" mb={2} sx={{ fontSize: "0.9rem" }}>✓ Tiện lợi</Typography>
+                <Typography color="text.secondary" mb={2} sx={{ fontSize: "0.9rem" }}>✓ Tiết kiệm thời gian</Typography>
+                <Typography color="text.secondary" mb={2} sx={{ fontSize: "0.9rem" }}>✓ Đầy đủ dinh dưỡng</Typography>
+
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, bgcolor: "white", px: 2, py: 1, borderRadius: 1 }}>
                   <span style={{ fontSize: "20px" }}>⏱</span>
                   <Typography fontWeight="600" sx={{ color: "#72CCF1" }}>Thời gian: {setData.duration} ngày</Typography>
@@ -372,12 +376,12 @@ const SetDetail = () => {
 
               <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
                 <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="caption" sx={{ color: "#72CCF1", fontWeight: 700 }}>100+</Typography>
+                  <Typography variant="caption" sx={{ color: "#72CCF1", fontWeight: 700 }}>99+</Typography>
                   <Typography variant="caption" display="block" color="text.secondary">Đơn hàng</Typography>
                 </Box>
                 <Box sx={{ width: "1px", bgcolor: "#ddd" }} />
                 <Box sx={{ textAlign: "center" }}>
-                  <Typography variant="caption" sx={{ color: "#72CCF1", fontWeight: 700 }}>4.8★</Typography>
+                  <Typography variant="caption" sx={{ color: "#ffe762ff", fontWeight: 700 }}>4.9★</Typography>
                   <Typography variant="caption" display="block" color="text.secondary">Đánh giá</Typography>
                 </Box>
                 <Box sx={{ width: "1px", bgcolor: "#ddd" }} />

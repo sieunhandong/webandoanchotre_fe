@@ -1,4 +1,4 @@
-// HomePage.jsx
+
 import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
@@ -40,6 +40,7 @@ const HomePage = () => {
     recipes: useRef(null),
     reviews: useRef(null),
     partners: useRef(null),
+    featured: useRef(null),
   };
 
   // Banner slides data
@@ -96,12 +97,41 @@ const HomePage = () => {
     },
   ];
 
-  // Partners data - ĐÃ CẬP NHẬT: Dùng ảnh từ local
+  // Partners data
   const partners = [
     { name: "Vinamilk", logo: "/partner1.jpg" },
     { name: "Nutricare", logo: "/partner2.jpg" },
     { name: "Nestlé", logo: "/partner3.jpg" },
     { name: "Organic", logo: "/partner4.jpg" },
+  ];
+
+  // Cut pieces data với nội dung
+  const cutPieces = [
+    {
+      icon: "🍎",
+      title: "Dinh dưỡng khoa học",
+      text: "Công thức cân đối dinh dưỡng"
+    },
+    {
+      icon: "👶",
+      title: "An toàn cho bé",
+      text: "Nguyên liệu tươi ngon, sạch"
+    },
+    {
+      icon: "👨‍🍳",
+      title: "Dễ dàng chế biến",
+      text: "Hướng dẫn chi tiết từng bước"
+    },
+    {
+      icon: "💚",
+      title: "Organic 100%",
+      text: "Không chất bảo quản"
+    },
+    {
+      icon: "⭐",
+      title: "Tin cậy nhất",
+      text: "Được hàng nghìn mẹ lựa chọn"
+    }
   ];
 
   useEffect(() => {
@@ -194,10 +224,9 @@ const HomePage = () => {
             key={index}
             className={`banner-slide ${currentSlide === index ? 'active' : ''}`}
             sx={{
-              background: `${slide.gradient}, url('${slide.image}')`,
+              background: `url('${slide.image}')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundBlendMode: "overlay",
             }}
           >
             <Container maxWidth="lg">
@@ -215,7 +244,7 @@ const HomePage = () => {
                   to="/quiz"
                   className="banner-button"
                 >
-                  Bắt đầu ngay 🚀
+                  Bắt đầu Quiz ngay 🚀
                 </Button>
               </Box>
             </Container>
@@ -246,51 +275,35 @@ const HomePage = () => {
       <Box className="decorative-wave" />
 
       {/* Section 1: Chuyện nhà TinnyYummy */}
-      <Container
-        className="section-about"
-        maxWidth="xl"
-      >
-        <Grid container spacing={6} alignItems="center" justifyContent="center" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-
-          {/* Ảnh */}
-          <Grid item xs={12} sm={6} md={6} className="about-image" sx={{ maxWidth: '600px', width: '100%' }}>
-            <CardMedia
-              component="img"
-              image="/home_banner1.png"
+      {/* ABOUT SECTION - HTML THUẦN */}
+      <section id="about-section" className="about-section">
+        <div className="about-container">
+          {/* ẢNH */}
+          <div className="about-image-wrapper">
+            <img
+              src="/home_banner1.png"
               alt="Chuyện nhà TinyYummy"
-              className="about-image-img"
-              sx={{ maxWidth: '400px', width: '100%', margin: '0 auto' }}
+              className="about-image"
             />
-          </Grid>
+          </div>
 
-          {/* Thông tin */}
-          <Grid item xs={12} sm={6} md={6} className="about-content" sx={{ maxWidth: '500px', width: '100%' }}>
-            <Typography variant="h3" className="about-title">
-              Chuyện nhà TinyYummy
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph sx={{ fontSize: '1.05rem', lineHeight: 1.8 }}>
-              TinyYummy là thương hiệu Việt tiên phong trong lĩnh vực
-              đồ ăn dặm cho trẻ em, cam kết mang đến những sản phẩm dinh
-              dưỡng an toàn, tiện lợi và chất lượng cao, đồng hành cùng ba
-              mẹ trong hành trình chăm sóc và phát triển toàn diện cho bé yêu.
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph sx={{ fontSize: '1.05rem', lineHeight: 1.8 }}>
+          {/* NỘI DUNG */}
+          <div className="about-content-wrapper">
+            <h2 className="about-title">Chuyện nhà TY</h2>
+            <p className="about-text">
+              TinyYummy là thương hiệu Việt tiên phong trong lĩnh vực đồ ăn dặm cho trẻ em,
+              cam kết mang đến những sản phẩm dinh dưỡng an toàn, tiện lợi và chất lượng cao,
+              đồng hành cùng ba mẹ trong hành trình chăm sóc và phát triển toàn diện cho bé yêu.
+            </p>
+            <p className="about-text">
               Với đội ngũ chuyên gia dinh dưỡng giàu kinh nghiệm, chúng tôi nghiên cứu
-              và phát triển các công thức ăn dặm khoa học, phù hợp với từng giai đoạn
-              phát triển của trẻ.
-            </Typography>
-            <Button
-              variant="contained"
-              component={Link}
-              to="/about-us"
-              className="btn-about"
-            >
-              Tìm hiểu thêm về chúng tôi ✨
-            </Button>
-          </Grid>
+              và phát triển các công thức ăn dặm khoa học, phù hợp với từng giai đoạn phát triển của trẻ.
+            </p>
+            <a href="/about-us" className="about-button">Tìm hiểu thêm về chúng tôi ✨</a>
+          </div>
+        </div>
+      </section>
 
-        </Grid>
-      </Container>
 
       {/* BLOG SECTION */}
       <Container
@@ -305,7 +318,7 @@ const HomePage = () => {
             <Chip label="BLOG MỚI NHẤT" className="chip-primary" />
           </Box>
           <Typography variant="h3" className="section-title">
-            Bài viết nổi bật
+            BÀI VIẾT NỔI BẬT
           </Typography>
           <Typography variant="body1" color="text.secondary" className="section-subtitle">
             Cập nhật kiến thức dinh dưỡng mới nhất cho bé yêu từ các chuyên gia hàng đầu
@@ -342,9 +355,6 @@ const HomePage = () => {
                   <CardContent sx={{ p: 3 }}>
                     <Typography variant="h6" className="blog-title">
                       {blog.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" className="blog-excerpt">
-                      {blog.content.replace(/<[^>]+>/g, "").slice(0, 120)}...
                     </Typography>
                   </CardContent>
                 </Card>
@@ -396,11 +406,14 @@ const HomePage = () => {
                 <Card
                   key={set._id}
                   className={`mealset-card ${idx === 1 ? 'popular' : ''}`}
-                  sx={{ animationDelay: `${idx * 0.15}s` }}
+                  sx={{
+                    animationDelay: `${idx * 0.15}s`,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => window.location.href = `/mealset/${set._id}`}
                 >
                   {idx === 1 && (
                     <Box className="popular-badge" sx={{ marginTop: '1rem' }}>
-                      {/* <Typography sx={{ fontSize: "1.5rem" }}>⭐</Typography> */}
                       <Chip label="PHỔ BIẾN NHẤT" className="chip-popular" />
                     </Box>
                   )}
@@ -449,6 +462,7 @@ const HomePage = () => {
                     component={Link}
                     to={`/mealset/${set._id}`}
                     className={`btn-mealset ${idx === 1 ? 'primary' : 'outline'}`}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     Mua ngay 🛒
                   </Button>
@@ -459,97 +473,93 @@ const HomePage = () => {
         </Container>
       </Box>
 
-      {/* RECIPES SECTION */}
-      <Container
-        ref={sectionRefs.recipes}
-        maxWidth="xl"
-        className={`section ${visibleSections.recipes ? 'visible' : ''}`}
-        sx={{ my: 10 }}
+
+
+      {/* FEATURED IMAGE SECTION - HIỆU ỨNG ẢNH BỊ CẮT */}
+      <section
+        className="featured-grid-section"
+        style={{
+          backgroundImage: "url('/homepage2.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
-        <Box className="section-header">
-          <Box className="section-icon-chip">
-            <Typography sx={{ fontSize: "2rem" }}>👨‍🍳</Typography>
-            <Chip label="CÔNG THỨC NẤU ĂN" className="chip-green" />
-          </Box>
-          <Typography variant="h3" className="section-title">
-            Khám phá công thức
-          </Typography>
-          <Typography variant="body1" color="text.secondary" className="section-subtitle">
-            Các công thức nấu ăn bổ dưỡng, dễ làm cho bé yêu của bạn
-          </Typography>
-        </Box>
+        <div className="featured-overlay"></div>
+
+        <div className="featured-grid">
+          {[
+            { icon: "🍎", title: "Dinh dưỡng khoa học", text: "Công thức cân đối dinh dưỡng" },
+            { icon: "💚", title: "Organic 100%", text: "Không chất bảo quản" },
+            { icon: "👶", title: "An toàn cho bé", text: "Nguyên liệu tươi ngon, sạch" },
+            { icon: "⭐", title: "Tin cậy nhất", text: "Được hàng nghìn mẹ lựa chọn" },
+            { icon: "👩‍🍳", title: "Dễ dàng chế biến", text: "Hướng dẫn chi tiết từng bước" },
+            { icon: "🌈", title: "Đa dạng món ăn", text: "Phù hợp từng giai đoạn phát triển" },
+          ].map((item, i) => (
+            <div key={i} className={`featured-tile tile-${i + 1}`}>
+              <div className="tile-content">
+                <h3 className="tile-title">{item.title}</h3>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
+
+      {/* RECIPES SECTION */}
+      <section id="recipes-section" className="recipes-section">
+        <div className="recipes-header">
+          <div className="recipes-header-text">
+            <h2 className="recipes-title">👨‍🍳KHÁM PHÁ CÔNG THỨC</h2>
+            <p className="recipes-subtitle">
+              Các công thức nấu ăn bổ dưỡng, dễ làm cho bé yêu của bạn
+            </p>
+          </div>
+        </div>
 
         {loadingRecipes ? (
-          <Box textAlign="center">
-            <CircularProgress sx={{ color: "#72CDF1" }} />
-          </Box>
+          <div className="recipes-loading">
+            <div className="loader"></div>
+          </div>
         ) : (
           <>
-            <Grid container spacing={4} sx={{ mb: 5, justifyContent: "center" }}>
-              {recipes.map((recipe, idx) => (
-                <Grid item xs={12} sm={6} md={4} key={recipe._id}>
-                  <Card className="recipe-card" sx={{ animationDelay: `${idx * 0.1}s` }}>
-                    <Box className="recipe-image-wrapper">
-                      {recipe.images?.[0] && (
-                        <CardMedia
-                          component="img"
-                          image={recipe.images[0]}
-                          alt={recipe.name}
-                          className="recipe-image"
-                        />
-                      )}
-                      <Box className="recipe-gradient" />
-                      <Box className="recipe-icon bounce">
-                        <Typography sx={{ fontSize: "1.8rem" }}>🍽️</Typography>
-                      </Box>
-                    </Box>
+            <div className="recipes-grid">
+              {recipes.map((recipe) => (
+                <div
+                  key={recipe._id}
+                  className="recipe-card-plain"
+                  onClick={() => (window.location.href = `/recipes/${recipe._id}`)}
+                >
+                  <div className="recipe-image-wrapper-plain">
+                    <img
+                      src={recipe.images?.[0]}
+                      alt={recipe.name}
+                      className="recipe-image-plain"
+                    />
+                  </div>
 
-                    <CardContent className="recipe-content">
-                      <Typography variant="h6" className="recipe-title">
-                        {recipe.name}
-                      </Typography>
-                      <Box className="recipe-tags">
-                        <Chip label="Bổ dưỡng" size="small" className="tag-nutrition" />
-                        <Chip label="Dễ làm" size="small" className="tag-easy" />
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                  <div className="recipe-content-plain">
+                    <h3 className="recipe-name-plain">{recipe.name}</h3>
+                    <div className="recipe-tags-plain">
+                      <span className="tag tag-blue">Bổ dưỡng</span>
+                      <span className="tag tag-green">Dễ làm</span>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </Grid>
+            </div>
 
-            <Box textAlign="center">
-              <Button
-                variant="contained"
-                size="large"
-                component={Link}
-                to="/recipes"
-                className="btn-green"
-              >
+            <div className="recipes-more">
+              <a href="/recipes" className="recipes-btn">
                 Xem thêm công thức →
-              </Button>
-            </Box>
+              </a>
+            </div>
           </>
         )}
-      </Container>
+      </section>
 
-      {/* FEATURED IMAGE SECTION - ĐÃ THÊM MỚI */}
-      {/* <Box className="section-featured">
-        <Container maxWidth="xl">
-          <Box className="featured-content">
-            <Box className="featured-image-wrapper">
-              <img src="/homepage.jpeg" alt="Featured Banner" className="featured-image" />
-              <Box className="featured-overlay-cut">
-                <Box className="cut-piece cut-1"></Box>
-                <Box className="cut-piece cut-2"></Box>
-                <Box className="cut-piece cut-3"></Box>
-                <Box className="cut-piece cut-4"></Box>
-                <Box className="cut-piece cut-5"></Box>
-              </Box>
-            </Box>
-          </Box>
-        </Container>
-      </Box> */}
+
 
       {/* REVIEWS SECTION */}
       <Box
@@ -616,7 +626,7 @@ const HomePage = () => {
               <Chip label="ĐỐI TÁC" className="chip-gray" />
             </Box>
             <Typography variant="h3" className="section-title">
-              Đối tác tin cậy
+              ĐỐI TÁC TIN CẬY
             </Typography>
             <Typography variant="body1" color="text.secondary" className="section-subtitle">
               Hợp tác cùng các thương hiệu hàng đầu
@@ -666,16 +676,6 @@ const HomePage = () => {
             </Button>
           </Box>
         </Container>
-      </Box>
-
-      {/* FOOTER */}
-      <Box className="footer">
-        <Typography variant="h6" className="footer-title">
-          © 2025 Baby Food Blog. All rights reserved.
-        </Typography>
-        <Typography variant="body2" className="footer-subtitle">
-          Dinh dưỡng tốt nhất cho bé yêu của bạn ❤️
-        </Typography>
       </Box>
     </Box>
   );

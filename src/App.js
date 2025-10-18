@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import Footer from "./components/Footer";
+import Footer from "./components/Footer/Footer.js";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import HomePage from "./pages/HomePage/HomePage";
@@ -32,9 +32,11 @@ import AdminFood from "./pages/Admin/FoodManagement/FoodManagement.js";
 import AdminBlogCategory from "./pages/Admin/BlogCategoryManagement/BlogCategoryManagement.js";
 import BlogPage from "./pages/BlogReview/BlogPage.js";
 import BlogDetail from "./pages/ReviewDetail/BlogDetail.js";
-import AboutUs from "./components/AboutUs.js";
+import AboutUs from "./components/AboutUs/AboutUs.js";
 import SetDetail from "./pages/SetDetail/SetDetail.js";
 import SocialButtons from "./components/SocialButtons.js";
+import FoodPage from "./pages/FoodPage/FoodPage.js";
+import FoodDetails from "./pages/FoodPage/FoodDetails.js";
 const AdminRoute = ({ children }) => {
   const userRole =
     localStorage.getItem("userRole") || sessionStorage.getItem("userRole");
@@ -171,6 +173,8 @@ function App() {
         <Route path="/user/complaint" element={<ComplaintPage />} />
         <Route path="/user/refund" element={<Refund />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/recipes" element={<FoodPage />} />
+        <Route path="/recipes/:id" element={<FoodDetails />} />
         <Route
           path="/user/change-password"
           element={
@@ -201,7 +205,7 @@ function App() {
       {!isAdminRoute && !shouldHideFooter && (
         <>
           <SocialButtons />
-          {/* <Footer /> */}
+          <Footer />
         </>
       )}
     </>
