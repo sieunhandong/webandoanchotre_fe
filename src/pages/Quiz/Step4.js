@@ -3,40 +3,70 @@ import { step4 } from "../../services/QuizService";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import "./step4.css";
+import { Alert, Snackbar } from "@mui/material";
 
 const Step4 = ({ data, onNext, onPrev }) => {
     const [menu, setMenu] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const savedMenu =
-            data?.mealSuggestions ||
-            JSON.parse(localStorage.getItem("quiz_mealSuggestions") || "[]");
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        severity: "info",
+    });
 
+    const handleAlert = (message, severity = "info") => {
+        setAlert({ open: true, message, severity });
+    };
+
+    const handleCloseAlert = () => {
+        setAlert((prev) => ({ ...prev, open: false }));
+    };
+    // Tạo "hash" dữ liệu đầu vào để so sánh
+    const createInputHash = (data) => {
+        return JSON.stringify({
+            age: data?.age,
+            weight: data?.weight,
+            allergies: data?.allergies || [],
+            feedingMethod: data?.feedingMethod,
+            selectedProducts: data?.selectedProducts || [],
+        });
+    };
+    useEffect(() => {
+        if (!data?.sessionId) return;
+        const inputHash = createInputHash(data);
+        const savedHash = localStorage.getItem(`quiz_mealInputHash_${data.sessionId}`);
+        const savedMenu = JSON.parse(localStorage.getItem(`quiz_mealSuggestions_${data.sessionId}`) || "[]");
+
+        // Nếu dữ liệu thay đổi → xóa cache cũ và gọi AI
+        if (savedHash !== inputHash) {
+            localStorage.removeItem(`quiz_mealSuggestions_${data.sessionId}`);
+            fetchMenu(data.sessionId, inputHash);
+            return;
+        }
         if (savedMenu.length > 0) {
             setMenu(savedMenu);
         } else if (data?.sessionId) {
-            fetchMenu(data.sessionId);
+            fetchMenu(data.sessionId, inputHash);
         }
-    }, [data?.sessionId]);
+    }, [data?.sessionId, data?.age, data?.weight, data?.feedingMethod, JSON.stringify(data?.allergies)]);
 
-    const fetchMenu = async (sessionId) => {
+    const fetchMenu = async (sessionId, inputHash) => {
         setLoading(true);
         try {
             const res = await step4({ sessionId });
             if (res.data.success && res.data.data.menu) {
                 const suggestedMenu = res.data.data.menu;
                 setMenu(suggestedMenu);
-                localStorage.setItem(
-                    "quiz_mealSuggestions",
-                    JSON.stringify(suggestedMenu)
-                );
+                // Lưu vào localStorage
+                localStorage.setItem(`quiz_mealSuggestions_${sessionId}`, JSON.stringify(suggestedMenu));
+                localStorage.setItem(`quiz_mealInputHash_${sessionId}`, inputHash);
             } else {
-                alert("Không nhận được dữ liệu thực đơn!");
+                handleAlert("Không nhận được dữ liệu thực đơn!", "error");
             }
         } catch (err) {
             console.error(err);
-            alert("Lỗi khi lấy gợi ý thực đơn!");
+            handleAlert("Lỗi khi lấy gợi ý thực đơn!", "error");
         } finally {
             setLoading(false);
         }
@@ -91,6 +121,33 @@ const Step4 = ({ data, onNext, onPrev }) => {
                     <ArrowForwardIosRoundedIcon />
                 </button>
             </div>
+
+            <Snackbar
+                open={alert.open}
+                autoHideDuration={3000}
+                onClose={handleCloseAlert}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert
+                    onClose={handleCloseAlert}
+                    severity={alert.severity}
+                    sx={{
+                        bgcolor:
+                            alert.severity === "error"
+                                ? "#FFD6D6"
+                                : alert.severity === "info"
+                                    ? "#E3F7FF"
+                                    : "#D6FFE3",
+                        color: "#333",
+                        fontWeight: 600,
+                        borderRadius: "14px",
+                        boxShadow: "0 6px 16px rgba(114,204,241,0.25)",
+                        px: 2,
+                    }}
+                >
+                    {alert.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

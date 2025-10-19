@@ -47,6 +47,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
       sessionStorage.clear();
       updateUserEmail(null);
       setDrawerOpen(false);
+      handleMoreMenuClose();
       navigate("/account/login");
     } catch (error) {
       console.error("Logout error:", error);

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import AuthService from "../services/AuthService";
-import { toast } from "react-toastify";
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL_BACKEND,
 });

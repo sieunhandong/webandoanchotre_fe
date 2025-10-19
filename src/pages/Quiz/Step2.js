@@ -3,12 +3,9 @@ import {
     Box,
     Paper,
     Typography,
-    CircularProgress,
     Snackbar,
     Alert,
-    IconButton,
     Grid,
-    Button,
 } from "@mui/material";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";

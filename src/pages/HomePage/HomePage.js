@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
@@ -48,7 +47,7 @@ const HomePage = () => {
     {
       title: "Khám phá thế giới ăn dặm",
       subtitle: "Dinh dưỡng khoa học cho bé yêu phát triển toàn diện",
-      image: "/banner1.jpg",
+      image: "/banner5.jpg",
       gradient: "linear-gradient(135deg, rgba(114, 205, 241, 0.95) 0%, rgba(114, 205, 241, 0.7) 100%)",
     },
     {
@@ -105,35 +104,6 @@ const HomePage = () => {
     { name: "Organic", logo: "/partner4.jpg" },
   ];
 
-  // Cut pieces data với nội dung
-  const cutPieces = [
-    {
-      icon: "🍎",
-      title: "Dinh dưỡng khoa học",
-      text: "Công thức cân đối dinh dưỡng"
-    },
-    {
-      icon: "👶",
-      title: "An toàn cho bé",
-      text: "Nguyên liệu tươi ngon, sạch"
-    },
-    {
-      icon: "👨‍🍳",
-      title: "Dễ dàng chế biến",
-      text: "Hướng dẫn chi tiết từng bước"
-    },
-    {
-      icon: "💚",
-      title: "Organic 100%",
-      text: "Không chất bảo quản"
-    },
-    {
-      icon: "⭐",
-      title: "Tin cậy nhất",
-      text: "Được hàng nghìn mẹ lựa chọn"
-    }
-  ];
-
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -184,9 +154,13 @@ const HomePage = () => {
     return () => clearInterval(timer);
   }, [bannerSlides.length]);
 
-  // Intersection Observer for lazy loading sections
+  // Enhanced Intersection Observer với threshold tốt hơn
   useEffect(() => {
     const observers = {};
+    const observerOptions = {
+      threshold: 0.15, // Trigger khi 15% element xuất hiện
+      rootMargin: '0px 0px -50px 0px' // Trigger sớm hơn một chút
+    };
 
     Object.keys(sectionRefs).forEach((key) => {
       if (sectionRefs[key].current) {
@@ -194,13 +168,30 @@ const HomePage = () => {
           ([entry]) => {
             if (entry.isIntersecting) {
               setVisibleSections((prev) => ({ ...prev, [key]: true }));
+              // Unobserve sau khi đã visible để tránh re-trigger
+              observers[key].unobserve(entry.target);
             }
           },
-          { threshold: 0.1 }
+          observerOptions
         );
         observers[key].observe(sectionRefs[key].current);
       }
     });
+
+    // Observer cho featured grid section
+    const featuredSection = document.querySelector('.featured-grid-section');
+    if (featuredSection) {
+      const featuredObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            featuredSection.classList.add('visible');
+            featuredObserver.unobserve(entry.target);
+          }
+        },
+        observerOptions
+      );
+      featuredObserver.observe(featuredSection);
+    }
 
     return () => {
       Object.values(observers).forEach((observer) => observer.disconnect());
@@ -275,7 +266,6 @@ const HomePage = () => {
       <Box className="decorative-wave" />
 
       {/* Section 1: Chuyện nhà TinnyYummy */}
-      {/* ABOUT SECTION - HTML THUẦN */}
       <section id="about-section" className="about-section">
         <div className="about-container">
           {/* ẢNH */}
@@ -291,7 +281,7 @@ const HomePage = () => {
           <div className="about-content-wrapper">
             <h2 className="about-title">Chuyện nhà TY</h2>
             <p className="about-text">
-              TinyYummy là thương hiệu Việt tiên phong trong lĩnh vực đồ ăn dặm cho trẻ em,
+              TinyYummy là thương hiệu Việt trong lĩnh vực đồ ăn dặm cho trẻ em,
               cam kết mang đến những sản phẩm dinh dưỡng an toàn, tiện lợi và chất lượng cao,
               đồng hành cùng ba mẹ trong hành trình chăm sóc và phát triển toàn diện cho bé yêu.
             </p>
@@ -336,7 +326,6 @@ const HomePage = () => {
                 <Card
                   key={blog._id}
                   className="blog-card"
-                  sx={{ animationDelay: `${idx * 0.1}s` }}
                   onClick={() => (window.location.href = `/blog/${blog._id}`)}
                 >
                   {blog.images?.[0] && (
@@ -407,7 +396,6 @@ const HomePage = () => {
                   key={set._id}
                   className={`mealset-card ${idx === 1 ? 'popular' : ''}`}
                   sx={{
-                    animationDelay: `${idx * 0.15}s`,
                     cursor: 'pointer'
                   }}
                   onClick={() => window.location.href = `/mealset/${set._id}`}
@@ -477,6 +465,7 @@ const HomePage = () => {
 
       {/* FEATURED IMAGE SECTION - HIỆU ỨNG ẢNH BỊ CẮT */}
       <section
+        ref={sectionRefs.featured}
         className="featured-grid-section"
         style={{
           backgroundImage: "url('/homepage2.jpg')",
@@ -508,7 +497,7 @@ const HomePage = () => {
 
 
       {/* RECIPES SECTION */}
-      <section id="recipes-section" className="recipes-section">
+      <section id="recipes-section" className="recipes-section" ref={sectionRefs.recipes}>
         <div className="recipes-header">
           <div className="recipes-header-text">
             <h2 className="recipes-title">👨‍🍳KHÁM PHÁ CÔNG THỨC</h2>
@@ -582,7 +571,7 @@ const HomePage = () => {
 
           <Box className="reviews-scroll">
             {reviews.map((review, idx) => (
-              <Card key={idx} className="review-card" sx={{ animationDelay: `${idx * 0.1}s` }}>
+              <Card key={idx} className="review-card">
                 <FormatQuoteIcon className="quote-icon" />
 
                 <Box className="review-header">

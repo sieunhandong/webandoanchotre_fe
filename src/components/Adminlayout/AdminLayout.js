@@ -38,7 +38,7 @@ export default function AdminLayout({ updateUserEmail }) {
     navigate("/account/login");
   };
   useEffect(() => {
-    console.log("userEmail updated:", userEmail);
+    // console.log("userEmail updated:", userEmail);
   }, [userEmail]);
 
   return (

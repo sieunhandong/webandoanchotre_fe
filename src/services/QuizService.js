@@ -53,6 +53,11 @@ export const getSets = async () => {
     const response = await axiosInstance.get(`/quiz/sets`);
     return response;
 };
+export const getQuizSession = async (sessionId) => {
+    const response = await axiosInstance.get(`/quiz/${sessionId}`);
+    return response;
+};
+
 
 // 📦 Đơn hàng của người dùng
 export const getOrders = async () => {

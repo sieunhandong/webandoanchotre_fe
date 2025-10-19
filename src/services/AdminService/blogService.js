@@ -28,8 +28,10 @@ export const getAllBlogsByUser = (params) =>
   axiosInstance.get("/blog", { params }).then((res) => res.data);
 export const getAllCategories = () =>
   axiosInstance.get("/blog/category").then((res) => res.data);
-export const getBlogsByMainCategories = () =>
-  axiosInstance.get("/blog/main-categories").then((res) => res.data);
+export const getBlogsByMainCategories = async (params = { page: 1, limit: 6 }) => {
+  const res = await axiosInstance.get(`/blog/main-categories`, { params });
+  return res.data;
+};
 
 // Lấy tất cả blog theo categoryId, kèm phân trang
 export const getBlogsByCategory = (blogCategoryId) =>

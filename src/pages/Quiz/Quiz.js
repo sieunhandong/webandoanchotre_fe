@@ -22,7 +22,6 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
 const Quiz = () => {
     const [step, setStep] = useState(1);
@@ -47,6 +46,35 @@ const Quiz = () => {
 
                 if (stepParam) savedStep = stepParam;
                 if (sessionParam) savedSession = sessionParam;
+                // 🟢 Nếu có sessionId cũ → kiểm tra session còn tồn tại không
+                if (savedSession) {
+                    try {
+                        const checkRes = await QuizService.getQuizSession(savedSession);
+                        if (!checkRes?.data?.data) {
+                            console.warn("⚠️ Session đã hết hạn hoặc bị xóa, tạo mới...");
+                            [
+                                "quiz_sessionId",
+                                "quiz_step",
+                                "quiz_selectedSetId",
+                                "quiz_mealSuggestions",
+                                "quiz_current_step"
+                            ].forEach((key) => localStorage.removeItem(key));
+                            savedSession = null;
+                            savedStep = 1;
+                        }
+                    } catch (err) {
+                        console.warn("⚠️ Không kiểm tra được session, tạo mới.");
+                        [
+                            "quiz_sessionId",
+                            "quiz_step",
+                            "quiz_selectedSetId",
+                            "quiz_mealSuggestions",
+                            "quiz_current_step"
+                        ].forEach((key) => localStorage.removeItem(key));
+                        savedSession = null;
+                        savedStep = 1;
+                    }
+                }
 
                 if (!savedSession) {
                     const res = await QuizService.startQuiz();

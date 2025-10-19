@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { getMyOrders, createPayment, cancelOrder } from "../../services/OrderService";
+import { getMyOrders } from "../../services/OrderService";
 import "./TrackOrderPage.css";
 
 const ORDERS_PER_PAGE = 5;
@@ -9,7 +9,6 @@ const ORDERS_PER_PAGE = 5;
 const TrackOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [notification, setNotification] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
@@ -30,11 +29,6 @@ const TrackOrderPage = () => {
 
   const calcTotal = (items) =>
     items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  const showNotification = (message, type = "info") => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3500);
-  };
 
   // Pagination logic
   const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
@@ -196,12 +190,6 @@ const TrackOrderPage = () => {
             </div>
           )}
         </>
-      )}
-
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.message}
-        </div>
       )}
     </div>
   );

@@ -18,10 +18,6 @@ export const getOrderStatus = async (orderId) => {
   return response;
 };
 
-export const createPayment = async (orderId) => {
-  const response = await axiosInstance.post("/payment/create", { orderId });
-  return response;
-};
 export const deleteOrder = async (orderId) => {
   const res = await axiosInstance.delete(`/order/${orderId}`);
   return res;

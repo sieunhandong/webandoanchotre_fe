@@ -54,12 +54,7 @@ function Register({ onLoginSuccess }) {
   };
 
   const handleSendOTP = async () => {
-    if (
-      !formData.email ||
-      !formData.password ||
-      !formData.name ||
-      !formData.phone
-    ) {
+    if (!formData.email || !formData.password || !formData.name || !formData.phone) {
       handleAlert("Vui lòng điền đầy đủ thông tin", "error");
       return;
     }
@@ -157,17 +152,13 @@ function Register({ onLoginSuccess }) {
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
-      const result = await AuthService.googleAuth(
-        credentialResponse.credential
-      );
+      const result = await AuthService.googleAuth(credentialResponse.credential);
 
       if (result?.accessToken && result?.role) {
-        const storageMethod = formData.rememberMe
-          ? localStorage
-          : sessionStorage;
+        const storageMethod = formData.rememberMe ? localStorage : sessionStorage;
 
         storageMethod.setItem("access_token", result.accessToken);
-        storageMethod.setItem("userEmail", result.email); // đảm bảo backend trả về email
+        storageMethod.setItem("userEmail", result.email);
         storageMethod.setItem("userRole", result.role);
 
         if (onLoginSuccess) {
@@ -176,7 +167,6 @@ function Register({ onLoginSuccess }) {
 
         handleAlert("Đăng nhập bằng Google thành công!", "success");
 
-        // Chuyển hướng dựa theo role
         setTimeout(() => {
           if (result.role === "admin") {
             navigate("/admin/dashboard");
@@ -209,9 +199,9 @@ function Register({ onLoginSuccess }) {
   };
 
   return (
-    <Box className="register-container" sx={{ backgroundImage: `url('/loginbg.jpg')` }}>
-      <Box className="register-form-container">
-        <Typography variant="h4" className="register-title" gutterBottom>
+    <Box className="custom-register-container" sx={{ backgroundImage: `url('/loginbg.jpg')` }}>
+      <Box className="custom-register-form-container">
+        <Typography variant="h4" className="custom-register-title" gutterBottom>
           Đăng ký
         </Typography>
 
@@ -221,7 +211,7 @@ function Register({ onLoginSuccess }) {
           </Typography>
         )}
 
-        <form onSubmit={handleSubmit} className="register-form">
+        <form onSubmit={handleSubmit} className="custom-register-form">
           <TextField
             required
             fullWidth
@@ -262,11 +252,7 @@ function Register({ onLoginSuccess }) {
             value={formData.password}
             onChange={handleChange}
             error={!!error && formData.password.length < 6}
-            helperText={
-              formData.password.length < 6
-                ? "Mật khẩu phải có ít nhất 6 ký tự"
-                : ""
-            }
+            helperText={formData.password.length < 6 ? "Mật khẩu phải có ít nhất 6 ký tự" : ""}
           />
 
           <Button
@@ -274,14 +260,14 @@ function Register({ onLoginSuccess }) {
             fullWidth
             variant="contained"
             disabled={loading}
-            className="register-button"
+            className="custom-register-button"
           >
             {loading ? "Đang xử lý..." : "Đăng ký"}
           </Button>
 
           <Typography align="center" sx={{ mt: 2 }}>
             Đã có tài khoản, đăng nhập&nbsp;
-            <Link to="/account/login" className="login-link">
+            <Link to="/account/login" className="custom-login-link">
               tại đây
             </Link>
           </Typography>
@@ -292,18 +278,15 @@ function Register({ onLoginSuccess }) {
             </Typography>
           </Divider>
 
-          <Box className="social-buttons-container">
+          <Box className="custom-social-buttons-container">
             <GoogleLogin onSuccess={handleGoogleLogin} onError={handleError} />
           </Box>
         </form>
 
         {/* OTP Dialog */}
-        <Dialog
-          open={otpDialogOpen}
-          onClose={() => !loading && setOtpDialogOpen(false)}
-        >
+        <Dialog open={otpDialogOpen} onClose={() => !loading && setOtpDialogOpen(false)}>
           <DialogTitle>Xác thực OTP</DialogTitle>
-          <DialogContent className="otp-dialog">
+          <DialogContent className="custom-otp-dialog">
             <Typography variant="body2" sx={{ mb: 2 }}>
               Mã OTP đã được gửi đến email <strong>{formData.email}</strong>
             </Typography>
@@ -320,16 +303,13 @@ function Register({ onLoginSuccess }) {
             <Button
               onClick={resendOTP}
               disabled={loading}
-              className="otp-resend-button"
+              className="custom-otp-resend-button"
             >
               Gửi lại mã OTP
             </Button>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={() => !loading && setOtpDialogOpen(false)}
-              disabled={loading}
-            >
+            <Button onClick={() => !loading && setOtpDialogOpen(false)} disabled={loading}>
               Hủy
             </Button>
             <Button onClick={handleVerifyOTP} disabled={loading}>
