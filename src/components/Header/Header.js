@@ -33,6 +33,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Header.css";
+
 const Header = ({ userEmail, updateUserEmail }) => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -93,6 +94,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
 
   const drawerContent = (
     <Box
+      className="baby-food-header-drawer-container"
       sx={{
         width: 280,
         height: "100%",
@@ -103,6 +105,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
     >
       {/* Drawer Header */}
       <Box
+        className="baby-food-header-drawer-header"
         sx={{
           p: 2.5,
           display: "flex",
@@ -115,6 +118,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
         {userEmail ? (
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <Avatar
+              className="baby-food-header-drawer-avatar"
               sx={{
                 bgcolor: "#fff",
                 color: "#72CCF1",
@@ -128,10 +132,18 @@ const Header = ({ userEmail, updateUserEmail }) => {
               {firstLetter}
             </Avatar>
             <Box>
-              <Typography variant="body1" sx={{ fontWeight: 600, fontSize: "1rem" }}>
+              <Typography
+                variant="body1"
+                className="baby-food-header-drawer-username"
+                sx={{ fontWeight: 600, fontSize: "1rem" }}
+              >
                 {userEmail.split("@")[0]}
               </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.9, fontSize: "0.75rem" }}>
+              <Typography
+                variant="caption"
+                className="baby-food-header-drawer-email"
+                sx={{ opacity: 0.9, fontSize: "0.75rem" }}
+              >
                 {userEmail}
               </Typography>
             </Box>
@@ -142,6 +154,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
           </Typography>
         )}
         <IconButton
+          className="baby-food-header-drawer-close-btn"
           onClick={toggleDrawer(false)}
           sx={{ color: "#fff" }}
         >
@@ -149,15 +162,16 @@ const Header = ({ userEmail, updateUserEmail }) => {
         </IconButton>
       </Box>
 
-      <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.2)" }} />
+      <Divider className="baby-food-header-drawer-divider" sx={{ borderColor: "rgba(255, 255, 255, 0.2)" }} />
 
       {/* Menu Items */}
-      <List sx={{ px: 1, py: 2 }}>
+      <List className="baby-food-header-drawer-menu-list" sx={{ px: 1, py: 2 }}>
         {mobileMenuItems.map((item, index) => {
           if (item.divider) {
             return (
               <Divider
                 key={`divider-${index}`}
+                className="baby-food-header-drawer-divider"
                 sx={{ my: 1.5, borderColor: "rgba(255, 255, 255, 0.2)" }}
               />
             );
@@ -165,6 +179,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
           return (
             <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
               <ListItemButton
+                className="baby-food-header-drawer-menu-item"
                 onClick={() => handleNavigation(item.path)}
                 sx={{
                   borderRadius: 2,
@@ -176,7 +191,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                   transition: "all 0.3s ease",
                 }}
               >
-                <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}>
+                <ListItemIcon className="baby-food-header-drawer-menu-icon" sx={{ color: "#fff", minWidth: 40 }}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
@@ -194,9 +209,10 @@ const Header = ({ userEmail, updateUserEmail }) => {
         {/* Logout button */}
         {userEmail && (
           <>
-            <Divider sx={{ my: 1.5, borderColor: "rgba(255, 255, 255, 0.2)" }} />
+            <Divider className="baby-food-header-drawer-divider" sx={{ my: 1.5, borderColor: "rgba(255, 255, 255, 0.2)" }} />
             <ListItem disablePadding>
               <ListItemButton
+                className="baby-food-header-drawer-logout-btn"
                 onClick={handleLogout}
                 sx={{
                   borderRadius: 2,
@@ -209,7 +225,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                   transition: "all 0.3s ease",
                 }}
               >
-                <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}>
+                <ListItemIcon className="baby-food-header-drawer-menu-icon" sx={{ color: "#fff", minWidth: 40 }}>
                   <LogoutIcon />
                 </ListItemIcon>
                 <ListItemText
@@ -227,6 +243,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
 
       {/* Footer */}
       <Box
+        className="baby-food-header-drawer-footer"
         sx={{
           position: "absolute",
           bottom: 0,
@@ -240,7 +257,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
           gap: 1,
         }}
       >
-        <PhoneIcon sx={{ fontSize: 20 }} />
+        <PhoneIcon className="baby-food-header-drawer-phone-icon" sx={{ fontSize: 20 }} />
         <Typography variant="body2" sx={{ fontWeight: 500 }}>
           0969729035
         </Typography>
@@ -251,6 +268,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
   return (
     <>
       <AppBar
+        className="baby-food-header-appbar"
         position="sticky"
         sx={{
           background: "linear-gradient(135deg, #72CCF1 0%, #5BAED8 100%)",
@@ -258,6 +276,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
         }}
       >
         <Toolbar
+          className="baby-food-header-toolbar"
           sx={{
             justifyContent: "space-between",
             maxWidth: 1400,
@@ -270,6 +289,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
           <Box
             component={Link}
             to="/"
+            className="baby-food-header-logo-link"
             sx={{
               display: "flex",
               alignItems: "center",
@@ -280,6 +300,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
               component="img"
               src="/NB (2).png"
               alt="Baby Food Logo"
+              className="baby-food-header-logo-image"
               sx={{
                 height: { xs: 50, md: 70 },
                 transition: "transform 0.3s ease",
@@ -292,10 +313,11 @@ const Header = ({ userEmail, updateUserEmail }) => {
 
           {/* Desktop Menu */}
           {!isMobile && (
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Box className="baby-food-header-desktop-menu" sx={{ display: "flex", gap: 2, alignItems: "center" }}>
               <Button
                 component={Link}
                 to="/quiz"
+                className="baby-food-header-nav-button baby-food-header-nav-button-quiz"
                 sx={{
                   color: "#fff",
                   fontWeight: 600,
@@ -314,6 +336,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
               <Button
                 component={Link}
                 to="/about-us"
+                className="baby-food-header-nav-button baby-food-header-nav-button-about"
                 sx={{
                   color: "#fff",
                   fontWeight: 600,
@@ -332,6 +355,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
               <Button
                 component={Link}
                 to="/blog"
+                className="baby-food-header-nav-button baby-food-header-nav-button-blog"
                 sx={{
                   color: "#fff",
                   fontWeight: 600,
@@ -351,10 +375,11 @@ const Header = ({ userEmail, updateUserEmail }) => {
           )}
 
           {/* Right Section */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box className="baby-food-header-right-section" sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             {/* Mobile Menu Icon */}
             {isMobile && (
               <IconButton
+                className="baby-food-header-mobile-menu-btn"
                 onClick={toggleDrawer(true)}
                 sx={{
                   color: "#fff",
@@ -375,6 +400,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                   <Button
                     component={Link}
                     to="/user/profile"
+                    className="baby-food-header-user-button"
                     sx={{
                       color: "#fff",
                       bgcolor: "rgba(255, 255, 255, 0.15)",
@@ -391,6 +417,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                     }}
                   >
                     <Avatar
+                      className="baby-food-header-user-avatar"
                       sx={{
                         bgcolor: "#fff",
                         color: "#72CCF1",
@@ -410,6 +437,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                   <Button
                     component={Link}
                     to="/account/login"
+                    className="baby-food-header-login-button"
                     sx={{
                       color: "#fff",
                       bgcolor: "rgba(255, 255, 255, 0.15)",
@@ -430,6 +458,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
 
                 {/* More Menu */}
                 <IconButton
+                  className="baby-food-header-more-menu-btn"
                   onClick={handleMoreMenuOpen}
                   sx={{
                     color: "#fff",
@@ -443,6 +472,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                 </IconButton>
 
                 <Menu
+                  className="baby-food-header-more-menu"
                   anchorEl={moreMenuAnchor}
                   open={Boolean(moreMenuAnchor)}
                   onClose={handleMoreMenuClose}
@@ -457,7 +487,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                 >
                   {userEmail && (
                     <>
-                      <MenuItem onClick={() => handleNavigation("/track-order")}>
+                      <MenuItem className="baby-food-header-menu-item" onClick={() => handleNavigation("/track-order")}>
                         <ListItemIcon>
                           <ShoppingBagIcon fontSize="small" />
                         </ListItemIcon>
@@ -466,20 +496,20 @@ const Header = ({ userEmail, updateUserEmail }) => {
                       <Divider />
                     </>
                   )}
-                  <MenuItem onClick={() => handleNavigation("/user/refund")}>
+                  <MenuItem className="baby-food-header-menu-item" onClick={() => handleNavigation("/user/refund")}>
                     <ListItemIcon>
                       <FeedbackIcon fontSize="small" />
                     </ListItemIcon>
                     Phản hồi
                   </MenuItem>
-                  <MenuItem onClick={() => handleNavigation("/user/complaint")}>
+                  <MenuItem className="baby-food-header-menu-item" onClick={() => handleNavigation("/user/complaint")}>
                     <ListItemIcon>
                       <ReportProblemIcon fontSize="small" />
                     </ListItemIcon>
                     Khiếu lại
                   </MenuItem>
                   <Divider />
-                  <MenuItem disabled>
+                  <MenuItem className="baby-food-header-menu-item baby-food-header-menu-item-phone" disabled>
                     <ListItemIcon>
                       <PhoneIcon fontSize="small" />
                     </ListItemIcon>
@@ -488,7 +518,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                   {userEmail && (
                     <>
                       <Divider />
-                      <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
+                      <MenuItem className="baby-food-header-menu-item baby-food-header-menu-item-logout" onClick={handleLogout} sx={{ color: "error.main" }}>
                         <ListItemIcon>
                           <LogoutIcon fontSize="small" color="error" />
                         </ListItemIcon>
@@ -505,6 +535,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
 
       {/* Mobile Drawer */}
       <Drawer
+        className="baby-food-header-drawer"
         anchor="left"
         open={drawerOpen}
         onClose={toggleDrawer(false)}

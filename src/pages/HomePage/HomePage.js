@@ -53,13 +53,13 @@ const HomePage = () => {
     {
       title: "Công thức nấu ăn đa dạng",
       subtitle: "Hàng trăm món ăn dặm bổ dưỡng, dễ làm",
-      image: "/banner2.jpg",
+      image: "/banner8.jpg",
       gradient: "linear-gradient(135deg, rgba(255, 183, 197, 0.95) 0%, rgba(255, 183, 197, 0.7) 100%)",
     },
     {
       title: "Tư vấn từ chuyên gia",
       subtitle: "Đội ngũ dinh dưỡng viên giàu kinh nghiệm",
-      image: "/banner3.jpg",
+      image: "/banner2.jpg",
       gradient: "linear-gradient(135deg, rgba(180, 231, 206, 0.95) 0%, rgba(180, 231, 206, 0.7) 100%)",
     },
   ];

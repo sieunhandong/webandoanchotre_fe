@@ -68,7 +68,7 @@ function Register({ onLoginSuccess }) {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
     if (!passwordRegex.test(formData.password)) {
       handleAlert(
-        "Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt!",
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!",
         "error"
       );
       return;
@@ -82,7 +82,7 @@ function Register({ onLoginSuccess }) {
 
     const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
     if (!phoneRegex.test(formData.phone)) {
-      handleAlert("Số điện thoại không hợp lệ!", "error");
+      handleAlert("Số điện thoại không hợp lệ (phải gồm 10 số)!", "error");
       return;
     }
 
@@ -262,7 +262,7 @@ function Register({ onLoginSuccess }) {
             value={formData.password}
             onChange={handleChange}
             error={!!error && formData.password.length < 6}
-            helperText={formData.password.length < 8 ? "Mật khẩu phải có ít nhất 8 ký tự" : ""}
+          // helperText={formData.password.length < 8 ? "Mật khẩu phải có ít nhất 8 ký tự,có ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt!" : ""}
           />
 
           <Button

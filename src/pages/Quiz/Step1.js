@@ -140,7 +140,7 @@ const Step1 = ({ data, onNext }) => {
                 </Box>
 
                 {/* --- Dị ứng --- */}
-                <Box className="form-group">
+                <Box className="step1-form-group">
                     <label>Dị ứng thực phẩm (nếu có)</label>
                     <TextField
                         variant="outlined"

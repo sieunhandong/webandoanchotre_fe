@@ -256,6 +256,17 @@
   margin-bottom: 1rem !important;
   font-family: "Baloo 2", cursive !important;
   animation: fadeInRotate 1s ease-out 0.5s both;
+  text-shadow:
+    -5px -5px 0 #000,
+    5px -5px 0 #000,
+    -5px 5px 0 #000,
+    5px 5px 0 #000,
+    -5px 0px 0 #000,
+    5px 0px 0 #000,
+    0px -5px 0 #000,
+    0px 5px 0 #000,
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(0, 0, 0, 0.8);
 }
 
 .banner-subtitle {
@@ -265,6 +276,12 @@
   margin-bottom: 2rem !important;
   font-family: 'Baloo 2', cursive !important;
   animation: fadeInUp 1s ease-out 0.7s both;
+  text-shadow:
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000,
+    0 0 6px rgba(0, 0, 0, 0.7);
 }
 
 .banner-button {

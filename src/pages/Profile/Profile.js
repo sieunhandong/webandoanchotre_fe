@@ -29,7 +29,7 @@ export default function Profile() {
       age: "",
       weight: "",
       allergies: [], // array of strings
-      feedingMethod: "traditional",
+      feedingMethod: "",
     },
   });
 
@@ -54,7 +54,7 @@ export default function Profile() {
                 ? u.userInfo.userInfo?.babyInfo?.allergies // fallback safe
                 : u.userInfo?.babyInfo?.allergies || [],
               // above line defensive; ensure array
-              feedingMethod: u.userInfo?.babyInfo?.feedingMethod || "traditional",
+              feedingMethod: u.userInfo?.babyInfo?.feedingMethod || "",
             },
           });
         }
@@ -124,7 +124,20 @@ export default function Profile() {
     setErrorMessage("");
     setSuccessMessage("");
     try {
-      // call updateProfile with the structure you backend expects
+      // ✅ Kiểm tra dữ liệu hợp lệ trước khi gửi
+      if (!editData.name || !editData.phone) {
+        setErrorMessage("Vui lòng nhập đầy đủ họ tên và số điện thoại.");
+        setSaving(false);
+        return;
+      }
+
+      // ✅ Kiểm tra số điện thoại hợp lệ (10 chữ số)
+      const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+      if (!phoneRegex.test(editData.phone)) {
+        setErrorMessage("Số điện thoại không hợp lệ (phải gồm 10 chữ số).");
+        setSaving(false);
+        return;
+      }
       // Here we pass editData; adjust if your API expects nested userInfo
       await updateProfile(editData);
       // optimistic update
@@ -334,6 +347,7 @@ export default function Profile() {
                 onChange={handleChange}
                 className="tiny_profilepage__field_input"
               >
+                <option value="">-- Chưa chọn phương pháp --</option>
                 <option value="traditional">Truyền thống</option>
                 <option value="blw">Tự chỉ huy (BLW)</option>
                 <option value="japanese">Kiểu Nhật</option>

@@ -17,11 +17,11 @@
 }
 
 /* ==== Form group ==== */
-.form-group {
+.step1-form-group {
     margin-bottom: 35px;
 }
 
-.form-group label {
+.step1-form-group label {
     display: block;
     font-weight: 600;
     margin-bottom: 15px;
