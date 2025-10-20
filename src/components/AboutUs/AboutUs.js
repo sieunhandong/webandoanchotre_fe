@@ -136,11 +136,6 @@ const AboutUs = () => {
             <p style={styles.mainTitleSpan} className="main-title-span">
               Dinh dưỡng từ tình yêu thương
             </p>
-
-            <p style={styles.heroSubtitle} className="hero-subtitle">
-              Mỗi bữa ăn dặm là hành trình khám phá thế giới vị giác
-            </p>
-
             <p style={styles.heroDescription} className="hero-description">
               Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
               TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn, mà là nền tảng
@@ -804,7 +799,6 @@ const AboutUs = () => {
 
 const styles = {
   wrapper: {
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     overflowX: 'hidden',
     background: '#fff',
     color: '#333'
@@ -908,7 +902,6 @@ const styles = {
     marginBottom: '15px',
     textShadow: '3px 3px 6px rgba(0,0,0,0.2)',
     lineHeight: 1.2,
-    fontFamily: "'Baloo 2', cursive"
   },
 
   mainTitleSpan: {
@@ -917,13 +910,12 @@ const styles = {
     fontSize: '3.2rem',
     marginTop: '0',
     marginBottom: '25px',
-    background: 'linear-gradient(90deg, #6ff87bff, #f88c8cff)',
+    background: 'linear-gradient(90deg, #000000ff, #f88c8cff)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     backgroundClip: 'text',
     fontWeight: 600,
     lineHeight: 1.3,
-    fontFamily: "'Baloo 2', cursive"
   },
 
   heroSubtitle: {
@@ -933,7 +925,6 @@ const styles = {
     opacity: 0.95,
     fontWeight: 600,
     lineHeight: 1.4,
-    fontFamily: "'Baloo 2', cursive"
   },
 
   heroDescription: {
@@ -945,7 +936,6 @@ const styles = {
     opacity: 0.92,
     textAlign: 'justify',
     textAlignLast: 'center',
-    fontFamily: "'Baloo 2', cursive"
   },
   valuesSection: {
     padding: '100px 0',
@@ -958,7 +948,6 @@ const styles = {
     marginBottom: '60px',
     textTransform: 'uppercase',
     letterSpacing: '2px',
-    fontFamily: "'Baloo 2', cursive"
   },
   valuesGrid: {
     display: 'grid',

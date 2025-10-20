@@ -43,6 +43,7 @@ const SetDetail = () => {
     wardName: "",
   });
   const [deliveryTime, setDeliveryTime] = useState("");
+  const [phone, setPhone] = useState("");
   const [paying, setPaying] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "", severity: "success" });
 
@@ -195,11 +196,48 @@ const SetDetail = () => {
       }, 1500);
       return;
     }
-
-    if (!deliveryTime || !address.address || !address.provinceId || !address.districtId || !address.wardCode) {
-      setAlert({ open: true, message: "Vui lòng nhập đầy đủ thông tin.", severity: "error" });
+    if (!deliveryTime) {
+      setAlert({
+        open: true,
+        message: "Vui lòng chọn ngày giao hàng mong muốn.",
+        severity: "error",
+      });
       return;
     }
+    const selectedDate = new Date(deliveryTime);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0); // reset giờ về 0 để so sánh chính xác
+
+    if (selectedDate < todayDate) {
+      setAlert({
+        open: true,
+        message: "Ngày giao hàng không hợp lệ (phải từ hôm nay trở đi).",
+        severity: "error",
+      });
+      return;
+    }
+    if (!phone) {
+      setAlert({
+        open: true,
+        message: "Vui nhập số điện thoại.",
+        severity: "error",
+      });
+      return;
+    }
+    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+    if (!phoneRegex.test(phone)) {
+      setAlert({
+        open: true,
+        message: "Số điện thoại không hợp lệ (phải gồm 10 số)!",
+        severity: "error",
+      });
+      return;
+    }
+    if (!address.address || !address.provinceId || !address.districtId || !address.wardCode) {
+      setAlert({ open: true, message: "Vui lòng nhập đầy đủ địa chỉ giao hàng.", severity: "error" });
+      return;
+    }
+
 
     setPaying(true);
     try {
@@ -209,6 +247,7 @@ const SetDetail = () => {
         price: setData.price,
         deliveryTime,
         address,
+        phone
       });
       if (res.data?.success) {
         const { paymentUrl, orderCode } = res.data.data;
@@ -306,6 +345,25 @@ const SetDetail = () => {
               </Box>
 
               <TextField fullWidth type="date" value={deliveryTime} onChange={(e) => setDeliveryTime(e.target.value)} inputProps={{ min: new Date().toISOString().split("T")[0] }} label="Ngày giao hàng *" InputLabelProps={{ shrink: true }} sx={{ mb: { xs: 2, md: 2.5 }, "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" } }} />
+              <TextField
+                fullWidth
+                label="Số điện thoại liên hệ *"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                type="tel"
+                placeholder="Nhập số điện thoại của bạn"
+                sx={{
+                  mb: { xs: 2, md: 2.5 },
+                  "& .MuiOutlinedInput-root": {
+                    "&:hover fieldset": { borderColor: "#72CCF1" },
+                    "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" },
+                }}
+                inputProps={{
+                  pattern: "[0-9]{10}", // chỉ cho phép 10-11 chữ số
+                }}
+              />
               <TextField fullWidth label="Địa chỉ cụ thể *" value={address.address} onChange={(e) => setAddress({ ...address, address: e.target.value })} placeholder="Số nhà, tên đường..." sx={{ mb: { xs: 2, md: 2.5 }, "& .MuiOutlinedInput-root": { "&:hover fieldset": { borderColor: "#72CCF1" }, "&.Mui-focused fieldset": { borderColor: "#72CCF1", borderWidth: 2 } }, "& .MuiInputLabel-root.Mui-focused": { color: "#72CCF1" } }} />
               <Grid container spacing={{ xs: 1, md: 2 }}>
                 <Grid item xs={12} sm={4}>

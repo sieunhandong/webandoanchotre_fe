@@ -101,7 +101,7 @@ export default function OrderManagement() {
       filteredOrders = filteredOrders.filter(
         (o) =>
           o.userId?.name?.toLowerCase().includes(term) ||
-          o.userId?.phone?.toLowerCase().includes(term)
+          o?.delivery?.phone?.toLowerCase().includes(term)
       );
     }
 
@@ -179,11 +179,11 @@ export default function OrderManagement() {
                 "Khách hàng",
                 "Số điện thoại",
                 "Ngày đặt",
-                "Trạng thái",
+                "Trạng thái đơn hàng",
+                "Trạng thái thanh toán",
                 "Ngày giao bắt đầu",
                 "Ngày hiện tại",
                 "Thực đơn hôm nay",
-                "Tổng tiền",
                 "Hành động",
               ].map((text) => (
                 <TableCell key={text} sx={{ color: "#fff", fontWeight: 600 }}>
@@ -198,7 +198,7 @@ export default function OrderManagement() {
               .map((order) => (
                 <TableRow key={order._id}>
                   <TableCell>{order.userId?.name || "N/A"}</TableCell>
-                  <TableCell>{order.userId?.phone || "N/A"}</TableCell>
+                  <TableCell>{order?.delivery?.phone || "N/A"}</TableCell>
                   <TableCell>
                     {new Date(order.createdAt).toLocaleDateString("vi-VN")}
                   </TableCell>
@@ -213,6 +213,29 @@ export default function OrderManagement() {
                       {statusLabels[order.status?.toLowerCase()] ||
                         order.status ||
                         "N/A"}
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{
+                        display: "inline-block",
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        color:
+                          order.paymentStatus?.toLowerCase() === "completed"
+                            ? "#0f5132"
+                            : "#842029",
+                        backgroundColor:
+                          order.paymentStatus?.toLowerCase() === "completed"
+                            ? "#d1e7dd" // xanh nhạt: đã thanh toán
+                            : "#f8d7da", // đỏ nhạt: chưa thanh toán
+                      }}
+                    >
+                      {order.paymentStatus?.toLowerCase() === "completed"
+                        ? "Đã thanh toán"
+                        : "Chưa thanh toán"}
                     </Box>
                   </TableCell>
                   <TableCell>
@@ -274,7 +297,6 @@ export default function OrderManagement() {
                     )}
                   </TableCell>
 
-                  <TableCell>{order.total?.toLocaleString()} VNĐ</TableCell>
                   <TableCell align="right">
                     <Tooltip title="Xem chi tiết">
                       <IconButton onClick={() => setSelectedOrder(order)}>

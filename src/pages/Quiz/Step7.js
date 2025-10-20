@@ -19,6 +19,7 @@ const Step7 = ({ data, onPrev }) => {
 
     const [selectedSet, setSelectedSet] = useState(null);
     const [deliveryTime, setDeliveryTime] = useState("");
+    const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
 
     const [qrUrl, setQrUrl] = useState(null);
@@ -160,17 +161,38 @@ const Step7 = ({ data, onPrev }) => {
         }
 
         if (!deliveryTime) {
-            handleAlert("Vui lòng chọn ngày giao hàng mong muốn.", "info");
+            handleAlert("Vui lòng chọn ngày giao hàng mong muốn.", "error");
+            return;
+        }
+        const selectedDate = new Date(deliveryTime);
+        const todayDate = new Date();
+        todayDate.setHours(0, 0, 0, 0); // reset giờ về 0 để so sánh chính xác
+
+        if (selectedDate < todayDate) {
+            handleAlert("Ngày giao hàng không hợp lệ (phải từ hôm nay trở đi).", "error");
+            return;
+        }
+        if (!phone) {
+            handleAlert("Vui nhập số điện thoại.", "error");
+            return;
+        }
+        const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+        if (!phoneRegex.test(phone)) {
+            setAlert({
+                open: true,
+                message: "Số điện thoại không hợp lệ (phải gồm 10 số)!",
+                severity: "error",
+            });
             return;
         }
         if (!address.address || !address.provinceId || !address.districtId || !address.wardCode) {
-            handleAlert("Vui lòng nhập đầy đủ địa chỉ giao hàng.", "info");
+            handleAlert("Vui lòng nhập đầy đủ địa chỉ giao hàng.", "error");
             return;
         }
 
         setLoading(true);
         try {
-            const res = await step7({ sessionId, deliveryTime, address });
+            const res = await step7({ sessionId, deliveryTime, address, phone });
             if (res.data?.success) {
                 const { paymentUrl, orderCode } = res.data.data;
                 setQrUrl(paymentUrl);
@@ -253,7 +275,16 @@ const Step7 = ({ data, onPrev }) => {
                                 onChange={(e) => setDeliveryTime(e.target.value)}
                                 min={today}
                             />
-
+                            <label>📞 Số điện thoại liên hệ:</label>
+                            <input
+                                type="tel"
+                                placeholder="Nhập số điện thoại của bạn"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                pattern="[0-9]{10}"
+                                maxLength={10}
+                                required
+                            />
                             <label>🏠 Địa chỉ cụ thể:</label>
                             <input
                                 type="text"
