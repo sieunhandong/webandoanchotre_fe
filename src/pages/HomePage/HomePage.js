@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Typography,
-  Grid,
   Button,
   Card,
   CardContent,
@@ -10,13 +9,10 @@ import {
   CircularProgress,
   Container,
   Chip,
-  IconButton,
   Rating,
   Avatar,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import * as BlogService from "../../services/AdminService/blogService";
 import * as MealSetService from "../../services/MealSetService";
@@ -45,20 +41,20 @@ const HomePage = () => {
   // Banner slides data
   const bannerSlides = [
     {
-      title: "Khám phá thế giới ăn dặm",
-      subtitle: "Dinh dưỡng khoa học cho bé yêu phát triển toàn diện",
+      title: "",
+      subtitle: "",
       image: "/banner5.jpg",
       gradient: "linear-gradient(135deg, rgba(114, 205, 241, 0.95) 0%, rgba(114, 205, 241, 0.7) 100%)",
     },
     {
-      title: "Công thức nấu ăn đa dạng",
-      subtitle: "Hàng trăm món ăn dặm bổ dưỡng, dễ làm",
+      title: "",
+      subtitle: "",
       image: "/banner8.jpg",
       gradient: "linear-gradient(135deg, rgba(255, 183, 197, 0.95) 0%, rgba(255, 183, 197, 0.7) 100%)",
     },
     {
-      title: "Tư vấn từ chuyên gia",
-      subtitle: "Đội ngũ dinh dưỡng viên giàu kinh nghiệm",
+      title: " ",
+      subtitle: " ",
       image: "/banner2.jpg",
       gradient: "linear-gradient(135deg, rgba(180, 231, 206, 0.95) 0%, rgba(180, 231, 206, 0.7) 100%)",
     },
@@ -198,13 +194,13 @@ const HomePage = () => {
     };
   }, []);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
-  };
+  // const nextSlide = () => {
+  //   setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
+  // };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
-  };
+  // const prevSlide = () => {
+  //   setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+  // };
 
   return (
     <Box className="homepage-container">
@@ -222,12 +218,12 @@ const HomePage = () => {
           >
             <Container maxWidth="lg">
               <Box className={`banner-content ${currentSlide === index ? 'animate' : ''}`}>
-                <Typography variant="h2" className="banner-title">
+                {/* <Typography variant="h2" className="banner-title">
                   {slide.title}
                 </Typography>
                 <Typography variant="h5" className="banner-subtitle">
                   {slide.subtitle}
-                </Typography>
+                </Typography> */}
                 <Button
                   variant="contained"
                   size="large"
@@ -243,12 +239,12 @@ const HomePage = () => {
         ))}
 
         {/* Navigation Arrows */}
-        <IconButton onClick={prevSlide} className="banner-arrow banner-arrow-left">
+        {/* <IconButton onClick={prevSlide} className="banner-arrow banner-arrow-left">
           <ArrowBackIosNewIcon />
         </IconButton>
         <IconButton onClick={nextSlide} className="banner-arrow banner-arrow-right">
           <ArrowForwardIosIcon />
-        </IconButton>
+        </IconButton> */}
 
         {/* Dots Indicator */}
         <Box className="banner-dots">
@@ -430,11 +426,11 @@ const HomePage = () => {
                     </Typography>
                     <Typography variant="body2" className="feature">
                       <Box component="span" className="checkmark">✓</Box>
-                      <span>Dinh dưỡng</span>
+                      <span>Menu cá nhân hóa</span>
                     </Typography>
                     <Typography variant="body2" className="feature">
                       <Box component="span" className="checkmark">✓</Box>
-                      <span>Tiện lợi</span>
+                      <span>Giao hàng tận nơi trong {set.duration} ngày</span>
                     </Typography>
                     {set.extraInfo?.map((info, i) => (
                       <Typography key={i} variant="body2" className="feature">
@@ -468,7 +464,7 @@ const HomePage = () => {
         ref={sectionRefs.featured}
         className="featured-grid-section"
         style={{
-          backgroundImage: "url('/homepage2.jpg')",
+          backgroundImage: "url('/homepage.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -500,7 +496,7 @@ const HomePage = () => {
       <section id="recipes-section" className="recipes-section" ref={sectionRefs.recipes}>
         <div className="recipes-header">
           <div className="recipes-header-text">
-            <h2 className="recipes-title">👨‍🍳KHÁM PHÁ CÔNG THỨC</h2>
+            <h2 className="recipes-title">KHÁM PHÁ CÔNG THỨC</h2>
             <p className="recipes-subtitle">
               Các công thức nấu ăn bổ dưỡng, dễ làm cho bé yêu của bạn
             </p>

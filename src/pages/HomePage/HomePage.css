@@ -249,25 +249,28 @@
   transform: translateY(0);
 }
 
-.banner-title {
+/* .banner-title {
   font-weight: 700 !important;
   font-size: clamp(4rem, 5vw, 5.5rem) !important;
-  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 1rem !important;
   animation: fadeInRotate 1s ease-out 0.5s both;
   text-shadow:
-    -4px -4px 0 #000,
-    4px -4px 0 #000,
-    -4px 4px 0 #000,
-    4px 4px 0 #000,
-    -4px 0px 0 #000,
-    4px 0px 0 #000,
-    0px -4px 0 #000,
-    0px 4px 0 #000,
-    0 0 6px rgba(0, 0, 0, 0.9),
-    0 0 10px rgba(0, 0, 0, 0.8);
-}
-
+    -3px -3px 0 #000,
+    3px -3px 0 #000,
+    -3px 3px 0 #000,
+    3px 3px 0 #000,
+    -3px 0px 0 #000,
+    3px 0px 0 #000,
+    0px -3px 0 #000,
+    0px 3px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000,
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 12px rgba(0, 0, 0, 0.6);
+} */
+/* 
 .banner-subtitle {
   font-weight: 400 !important;
   font-size: clamp(2rem, 3vw, 2.5rem) !important;
@@ -280,10 +283,10 @@
     -2px 2px 0 #000,
     2px 2px 0 #000,
     0 0 6px rgba(0, 0, 0, 0.7);
-}
+} */
 
 .banner-button {
-  margin-top: 1rem !important;
+  margin-top: 7rem !important;
   padding: 12px 40px !important;
   font-size: 1.1rem !important;
   font-weight: 600 !important;
@@ -1030,7 +1033,7 @@
   align-items: flex-start;
   color: #383838;
   font-size: 1rem;
-  opacity: 0;
+  opacity: 1;
   animation: slideInLeft 0.6s ease-out forwards;
 }
 
@@ -1247,12 +1250,17 @@
 }
 
 .recipes-title {
-  font-size: 2.4rem;
+  font-size: clamp(2rem, 4vw, 2.5rem) !important;
   font-weight: 700;
-  color: #2b2b2b;
-  margin-bottom: 0.5rem;
-  position: relative;
-  display: inline-block;
+  color: #333 !important;
+  margin-bottom: 1rem !important;
+  justify-content: center;
+  background: linear-gradient(135deg, #72cdf1 0%, #ffb7c5 50%, #b4e7ce 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerGradient 5s ease infinite;
 }
 
 .recipes-title::after {
@@ -2352,6 +2360,13 @@
   .recipe-name-plain {
     font-size: 1.2rem;
   }
+
+  .mealset-features .feature {
+    opacity: 1;
+    animation: none;
+    font-size: 0.95rem;
+    margin-bottom: 0.85rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2359,13 +2374,15 @@
     height: 60vh;
   }
 
+  /* 
+  
   .banner-title {
     font-size: 2.5rem !important;
   }
 
   .banner-subtitle {
     font-size: 1.2rem !important;
-  }
+  } */
 
   .banner-button {
     padding: 10px 25px !important;
@@ -2399,10 +2416,49 @@
 
   .mealset-card {
     padding: 1.5rem !important;
+    min-height: auto !important;
+    height: auto !important;
   }
 
   .mealset-features {
     padding: 1rem;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .mealset-features .feature {
+    opacity: 1 !important;
+    animation: none !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.5 !important;
+    word-wrap: break-word !important;
+  }
+
+  .mealset-features .checkmark {
+    font-size: 1rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0;
+    align-self: flex-start !important;
+  }
+
+  .btn-mealset {
+    padding: 10px !important;
+    font-size: 0.95rem !important;
+    margin-top: 1rem !important;
+  }
+
+  .mealset-card.popular {
+    transform: scale(1) !important;
+    height: auto !important;
+  }
+
+  .mealset-card * {
+    overflow: visible !important;
+  }
+
+  .mealset-card {
+    overflow: visible !important;
   }
 
   .section-featured {

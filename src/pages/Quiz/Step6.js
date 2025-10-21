@@ -106,7 +106,7 @@ const Step6 = ({ data, onNext, onPrev }) => {
                                 checked={agree}
                                 onChange={(e) => setAgree(e.target.checked)}
                             />{" "}
-                            Tôi đồng ý với <a href="#">điều khoản & chính sách</a>.
+                            Tôi đồng ý với <a href="/user/refund">điều khoản & chính sách</a>.
                         </label>
                     </div>
                 </div>

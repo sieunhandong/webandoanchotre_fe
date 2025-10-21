@@ -136,12 +136,14 @@ const AboutUs = () => {
             <p style={styles.mainTitleSpan} className="main-title-span">
               Dinh dưỡng từ tình yêu thương
             </p>
-            <p style={styles.heroDescription} className="hero-description">
-              Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
-              TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn, mà là nền tảng
-              cho sự phát triển toàn diện của bé. Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng,
-              an toàn và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
-            </p>
+            <div style={styles.heroDescription}>
+              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+                Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
+                TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn,
+                mà là nền tảng cho sự phát triển toàn diện của bé. Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng,
+                an toàn và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
+              </p>
+            </div>
           </div>
 
           {/* Ảnh bên phải */}
@@ -877,7 +879,7 @@ const styles = {
     zIndex: 10,
     textAlign: 'center',
     animation: 'fadeInUp 1s ease-out',
-    padding: '0 20px',
+    paddingBottom: '70px',
     maxWidth: '800px'
   },
   heroImages: {
@@ -931,11 +933,10 @@ const styles = {
     maxWidth: '700px',
     margin: '0 auto',
     fontSize: '1.05rem',
-    lineHeight: 1.8,
+    lineHeight: 1.9,
     color: '#fff',
     opacity: 0.92,
-    textAlign: 'justify',
-    textAlignLast: 'center',
+    textAlign: 'center',
   },
   valuesSection: {
     padding: '100px 0',

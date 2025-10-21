@@ -75,8 +75,8 @@ const Step5 = ({ data, onNext, onPrev }) => {
                                 <p className="step5-card-desc" >{s.description}</p>
                                 <div className="step5-info">
                                     <span>⏱ {s.duration} ngày</span>
-                                    <span>✓ Dinh dưỡng</span>
-                                    <span>✓ Tiện lợi</span>
+                                    <span>✓ Menu cá nhân hóa</span>
+                                    <span>✓ Giao hàng tận nơi trong vòng {s.duration} ngày</span>
                                 </div>
                             </div>
                         ))

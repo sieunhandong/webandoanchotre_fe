@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { step4 } from "../../services/QuizService";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
@@ -33,44 +33,14 @@ const Step4 = ({ data, onNext, onPrev }) => {
             selectedProducts: (data?.selectedProducts || []).sort(), // sort để tránh lệch thứ tự
         });
     };
-    useEffect(() => {
-        setMenu([]); // reset lại
-    }, [data?.sessionId]);
 
-    useEffect(() => {
-        if (!data?.sessionId) return;
-        const inputHash = createInputHash(data);
-        const savedHash = localStorage.getItem(`quiz_mealInputHash_${data.sessionId}`);
-        const savedMenu = JSON.parse(localStorage.getItem(`quiz_mealSuggestions_${data.sessionId}`) || "[]");
-
-        // Nếu dữ liệu đầu vào thay đổi → gọi lại AI
-        if (savedHash !== inputHash) {
-            localStorage.removeItem(`quiz_mealSuggestions_${data.sessionId}`);
-            fetchMenu(data.sessionId, inputHash);
-            return;
-        }
-        if (savedMenu.length > 0) {
-            setMenu(savedMenu);
-        } else {
-            fetchMenu(data.sessionId, inputHash);
-        }
-    }, [
-        data?.sessionId,
-        data?.age,
-        data?.weight,
-        data?.feedingMethod,
-        JSON.stringify(data?.allergies),
-        JSON.stringify(data?.selectedProducts), // thêm dòng này
-    ]);
-
-    const fetchMenu = async (sessionId, inputHash) => {
+    const fetchMenu = useCallback(async (sessionId, inputHash) => {
         setLoading(true);
         try {
             const res = await step4({ sessionId });
             if (res.data.success && res.data.data.menu) {
                 const suggestedMenu = res.data.data.menu;
                 setMenu(suggestedMenu);
-                // Lưu vào localStorage
                 localStorage.setItem(`quiz_mealSuggestions_${sessionId}`, JSON.stringify(suggestedMenu));
                 localStorage.setItem(`quiz_mealInputHash_${sessionId}`, inputHash);
             } else {
@@ -82,7 +52,34 @@ const Step4 = ({ data, onNext, onPrev }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+    useEffect(() => {
+        setMenu([]); // reset lại
+    }, [data?.sessionId]);
+
+    useEffect(() => {
+        console.log("👀 useEffect chạy lại (theo dõi dữ liệu đầu vào)", {
+            sessionId: data?.sessionId,
+            age: data?.age,
+            weight: data?.weight,
+            feedingMethod: data?.feedingMethod,
+            allergies: data?.allergies,
+            selectedProducts: data?.selectedProducts,
+        });
+        if (!data?.sessionId) return;
+        const inputHash = createInputHash(data);
+        const savedHash = localStorage.getItem(`quiz_mealInputHash_${data.sessionId}`);
+        const savedMenu = JSON.parse(localStorage.getItem(`quiz_mealSuggestions_${data.sessionId}`) || "[]");
+
+        if (savedHash !== inputHash) {
+            localStorage.removeItem(`quiz_mealSuggestions_${data.sessionId}`);
+            fetchMenu(data.sessionId, inputHash);
+        } else if (savedMenu.length > 0) {
+            setMenu(savedMenu);
+        } else {
+            fetchMenu(data.sessionId, inputHash);
+        }
+    }, [data?.sessionId, fetchMenu]); // chỉ theo dõi sessionId và hàm fetch
 
     const handleNext = () => {
         onNext && onNext({ menu });

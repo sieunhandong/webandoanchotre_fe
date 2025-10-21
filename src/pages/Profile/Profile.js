@@ -8,19 +8,26 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { getProfile, updateProfile } from "../../services/UserService";
 import AccountLayout from "../../components/BreadCrumb/AccountLayout";
 import "./Profile.css";
+
+// MUI Alert wrapper
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  // editData contains also babyInfo object
   const [editData, setEditData] = useState({
     name: "",
     email: "",
@@ -28,7 +35,7 @@ export default function Profile() {
     babyInfo: {
       age: "",
       weight: "",
-      allergies: [], // array of strings
+      allergies: [],
       feedingMethod: "",
     },
   });
@@ -51,9 +58,8 @@ export default function Profile() {
               age: u.userInfo?.babyInfo?.age || "",
               weight: u.userInfo?.babyInfo?.weight || "",
               allergies: Array.isArray(u.userInfo?.babyInfo?.allergies)
-                ? u.userInfo.userInfo?.babyInfo?.allergies // fallback safe
+                ? u.userInfo?.babyInfo?.allergies
                 : u.userInfo?.babyInfo?.allergies || [],
-              // above line defensive; ensure array
               feedingMethod: u.userInfo?.babyInfo?.feedingMethod || "",
             },
           });
@@ -75,7 +81,6 @@ export default function Profile() {
   };
 
   const cancelEdit = () => {
-    // revert to user data
     setIsEditing(false);
     setErrorMessage("");
     setSuccessMessage("");
@@ -88,7 +93,7 @@ export default function Profile() {
           age: user.userInfo?.babyInfo?.age || "",
           weight: user.userInfo?.babyInfo?.weight || "",
           allergies: Array.isArray(user.userInfo?.babyInfo?.allergies)
-            ? user.userInfo.userInfo?.babyInfo?.allergies // defensive
+            ? user.userInfo?.babyInfo?.allergies
             : user.userInfo?.babyInfo?.allergies || [],
           feedingMethod: user.userInfo?.babyInfo?.feedingMethod || "traditional",
         },
@@ -98,14 +103,12 @@ export default function Profile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // baby fields: age, weight, allergies, feedingMethod
     if (["age", "weight", "feedingMethod"].includes(name)) {
       setEditData((prev) => ({
         ...prev,
         babyInfo: { ...prev.babyInfo, [name]: value },
       }));
     } else if (name === "allergies") {
-      // user types comma-separated string
       const arr = value
         .split(",")
         .map((it) => it.trim())
@@ -124,23 +127,21 @@ export default function Profile() {
     setErrorMessage("");
     setSuccessMessage("");
     try {
-      // ✅ Kiểm tra dữ liệu hợp lệ trước khi gửi
       if (!editData.name || !editData.phone) {
         setErrorMessage("Vui lòng nhập đầy đủ họ tên và số điện thoại.");
         setSaving(false);
         return;
       }
 
-      // ✅ Kiểm tra số điện thoại hợp lệ (10 chữ số)
       const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
       if (!phoneRegex.test(editData.phone)) {
         setErrorMessage("Số điện thoại không hợp lệ (phải gồm 10 chữ số).");
         setSaving(false);
         return;
       }
-      // Here we pass editData; adjust if your API expects nested userInfo
+
       await updateProfile(editData);
-      // optimistic update
+
       setUser((prev) => ({
         ...prev,
         name: editData.name,
@@ -148,9 +149,9 @@ export default function Profile() {
         phone: editData.phone,
         userInfo: { ...prev?.userInfo, babyInfo: { ...editData.babyInfo } },
       }));
+
       setIsEditing(false);
       setSuccessMessage("Cập nhật thông tin thành công!");
-      setTimeout(() => setSuccessMessage(""), 3500);
     } catch (err) {
       console.error(err);
       setErrorMessage(
@@ -206,18 +207,17 @@ export default function Profile() {
                 onClick={saveProfile}
                 disabled={saving}
               >
-                {saving ? <div className="tiny_profilepage__spinner_small" /> : <><SaveIcon /> Lưu</>}
+                {saving ? (
+                  <div className="tiny_profilepage__spinner_small" />
+                ) : (
+                  <>
+                    <SaveIcon /> Lưu
+                  </>
+                )}
               </button>
             </div>
           )}
         </div>
-
-        {errorMessage && (
-          <div className="tiny_profilepage__error_message">{errorMessage}</div>
-        )}
-        {successMessage && (
-          <div className="tiny_profilepage__success_message">{successMessage}</div>
-        )}
 
         {/* Account info */}
         <div className="tiny_profilepage__info_row">
@@ -244,7 +244,6 @@ export default function Profile() {
             <EmailIcon /> Email:
           </div>
           <div className="tiny_profilepage__value">
-            {/* email often not editable */}
             {isEditing ? (
               <input
                 name="email"
@@ -329,11 +328,12 @@ export default function Profile() {
                 className="tiny_profilepage__field_input"
                 placeholder="Nhập, phân cách bằng dấu ,"
               />
-            ) : (editData.babyInfo.allergies && editData.babyInfo.allergies.length > 0 ? (
+            ) : editData.babyInfo.allergies &&
+              editData.babyInfo.allergies.length > 0 ? (
               editData.babyInfo.allergies.join(", ")
             ) : (
               "Chưa cập nhật"
-            ))}
+            )}
           </div>
         </div>
 
@@ -358,6 +358,37 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Snackbar Notifications */}
+      <Snackbar
+        open={!!errorMessage}
+        autoHideDuration={4000}
+        onClose={() => setErrorMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setErrorMessage("")}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={3000}
+        onClose={() => setSuccessMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSuccessMessage("")}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </AccountLayout>
   );
 }

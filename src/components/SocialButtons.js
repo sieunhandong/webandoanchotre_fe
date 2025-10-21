@@ -17,7 +17,7 @@ export default function SocialButtons() {
         {
             id: "facebook",
             title: "Liên hệ Facebook",
-            href: "https://www.facebook.com/minh.huong.601767?locale=vi_VN",
+            href: "https://www.facebook.com/profile.php?id=61582092933742",
             icon: Facebook,
             gradient: "linear-gradient(135deg, #62cbf5ff 0%, #a8d5f7 100%)",
             hoverGradient: "linear-gradient(135deg, #5bb8e8 0%, #72cdf1 100%)",

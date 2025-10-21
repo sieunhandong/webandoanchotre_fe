@@ -7,17 +7,23 @@ import {
   Login as LoginIcon,
   Home as HomeIcon,
   Security as SecurityIcon,
-  CheckCircle as CheckCircleIcon,
-  Error as ErrorIcon,
 } from "@mui/icons-material";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { getProfile, changePassword } from "../../services/UserService";
 import AccountLayout from "../../components/BreadCrumb/AccountLayout";
 import "./ChangePassword.css";
+
+// MUI Alert wrapper
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function ChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const [message, setMessage] = useState("");
   const [alertType, setAlertType] = useState("warning");
 
@@ -54,11 +60,6 @@ export default function ChangePassword() {
   // xử lý form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newPassword.length < 6) {
-      setMessage("Mật khẩu mới phải có ít nhất 6 ký tự.");
-      setAlertType("warning");
-      return;
-    }
     if (newPassword !== confirmPassword) {
       setMessage("Xác nhận mật khẩu không khớp.");
       setAlertType("warning");
@@ -116,15 +117,8 @@ export default function ChangePassword() {
           <SecurityIcon /> Đổi mật khẩu
         </h1>
         <p className="subtitle">
-          Đặt mật khẩu mới ít nhất 6 ký tự để bảo mật tài khoản.
+          Đặt mật khẩu mới ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.
         </p>
-
-        {message && (
-          <div className={`alert ${alertType}`}>
-            {alertType === "success" ? <CheckCircleIcon /> : <ErrorIcon />}
-            <span>{message}</span>
-          </div>
-        )}
 
         <form className="password-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -195,6 +189,22 @@ export default function ChangePassword() {
           </button>
         </form>
       </AccountLayout>
+
+      {/* Snackbar Alert */}
+      <Snackbar
+        open={!!message}
+        autoHideDuration={4000}
+        onClose={() => setMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setMessage("")}
+          severity={alertType}
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
