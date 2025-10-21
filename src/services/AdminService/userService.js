@@ -10,5 +10,5 @@ export const changeUserStatus = (userId) =>
 
 export const updateUserRole = (userId, newRole) =>
   axiosInstance
-    .put(`/admin/users/${userId}`, { role: newRole })
+    .put(`/admin/users/${userId}/role`, { role: newRole })
     .then((res) => res.data);
