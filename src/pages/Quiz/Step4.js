@@ -24,21 +24,26 @@ const Step4 = ({ data, onNext, onPrev }) => {
     };
     // Tạo "hash" dữ liệu đầu vào để so sánh
     const createInputHash = (data) => {
+        const normalize = (val) => (typeof val === "string" ? val.trim() : val);
         return JSON.stringify({
-            age: data?.age,
-            weight: data?.weight,
-            allergies: data?.allergies || [],
+            age: normalize(data?.age),
+            weight: normalize(data?.weight),
+            allergies: (data?.allergies || []).map((a) => a.trim().toLowerCase()),
             feedingMethod: data?.feedingMethod,
-            selectedProducts: data?.selectedProducts || [],
+            selectedProducts: (data?.selectedProducts || []).sort(), // sort để tránh lệch thứ tự
         });
     };
+    useEffect(() => {
+        setMenu([]); // reset lại
+    }, [data?.sessionId]);
+
     useEffect(() => {
         if (!data?.sessionId) return;
         const inputHash = createInputHash(data);
         const savedHash = localStorage.getItem(`quiz_mealInputHash_${data.sessionId}`);
         const savedMenu = JSON.parse(localStorage.getItem(`quiz_mealSuggestions_${data.sessionId}`) || "[]");
 
-        // Nếu dữ liệu thay đổi → xóa cache cũ và gọi AI
+        // Nếu dữ liệu đầu vào thay đổi → gọi lại AI
         if (savedHash !== inputHash) {
             localStorage.removeItem(`quiz_mealSuggestions_${data.sessionId}`);
             fetchMenu(data.sessionId, inputHash);
@@ -46,10 +51,17 @@ const Step4 = ({ data, onNext, onPrev }) => {
         }
         if (savedMenu.length > 0) {
             setMenu(savedMenu);
-        } else if (data?.sessionId) {
+        } else {
             fetchMenu(data.sessionId, inputHash);
         }
-    }, [data?.sessionId, data?.age, data?.weight, data?.feedingMethod, JSON.stringify(data?.allergies)]);
+    }, [
+        data?.sessionId,
+        data?.age,
+        data?.weight,
+        data?.feedingMethod,
+        JSON.stringify(data?.allergies),
+        JSON.stringify(data?.selectedProducts), // thêm dòng này
+    ]);
 
     const fetchMenu = async (sessionId, inputHash) => {
         setLoading(true);

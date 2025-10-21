@@ -87,9 +87,12 @@ const Header = ({ userEmail, updateUserEmail }) => {
       { divider: true },
       { text: "Thông tin cá nhân", icon: <PersonIcon />, path: "/user/profile" },
       { text: "Đơn hàng của tôi", icon: <ShoppingBagIcon />, path: "/track-order" },
-      { text: "Phản hồi", icon: <FeedbackIcon />, path: "/user/refund" },
+      { text: "Chính sách", icon: <FeedbackIcon />, path: "/user/refund" },
       { text: "Khiếu lại", icon: <ReportProblemIcon />, path: "/user/complaint" },
-    ] : []),
+    ] : [
+      { divider: true },
+      { text: "Đăng nhập", icon: <PersonIcon />, path: "/account/login", isLogin: true },
+    ]),
   ];
 
   const drawerContent = (
@@ -500,7 +503,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                     <ListItemIcon>
                       <FeedbackIcon fontSize="small" />
                     </ListItemIcon>
-                    Phản hồi
+                    Chính sách
                   </MenuItem>
                   <MenuItem className="baby-food-header-menu-item" onClick={() => handleNavigation("/user/complaint")}>
                     <ListItemIcon>

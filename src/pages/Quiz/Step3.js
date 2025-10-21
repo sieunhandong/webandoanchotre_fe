@@ -51,9 +51,9 @@ const Step3 = ({ data, onNext, onPrev }) => {
         try {
             const res = await step3({ sessionId, selectedProducts });
             if (res.data.success) {
-                // setSnackbar({ open: true, message: "Đã lưu thành công!", severity: "success" });
-                setTimeout(onNext, 800);
-            } else {
+                setTimeout(() => onNext({ selectedProducts }), 800);
+            }
+            else {
                 setSnackbar({ open: true, message: "Đã có lỗi xảy ra!", severity: "error" });
             }
         } catch (err) {

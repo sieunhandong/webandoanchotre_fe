@@ -55,19 +55,8 @@ export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
       setLoadingAI(true);
       const res = await aiSuggestMenu(order._id);
       if (res.success && res.data) {
-        // Gom 2 bữa thành 1 ngày
-        const rawMenus = res.data;
-        const groupedMenus = [];
-
-        for (let i = 0; i < rawMenus.length; i += 2) {
-          groupedMenus.push({
-            day: groupedMenus.length + 1,
-            menu: [rawMenus[i], rawMenus[i + 1]].filter(Boolean),
-          });
-        }
-        setAiMenu(groupedMenus);
-
-        setShowAIPopup(true); // mở popup xác nhận
+        setAiMenu(res.data); // backend đã trả đúng { day, menu: [] }
+        setShowAIPopup(true);
       } else {
         alert("❌ AI không trả về dữ liệu hợp lệ");
       }
@@ -264,7 +253,9 @@ export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
                           ) : (
                             Array.isArray(m.menu)
                               ? m.menu.join(" | ")
-                              : m.menu
+                              : typeof m.menu === "string"
+                                ? m.menu
+                                : "Không có dữ liệu"
                           )}
                         </TableCell>
                         <TableCell align="center">
@@ -314,19 +305,42 @@ export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
         <DialogContent dividers>
           {aiMenu && aiMenu.length > 0 ? (
             <Box>
-              {aiMenu.map((m) => (
-                <Box key={m.day} mb={2}>
-                  <Typography fontWeight="bold">Ngày {m.day}</Typography>
-                  <Typography ml={2}>
-                    {m.menu
-                      ? Array.isArray(m.menu)
-                        ? m.menu.join(" | ")
-                        : m.menu
-                      : m.meals?.join(" | ")}
-                  </Typography>
-                  <Divider sx={{ my: 1 }} />
-                </Box>
-              ))}
+              {aiMenu.length > 0 ? (
+                aiMenu.map((m, idx) => {
+                  // Nếu m bị trả về là object JSON string thì parse
+                  let dayData = typeof m === "string" ? JSON.parse(m) : m;
+                  const menus = Array.isArray(dayData.menu)
+                    ? dayData.menu
+                    : [dayData.menu].filter(Boolean);
+
+                  return (
+                    <Box key={idx} mb={2}>
+                      <Typography fontWeight="bold">
+                        Ngày {dayData.day || idx + 1}
+                      </Typography>
+
+                      {menus.map((meal, i) => {
+                        let text =
+                          typeof meal === "string"
+                            ? meal
+                            : typeof meal === "object"
+                              ? JSON.stringify(meal)
+                              : String(meal);
+
+                        return (
+                          <Typography key={i} sx={{ ml: 2, color: "text.secondary" }}>
+                            • {text}
+                          </Typography>
+                        );
+                      })}
+
+                      <Divider sx={{ my: 1 }} />
+                    </Box>
+                  );
+                })
+              ) : (
+                <DialogContentText>Không có dữ liệu thực đơn từ AI.</DialogContentText>
+              )}
             </Box>
           ) : (
             <DialogContentText>
