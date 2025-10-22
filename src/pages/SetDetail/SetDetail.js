@@ -77,7 +77,12 @@ const SetDetail = () => {
           : Array.isArray(res?.data)
             ? res.data
             : [];
-        setProvinces(list);
+        // ✅ Lọc chỉ 4 thành phố lớn
+        const allowedCities = ["Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Khánh Hòa"];
+        const filtered = list.filter((p) => allowedCities.includes(p.ProvinceName));
+
+        // ✅ Cập nhật state
+        setProvinces(filtered);
       } catch (err) {
         console.error("❌ Lỗi load tỉnh:", err);
       }

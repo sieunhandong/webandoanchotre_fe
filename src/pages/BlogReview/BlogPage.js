@@ -87,7 +87,7 @@ const BlogPage = () => {
   // Fetch categories
   const fetchAllCategories = async () => {
     try {
-      const res = await BlogService.getAllCategories();
+      const res = await BlogService.getAllCategoriesMain();
       if (res?.categories) setAllCategories(res.categories);
       else if (Array.isArray(res)) setAllCategories(res);
       else setAllCategories([]);

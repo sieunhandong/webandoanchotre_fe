@@ -76,21 +76,37 @@ export default function AdminBlogs() {
     try {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => {
-        if (k === "images") Array.from(v).forEach((f) => fd.append("images", f));
-        else fd.append(k, v);
+        if (k === "images") {
+          // Nếu v là FileList (ảnh mới chọn)
+          if (v && v.length > 0) {
+            Array.from(v).forEach((f) => fd.append("images", f));
+          }
+        } else {
+          fd.append(k, v);
+        }
       });
 
-      if (editBlog) await updateBlog(editBlog._id, form);
-      else await createBlog(fd);
+      if (editBlog) {
+        await updateBlog(editBlog._id, fd); // <-- gửi fd thay vì form
+      } else {
+        await createBlog(fd);
+      }
 
       showSnackbar(editBlog ? "Cập nhật thành công" : "Tạo blog thành công");
       setForm({ title: "", content: "", blogCategoryId: "", images: [] });
       setEditBlog(null);
       setOpenDialog(false);
       fetchBlogs(currentPage);
-    } catch {
+    } catch (err) {
       showSnackbar("Thao tác thất bại", "error");
     }
+  };
+
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setForm({ title: "", content: "", blogCategoryId: "", images: [] });
+    setEditBlog(null);
   };
 
   const handleDelete = async () => {
@@ -169,7 +185,7 @@ export default function AdminBlogs() {
       )}
 
       {/* Dialog Tạo/Sửa */}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
         <DialogTitle>{editBlog ? "Chỉnh sửa Blog" : "Tạo Blog mới"}</DialogTitle>
         <DialogContent>
           <TextField label="Tiêu đề" fullWidth value={form.title} onChange={(e) => handleChange("title", e.target.value)} margin="normal" />
