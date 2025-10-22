@@ -209,7 +209,7 @@ function Register({ onLoginSuccess }) {
   };
 
   return (
-    <Box className="custom-register-container" sx={{ backgroundImage: `url('/loginbg.jpg')` }}>
+    <Box className="custom-register-container" sx={{ backgroundImage: `url('/banner2.jpg')` }}>
       <Box className="custom-register-form-container">
         <Typography variant="h4" className="custom-register-title" gutterBottom>
           Đăng ký
