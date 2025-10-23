@@ -16,8 +16,6 @@ export default function ProductFormPage() {
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     name: "",
-    description: "",
-    nutrition: "",
     category: "",
     image: null,
   });
@@ -37,8 +35,6 @@ export default function ProductFormPage() {
         .then((p) => {
           setForm({
             name: p.name || "",
-            description: p.description || "",
-            nutrition: p.nutrition || "",
             category: p.category?._id || "",
             image: p.image || null,
           });
@@ -63,7 +59,6 @@ export default function ProductFormPage() {
     const err = {};
     if (!form.name.trim()) err.name = "Vui lòng nhập tên sản phẩm";
     if (!form.category) err.category = "Vui lòng chọn danh mục";
-    if (!form.description.trim()) err.description = "Vui lòng nhập mô tả";
     setErrors(err);
     return !Object.keys(err).length;
   };
@@ -137,65 +132,18 @@ export default function ProductFormPage() {
             {errors.category && <span className="error-text">{errors.category}</span>}
           </div>
 
-          {/* 🔸Dinh dưỡng */}
-          <div className="form-group form-group-full">
-            <label htmlFor="nutrition">Thành phần dinh dưỡng</label>
-            <textarea
-              id="nutrition"
-              name="nutrition"
-              value={form.nutrition}
-              onChange={handleChange}
-              rows={2}
-            />
-          </div>
-
-          {/* 🔸Độ tuổi phù hợp */}
-          {/* <div className="form-group">
-            <label htmlFor="suitableAge">Độ tuổi phù hợp</label>
-            <input
-              type="text"
-              id="suitableAge"
-              name="suitableAge"
-              value={form.suitableAge}
-              onChange={handleChange}
-            />
-          </div> */}
-
-          {/* 🔸Rủi ro dị ứng */}
-          {/* <div className="form-group">
-            <label htmlFor="allergicRisk">Rủi ro dị ứng</label>
-            <input
-              type="text"
-              id="allergicRisk"
-              name="allergicRisk"
-              value={form.allergicRisk}
-              onChange={handleChange}
-            />
-          </div> */}
-
-          {/* 🔸Mô tả */}
-          <div className="form-group form-group-full">
-            <label htmlFor="description">Mô tả</label>
-            <textarea
-              id="description"
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={3}
-              className={errors.description ? "error" : ""}
-            />
-            {errors.description && (
-              <span className="error-text">{errors.description}</span>
-            )}
-          </div>
-
           {/* 🔸Ảnh sản phẩm */}
           <div className="form-group form-group-full">
             <label>Ảnh sản phẩm</label>
 
-            {form.image && typeof form.image === "string" && (
+            {/* Hiển thị ảnh preview */}
+            {form.image && (
               <img
-                src={form.image}
+                src={
+                  typeof form.image === "string"
+                    ? form.image // ảnh từ server
+                    : URL.createObjectURL(form.image) // ảnh mới chọn
+                }
                 alt="preview"
                 className="preview-image"
               />

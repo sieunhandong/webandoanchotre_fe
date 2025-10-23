@@ -558,7 +558,7 @@ const HomePage = () => {
               <Chip label="ĐÁNH GIÁ KHÁCH HÀNG" className="chip-gold" />
             </Box>
             <Typography variant="h3" className="section-title">
-              Khách hàng nói gì về chúng tôi
+              KHÁCH HÀNG NÓI GÌ VỀ CHÚNG TÔI
             </Typography>
             <Typography variant="body1" color="text.secondary" className="section-subtitle">
               Hàng ngàn phụ huynh tin tưởng và lựa chọn
