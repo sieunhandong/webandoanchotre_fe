@@ -89,11 +89,22 @@ const AboutUs = () => {
   ];
 
   const stats = [
-    { number: "5+", label: "Năm kinh nghiệm" },
-    { number: "10K+", label: "Bé yêu tin dùng" },
-    { number: "50+", label: "Thực đơn đa dạng" }
+    {
+      title: "Tầm nhìn",
+      content: "Trở thành thương hiệu ăn dặm hàng đầu Việt Nam, đồng hành cùng hàng triệu gia đình trong hành trình nuôi dưỡng thế hệ trẻ khỏe mạnh, thông minh.",
+      image: "/aboutus1.jpg"
+    },
+    {
+      title: "Sứ mệnh",
+      content: "Mang đến những bữa ăn dặm dinh dưỡng, an toàn tuyệt đối từ nguyên liệu hữu cơ, giúp bé phát triển toàn diện về thể chất và trí tuệ.",
+      image: "/aboutus2.jpg"
+    },
+    {
+      title: "Giá trị cốt lõi",
+      content: "An toàn - Chất lượng - Tận tâm. Chúng tôi đặt sức khỏe của bé lên hàng đầu với quy trình sản xuất nghiêm ngặt và dịch vụ chăm sóc khách hàng chu đáo.",
+      image: "/raucu.jpg"
+    }
   ];
-
   const philosophyItems = [
     { text: "Dinh dưỡng cân bằng", bg: "#E6E6FA", color: "#666" },
     { text: "", bg: "", image: "/aboutus1.jpg" },
@@ -139,8 +150,12 @@ const AboutUs = () => {
             <div style={styles.heroDescription}>
               <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
                 Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
-                TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn,
-                mà là nền tảng cho sự phát triển toàn diện của bé. Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng,
+              </p>
+              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+                TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn, mà là nền tảng cho sự phát triển toàn diện của bé.
+              </p>
+              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+                Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng,
                 an toàn và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
               </p>
             </div>
@@ -342,7 +357,7 @@ const AboutUs = () => {
         style={styles.statsSection}
         data-section="stats"
       >
-        <div style={styles.container}>
+        <div style={styles.containerStats}>
           <h2
             data-card-id="stats-title"
             style={{
@@ -353,29 +368,47 @@ const AboutUs = () => {
               transition: 'all 0.8s ease-out'
             }}
           >
-            TinyYummy Trong Con Số
+            Về TinyYummy
           </h2>
+          <p
+            data-card-id="stats-subtitle"
+            style={{
+              ...styles.statsSubtitle,
+              opacity: animatedCards.has('stats-subtitle') ? 1 : 0,
+              transform: animatedCards.has('stats-subtitle') ? 'translateY(0)' : 'translateY(30px)',
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.2s'
+            }}
+          >
+            TinyYummy - Thương hiệu ăn dặm uy tín, đồng hành cùng hàng ngàn gia đình Việt trong hành trình nuôi dưỡng con yêu khỏe mạnh, thông minh từ những bữa ăn đầu đời.
+          </p>
           <div style={styles.statsGrid}>
             {stats.map((stat, index) => (
               <div
                 key={index}
                 data-card-id={`stat-${index}`}
                 style={{
-                  ...styles.statItem,
+                  ...styles.statCard,
                   opacity: animatedCards.has(`stat-${index}`) ? 1 : 0,
-                  transform: animatedCards.has(`stat-${index}`) ? 'scale(1)' : 'scale(0.5)',
+                  transform: animatedCards.has(`stat-${index}`) ? 'translateY(0)' : 'translateY(50px)',
                   transition: 'all 0.8s ease-out',
                   transitionDelay: `${index * 0.2}s`
                 }}
               >
-                <div style={styles.statNumber}>{stat.number}</div>
-                <div style={styles.statLabel}>{stat.label}</div>
+                <img
+                  src={stat.image}
+                  alt={stat.title}
+                  style={styles.statImage}
+                />
+                <div style={styles.statContent}>
+                  <h3 style={styles.statTitle}>{stat.title}</h3>
+                  <p style={styles.statText}>{stat.content}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-
       <style>{`
         @keyframes float {
           0%, 100% { 
@@ -742,6 +775,14 @@ const AboutUs = () => {
     font-size: 0.9rem !important;
     text-align: center !important;
   }
+    .stat-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 60px rgba(114, 204, 241, 0.3);
+}
+
+.stat-card:hover img {
+  transform: scale(1.05);
+}
 }
 
 @media (max-width: 600px) {
@@ -765,6 +806,9 @@ const AboutUs = () => {
   .hero-description {
     font-size: 0.85rem !important;
     padding: 0 10px !important;
+  }
+      .stats-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -812,11 +856,11 @@ const styles = {
   },
   heroSection: {
     position: 'relative',
-    minHeight: '80vh',
+    minHeight: '95vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #fdbbfdff 0%, #a0ecffff 100%)',
+    background: '#fcf3ec',
     overflow: 'hidden',
   },
   heroContainer: {
@@ -900,7 +944,7 @@ const styles = {
   mainTitle: {
     fontSize: '5.5rem',
     fontWeight: 700,
-    color: '#fff',
+    color: '#4b4b4b',
     marginBottom: '15px',
     textShadow: '3px 3px 6px rgba(0,0,0,0.2)',
     lineHeight: 1.2,
@@ -912,7 +956,7 @@ const styles = {
     fontSize: '3.2rem',
     marginTop: '0',
     marginBottom: '25px',
-    background: 'linear-gradient(90deg, #000000ff, #f88c8cff)',
+    background: 'linear-gradient(90deg, #72CCF1, #f97eda)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     backgroundClip: 'text',
@@ -934,7 +978,7 @@ const styles = {
     margin: '0 auto',
     fontSize: '1.05rem',
     lineHeight: 1.9,
-    color: '#fff',
+    color: '#000000',
     opacity: 0.92,
     textAlign: 'center',
   },
@@ -1083,30 +1127,60 @@ const styles = {
     lineHeight: 1.8,
     color: '#666'
   },
+  containerStats: {
+    maxWidth: '1600px',
+    margin: '0 auto',
+    padding: '0 20px'
+  },
   statsSection: {
     padding: '100px 0',
     background: '#fff'
   },
+  statsSubtitle: {
+    textAlign: 'center',
+    fontSize: '1.1rem',
+    color: '#666',
+    marginBottom: '60px',
+    maxWidth: '900px',
+    margin: '0 auto 60px',
+    lineHeight: 1.8
+  },
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '50px',
-    margin: '60px 0'
+    gap: '40px',
+    marginTop: '60px'
   },
-  statItem: {
+  statCard: {
+    background: '#fff',
+    borderRadius: '20px',
+    overflow: 'hidden',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+    transition: 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    cursor: 'pointer',
+    position: 'relative'
+  },
+  statImage: {
+    width: '100%',
+    height: '200px',
+    objectFit: 'cover',
+    transition: 'transform 0.5s ease'
+  },
+  statContent: {
+    padding: '30px'
+  },
+  statTitle: {
+    fontSize: '1.5rem',
+    fontWeight: 600,
+    color: '#72CCF1',
+    marginBottom: '15px',
     textAlign: 'center'
   },
-  statNumber: {
-    fontSize: '4rem',
-    fontWeight: 700,
-    color: '#72CCF1',
-    marginBottom: '10px',
-    animation: 'countUp 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
-    textShadow: '2px 2px 10px rgba(114, 204, 241, 0.3)'
-  },
-  statLabel: {
-    fontSize: '1.2rem',
-    color: '#666'
+  statText: {
+    fontSize: '0.95rem',
+    lineHeight: 1.8,
+    color: '#666',
+    textAlign: 'center'
   }
 };
 

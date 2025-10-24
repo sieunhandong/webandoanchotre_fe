@@ -80,7 +80,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
 
   // Mobile menu items
   const mobileMenuItems = [
-    { text: "Quiz", icon: <QuizIcon />, path: "/quiz" },
+    { text: "Hiểu bé hơn", icon: <QuizIcon />, path: "/quiz" },
     { text: "Về chúng tôi", icon: <InfoIcon />, path: "/about-us" },
     { text: "Blog", icon: <ArticleIcon />, path: "/blog" },
     ...(userEmail ? [
@@ -334,7 +334,7 @@ const Header = ({ userEmail, updateUserEmail }) => {
                   },
                 }}
               >
-                Quiz
+                Hiểu bé hơn
               </Button>
               <Button
                 component={Link}
