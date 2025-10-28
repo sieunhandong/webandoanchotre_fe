@@ -147,20 +147,20 @@ const AboutUs = () => {
             <p style={styles.mainTitleSpan} className="main-title-span">
               Dinh dưỡng từ tình yêu thương
             </p>
-            <div style={styles.heroDescription}>
-              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <div className="hero-description" style={styles.heroDescription}>
+              <p style={{ margin: '0 0 0.5em', whiteSpace: 'nowrap' }}>
                 Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
               </p>
-              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <p style={{ margin: '0 0 0.5em', whiteSpace: 'nowrap' }}>
                 TinyYummy hiểu rằng, mỗi thìa cháo,
               </p>
-              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <p style={{ margin: '0 0 0.5em', whiteSpace: 'nowrap' }}>
                 mỗi miếng bột không chỉ là thức ăn, mà là nền tảng cho sự phát triển toàn diện của bé.
               </p>
-              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <p style={{ margin: '0 0 0.5em', whiteSpace: 'nowrap' }}>
                 Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng, an toàn
               </p>
-              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <p style={{ margin: '0 0 0.5em', whiteSpace: 'nowrap' }}>
                 và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
               </p>
             </div>
@@ -744,8 +744,12 @@ const AboutUs = () => {
   }
 
   .hero-description {
-    font-size: 0.95rem !important;
-  }
+  font-size: 0.9rem !important;
+}
+
+.hero-description p {
+  font-size: 0.9rem !important;
+}
 }
 
 @media (max-width: 900px) {
@@ -777,9 +781,13 @@ const AboutUs = () => {
   }
 
   .hero-description {
-    font-size: 0.9rem !important;
-    text-align: center !important;
-  }
+  font-size: 0.85rem !important;
+  text-align: center !important;
+}
+
+.hero-description p {
+  font-size: 0.85rem !important;
+}
     .stat-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 20px 60px rgba(114, 204, 241, 0.3);
@@ -788,8 +796,29 @@ const AboutUs = () => {
 .stat-card:hover img {
   transform: scale(1.05);
 }
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+}
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 30px !important;
+  }
 }
 
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 25px !important;
+  }
+  
+  .stat-card {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
 @media (max-width: 600px) {
   .hero-img {
     width: 280px !important;
@@ -809,12 +838,13 @@ const AboutUs = () => {
   }
 
   .hero-description {
-    font-size: 0.85rem !important;
-    padding: 0 10px !important;
-  }
-      .stats-grid {
-    grid-template-columns: 1fr !important;
-  }
+  font-size: 0.7rem !important;
+  padding: 0 10px !important;
+}
+
+.hero-description p {
+  font-size: 0.7rem !important;
+}
 }
 
 @media (max-width: 480px) {
@@ -823,13 +853,22 @@ const AboutUs = () => {
   }
 
   .hero-img {
-    width: 250px !important;
-    height: 320px !important;
+    width: 200px !important;
+    height: 280px !important;
   }
 
   .main-title {
     font-size: 1.5rem !important;
   }
+    @media (max-width: 400px) {
+  .hero-description {
+    font-size: 0.65rem !important;
+  }
+  
+  .hero-description p {
+    font-size: 0.65rem !important;
+  }
+}
 }
         /* Custom Easing Functions */
         .value-card {
@@ -861,7 +900,7 @@ const styles = {
   },
   heroSection: {
     position: 'relative',
-    minHeight: '95vh',
+    minHeight: '70vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1152,7 +1191,7 @@ const styles = {
   },
   statsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
     gap: '40px',
     marginTop: '60px'
   },
