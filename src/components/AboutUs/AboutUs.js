@@ -152,11 +152,16 @@ const AboutUs = () => {
                 Bé yêu của bạn đang bước vào giai đoạn quan trọng nhất - giai đoạn ăn dặm.
               </p>
               <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
-                TinyYummy hiểu rằng, mỗi thìa cháo, mỗi miếng bột không chỉ là thức ăn, mà là nền tảng cho sự phát triển toàn diện của bé.
+                TinyYummy hiểu rằng, mỗi thìa cháo,
               </p>
               <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
-                Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng,
-                an toàn và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
+                mỗi miếng bột không chỉ là thức ăn, mà là nền tảng cho sự phát triển toàn diện của bé.
+              </p>
+              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+                Chúng tôi cam kết mang đến những bữa ăn dặm dinh dưỡng, an toàn
+              </p>
+              <p style={{ margin: '0 0 0.5em', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
+                và ngon miệng, giúp bé khỏe mạnh và phát triển tốt nhất.
               </p>
             </div>
           </div>
