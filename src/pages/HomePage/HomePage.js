@@ -464,7 +464,7 @@ const HomePage = () => {
         ref={sectionRefs.featured}
         className="featured-grid-section"
         style={{
-          backgroundImage: "url('/homepage.jpeg')",
+          backgroundImage: "url('/homepage.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

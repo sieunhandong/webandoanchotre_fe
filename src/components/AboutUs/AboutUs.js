@@ -74,17 +74,17 @@ const AboutUs = () => {
     {
       name: "Gạo lứt hữu cơ",
       description: "Gạo lứt organic giàu chất xơ và vitamin, giúp bé phát triển hệ tiêu hóa khỏe mạnh. Nguồn gốc từ các nông trại hữu cơ được chứng nhận.",
-      image: "/gaolut.jpg"
+      image: "/materials1.jpg"
     },
     {
       name: "Rau củ tươi",
       description: "Rau củ quả tươi mỗi ngày từ vườn, giàu vitamin và khoáng chất thiết yếu. Được thu hoạch vào buổi sáng sớm để đảm bảo độ tươi ngon tối đa.",
-      image: "/raucu.jpg"
+      image: "/materials2.jpg"
     },
     {
       name: "Thịt cá sạch",
       description: "Thịt, cá tươi sống được chọn lọc kỹ càng, cung cấp protein chất lượng cao. Nguồn cung ứng uy tín, đảm bảo không hormone, không kháng sinh.",
-      image: "/thitca.jpg"
+      image: "/materials3.jpg"
     }
   ];
 
@@ -92,17 +92,17 @@ const AboutUs = () => {
     {
       title: "Tầm nhìn",
       content: "Trở thành thương hiệu ăn dặm hàng đầu Việt Nam, đồng hành cùng hàng triệu gia đình trong hành trình nuôi dưỡng thế hệ trẻ khỏe mạnh, thông minh.",
-      image: "/aboutus1.jpg"
+      image: "/stats1.jpg"
     },
     {
       title: "Sứ mệnh",
       content: "Mang đến những bữa ăn dặm dinh dưỡng, an toàn tuyệt đối từ nguyên liệu hữu cơ, giúp bé phát triển toàn diện về thể chất và trí tuệ.",
-      image: "/aboutus2.jpg"
+      image: "/stats2.jpg"
     },
     {
       title: "Giá trị cốt lõi",
       content: "An toàn - Chất lượng - Tận tâm. Chúng tôi đặt sức khỏe của bé lên hàng đầu với quy trình sản xuất nghiêm ngặt và dịch vụ chăm sóc khách hàng chu đáo.",
-      image: "/raucu.jpg"
+      image: "/stats3.jpg"
     }
   ];
   const philosophyItems = [

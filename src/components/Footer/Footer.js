@@ -128,7 +128,7 @@ const Footer = () => {
                       Địa chỉ
                     </Typography>
                     <Typography variant="body2" className="tinyyummy-footer-contact-info-text">
-                      FPT University, Hòa Lạc, Hà Nội
+                      An Bình Plaza, Mỹ Đình, Hà Nội
                     </Typography>
                   </Box>
                 </Box>
