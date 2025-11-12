@@ -95,11 +95,11 @@ const BlogPage = () => {
       console.error("Error fetching categories list:", error);
     }
   };
-
   useEffect(() => {
     fetchMainCategories();
     fetchMoreBlogs(null, 1);
     fetchAllCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Infinite scroll observer
@@ -119,6 +119,7 @@ const BlogPage = () => {
     }
 
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMoreBlogs, selectedAllCategory, allBlogsPage]);
 
   // Handle page change for category

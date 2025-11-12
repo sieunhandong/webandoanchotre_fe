@@ -57,9 +57,9 @@ export default function FeedbackManagement() {
     open: false,
     feedbackId: null,
   });
-
   useEffect(() => {
     loadFeedbacks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadFeedbacks = async () => {
@@ -273,9 +273,9 @@ export default function FeedbackManagement() {
           sx={{
             borderTop: "1px solid #e0e0e0",
             "& .MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows":
-              {
-                fontWeight: 500,
-              },
+            {
+              fontWeight: 500,
+            },
           }}
         />
       </TableContainer>

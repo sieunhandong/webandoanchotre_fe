@@ -49,9 +49,9 @@ export default function CategoryManagement() {
       showAlert("Lỗi tải danh mục", "error");
     }
   };
-
   useEffect(() => {
     fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showAlert = (msg, sev = "info") =>
@@ -98,8 +98,8 @@ export default function CategoryManagement() {
       dialog.mode === "add"
         ? "Thêm thành công"
         : dialog.mode === "edit"
-        ? "Cập nhật thành công"
-        : "Xóa thành công",
+          ? "Cập nhật thành công"
+          : "Xóa thành công",
       "success"
     );
     fetchAll();
@@ -189,8 +189,8 @@ export default function CategoryManagement() {
           {dialog.mode === "add"
             ? "Thêm danh mục"
             : dialog.mode === "edit"
-            ? "Sửa danh mục"
-            : "Xóa danh mục"}
+              ? "Sửa danh mục"
+              : "Xóa danh mục"}
         </DialogTitle>
         <DialogContent>
           {(dialog.mode === "add" || dialog.mode === "edit") && (
@@ -222,8 +222,8 @@ export default function CategoryManagement() {
             {dialog.mode === "add"
               ? "Thêm"
               : dialog.mode === "edit"
-              ? "Cập nhật"
-              : "Xóa"}
+                ? "Cập nhật"
+                : "Xóa"}
           </Button>
         </DialogActions>
       </Dialog>

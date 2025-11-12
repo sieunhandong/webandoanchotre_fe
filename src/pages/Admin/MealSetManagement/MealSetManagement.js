@@ -55,9 +55,9 @@ export default function MealSetManagement() {
             showAlert("Lỗi tải danh sách set ăn", "error");
         }
     };
-
     useEffect(() => {
         fetchAll();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const showAlert = (msg, sev = "info") =>

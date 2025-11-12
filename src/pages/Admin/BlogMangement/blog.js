@@ -60,8 +60,9 @@ export default function AdminBlogs() {
       setLoading(false);
     }
   };
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchCategories(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setCurrentPage(1); fetchBlogs(1); }, [selectedCategory]);
 
   const showSnackbar = (msg, severity = "success") => setSnackbar({ open: true, message: msg, severity });

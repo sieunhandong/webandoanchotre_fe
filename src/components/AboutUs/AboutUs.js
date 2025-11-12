@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 const AboutUs = () => {
-  const [visibleSections, setVisibleSections] = useState(new Set());
+  // const [visibleSections, setVisibleSections] = useState(new Set());
   const observerRef = useRef(null);
 
   useEffect(() => {
@@ -9,12 +9,12 @@ const AboutUs = () => {
       (entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const section = entry.target.dataset.section;
+            // const section = entry.target.dataset.section;
             const cardId = entry.target.dataset.cardId;
 
-            if (section) {
-              setVisibleSections(prev => new Set([...prev, section]));
-            }
+            // if (section) {
+            //   setVisibleSections(prev => new Set([...prev, section]));
+            // }
 
             if (cardId) {
               setAnimatedCards(prev => new Set([...prev, cardId]));

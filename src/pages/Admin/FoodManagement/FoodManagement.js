@@ -67,9 +67,9 @@ export default function AdminFood() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchFoods();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, search]);
 
     const handleSubmit = async (e) => {

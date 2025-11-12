@@ -52,6 +52,7 @@ const SetDetail = () => {
   const [qrUrl, setQrUrl] = useState("");
   const [orderCode, setOrderCode] = useState("");
   const [countdown, setCountdown] = useState(180); // 3 phút
+  // eslint-disable-next-line no-unused-vars
   const [polling, setPolling] = useState(false);
 
   // Load set & provinces
@@ -107,6 +108,7 @@ const SetDetail = () => {
       }, 1000);
     }
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openQr]);
 
   // Polling payment status

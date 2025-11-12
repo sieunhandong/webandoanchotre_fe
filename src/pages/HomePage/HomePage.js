@@ -192,6 +192,7 @@ const HomePage = () => {
     return () => {
       Object.values(observers).forEach((observer) => observer.disconnect());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // const nextSlide = () => {

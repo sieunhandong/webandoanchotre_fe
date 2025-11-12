@@ -61,10 +61,12 @@ export default function ComplaintManagement() {
 
   useEffect(() => {
     fetchComplaints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [complaints, filters]);
 
   const fetchComplaints = async () => {

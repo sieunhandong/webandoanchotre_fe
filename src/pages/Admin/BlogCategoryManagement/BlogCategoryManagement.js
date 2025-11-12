@@ -15,6 +15,7 @@ import {
 
 export default function AdminBlogCategory() {
     const [categories, setCategories] = useState([]);
+    // eslint-disable-next-line no-unused-vars
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({ name: "" });
     const [editCategory, setEditCategory] = useState(null);
@@ -36,9 +37,9 @@ export default function AdminBlogCategory() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchCategories();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (e) => setForm({ name: e.target.value });

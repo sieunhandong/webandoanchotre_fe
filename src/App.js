@@ -66,6 +66,7 @@ function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const [userEmail, setUserEmail] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [userRole, setUserRole] = useState(null);
 
   const noFooterRoutes = [

@@ -64,9 +64,9 @@ export default function OrderManagement() {
       showAlert("Không thể tải danh sách đơn hàng", "error");
     }
   };
-
   useEffect(() => {
     fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() => {

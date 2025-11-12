@@ -25,9 +25,9 @@ const FoodPage = () => {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchFoods(page, search);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, search]);
 
     // Intersection Observer cho lazy loading animation

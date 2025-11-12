@@ -79,6 +79,7 @@ const Step4 = ({ data, onNext, onPrev }) => {
         } else {
             fetchMenu(data.sessionId, inputHash);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data?.sessionId, fetchMenu]); // chỉ theo dõi sessionId và hàm fetch
 
     const handleNext = () => {
