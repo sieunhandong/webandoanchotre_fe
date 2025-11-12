@@ -118,7 +118,7 @@ export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
                 </Typography>
                 <Typography>Tên: {order.userId?.name || "N/A"}</Typography>
                 <Typography>Email: {order.userId?.email || "N/A"}</Typography>
-                <Typography>Điện thoại: {order.userId?.phone || "N/A"}</Typography>
+                <Typography>Điện thoại: {order.userId?.phone || "Chưa cập nhật"}</Typography>
                 <Typography>
                   Ngày đặt: {new Date(order.createdAt).toLocaleString("vi-VN")}
                 </Typography>
@@ -132,10 +132,16 @@ export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
                   🚚 Địa chỉ giao hàng
                 </Typography>
                 <Typography>
-                  {address.address}, {address.wardName}, {address.districtName},{" "}
+                  {address.wardName}, {address.districtName},{" "}
                   {address.provinceName}
                 </Typography>
-                <Typography>Ngày giao dự kiến: {delivery.time}</Typography>
+                <Typography fontWeight={600} mb={1}>
+                  🚚 Địa chỉ ghi chú
+                </Typography>
+                <Typography>
+                  {address.address}
+                </Typography>
+                <Typography>Ngày giao đã chọn: {delivery.time}</Typography>
               </Paper>
             </Grid>
 
@@ -145,15 +151,17 @@ export default function OrderDetailsDialog({ open, order, onClose, refresh }) {
                 <Typography fontWeight={600} mb={1}>
                   👶 Thông tin bé
                 </Typography>
-                <Typography>Tuổi: {baby.age || "Chưa cập nhật"} tháng</Typography>
-                <Typography>Cân nặng: {baby.weight || "Chưa cập nhật"} kg</Typography>
+                <Typography>Tuổi: {baby.age || "Chưa cập nhật"}</Typography>
+                <Typography>Cân nặng: {baby.weight || "Chưa cập nhật"}</Typography>
                 <Typography>
                   Phương pháp ăn dặm:{" "}
                   {baby.feedingMethod === "traditional"
                     ? "Truyền thống"
                     : baby.feedingMethod === "blw"
-                      ? "BLW"
-                      : "Kết hợp"}
+                      ? "Tự chỉ huy"
+                      : baby.feedingMethod === "japanese"
+                        ? "Kiểu Nhật"
+                        : "Chưa cập nhật"}
                 </Typography>
                 <Typography>
                   Dị ứng:{" "}

@@ -84,15 +84,15 @@ export default function OrderDetailPage() {
         <div className="trackorderdetails-shippingdetails">
           <div className="trackorderdetails-recipientinfo">
             <div className="trackorderdetails-inforow">
-              <span className="trackorderdetails-infolabel">Địa chỉ chi tiết:</span>
-              <span className="trackorderdetails-infovalue">
-                {orderData.delivery?.address?.address}
-              </span>
-            </div>
-            <div className="trackorderdetails-inforow">
               <span className="trackorderdetails-infolabel">Địa chỉ:</span>
               <span className="trackorderdetails-infovalue">
                 {orderData.delivery?.address?.wardName}, {orderData.delivery?.address?.districtName}, {orderData.delivery?.address?.provinceName}
+              </span>
+            </div>
+            <div className="trackorderdetails-inforow">
+              <span className="trackorderdetails-infolabel">Địa chỉ ghi chú:</span>
+              <span className="trackorderdetails-infovalue">
+                {orderData.delivery?.address?.address}
               </span>
             </div>
             <div className="trackorderdetails-inforow">
