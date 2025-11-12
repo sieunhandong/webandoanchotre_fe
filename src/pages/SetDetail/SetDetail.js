@@ -133,7 +133,7 @@ const SetDetail = () => {
   const handleProvinceChange = async (e) => {
     const provinceId = e.target.value;
     const provinceName =
-      provinces.find((p) => p.ProvinceID == provinceId)?.ProvinceName || "";
+      provinces.find((p) => p.ProvinceID === provinceId)?.ProvinceName || "";
     setAddress({
       ...address,
       provinceId,
@@ -160,7 +160,7 @@ const SetDetail = () => {
   const handleDistrictChange = async (e) => {
     const districtId = e.target.value;
     const districtName =
-      districts.find((d) => d.DistrictID == districtId)?.DistrictName || "";
+      districts.find((d) => d.DistrictID === districtId)?.DistrictName || "";
     setAddress({
       ...address,
       districtId,
@@ -183,7 +183,7 @@ const SetDetail = () => {
 
   const handleWardChange = (e) => {
     const wardCode = e.target.value;
-    const wardName = wards.find((w) => w.WardCode == wardCode)?.WardName || "";
+    const wardName = wards.find((w) => w.WardCode === wardCode)?.WardName || "";
     setAddress({ ...address, wardCode, wardName });
   };
 

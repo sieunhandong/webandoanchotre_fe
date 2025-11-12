@@ -1,17 +1,16 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import { Box, Container, Grid, Typography, IconButton, Divider, Link, Stack } from '@mui/material';
 import { Facebook, Twitter, Instagram, YouTube } from '@mui/icons-material';
 import { Mail, Phone, MapPin, Heart } from 'lucide-react';
 import './footer.css';
 
 const Footer = () => {
-  const quickLinks = [
-    { name: 'Trang chủ', path: '/' },
-    { name: 'Công thức', path: '/recipes' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Về chúng tôi', path: '/about-us' },
-  ];
+  // const quickLinks = [
+  //   { name: 'Trang chủ', path: '/' },
+  //   { name: 'Công thức', path: '/recipes' },
+  //   { name: 'Blog', path: '/blog' },
+  //   { name: 'Về chúng tôi', path: '/about-us' },
+  // ];
 
   const socialLinks = [
     { icon: <Facebook />, url: '#', color: '#1877F2', name: 'Facebook' },

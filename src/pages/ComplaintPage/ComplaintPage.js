@@ -177,7 +177,7 @@ const ComplaintPage = () => {
                 >
                   <option value="">-- Chọn --</option>
                   <option value="Đơn hàng">Vấn đề về đơn hàng</option>
-                  <option value="Thanh toán">Thanh toán</option>
+                  <option value="Payment">Thanh toán</option>
                   <option value="Website">Giao diện / Website</option>
                   <option value="Khác">Khác</option>
                 </select>

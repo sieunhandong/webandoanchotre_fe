@@ -5,8 +5,8 @@ import {
   Typography,
   Paper,
   Divider,
-  Alert,
-  Snackbar,
+  // Alert,
+  // Snackbar,
   Link,
   Box,
 } from "@mui/material";
@@ -19,9 +19,9 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import ContactSupportIcon from "@mui/icons-material/ContactSupport";
 
 const Refund = () => {
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  // const [error, setError] = useState("");
+  // const [success, setSuccess] = useState("");
+  // const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
 
   const handleComplaintNavigation = (e) => {
@@ -384,7 +384,7 @@ const Refund = () => {
       {renderCommitment()}
       {renderContact()}
 
-      <Snackbar
+      {/* <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
@@ -398,7 +398,7 @@ const Refund = () => {
         >
           {error || success}
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
     </Container>
   );
 };

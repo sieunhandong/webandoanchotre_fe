@@ -100,7 +100,7 @@ const Step7 = ({ data, onPrev }) => {
     // ===== Xử lý chọn địa chỉ =====
     const handleProvinceChange = async (e) => {
         const provinceId = e.target.value;
-        const provinceName = provinces.find((p) => p.ProvinceID == provinceId)?.ProvinceName || "";
+        const provinceName = provinces.find((p) => p.ProvinceID === provinceId)?.ProvinceName || "";
         setAddress({
             ...address,
             provinceId,
@@ -127,7 +127,7 @@ const Step7 = ({ data, onPrev }) => {
 
     const handleDistrictChange = async (e) => {
         const districtId = e.target.value;
-        const districtName = districts.find((d) => d.DistrictID == districtId)?.DistrictName || "";
+        const districtName = districts.find((d) => d.DistrictID === districtId)?.DistrictName || "";
         setAddress({
             ...address,
             districtId,
@@ -151,7 +151,7 @@ const Step7 = ({ data, onPrev }) => {
 
     const handleWardChange = (e) => {
         const wardCode = e.target.value;
-        const wardName = wards.find((w) => w.WardCode == wardCode)?.WardName || "";
+        const wardName = wards.find((w) => w.WardCode === wardCode)?.WardName || "";
         setAddress({ ...address, wardCode, wardName });
     };
 
@@ -214,6 +214,7 @@ const Step7 = ({ data, onPrev }) => {
     };
 
     // ===== Countdown + Polling =====
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (!qrUrl) return;
         const timer = setInterval(() => {
