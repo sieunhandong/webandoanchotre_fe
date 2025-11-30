@@ -55,7 +55,7 @@ const HomePage = () => {
     {
       title: " ",
       subtitle: " ",
-      image: "/banner2.jpg",
+      image: "/banner.jpg",
       gradient: "linear-gradient(135deg, rgba(180, 231, 206, 0.95) 0%, rgba(180, 231, 206, 0.7) 100%)",
     },
   ];
