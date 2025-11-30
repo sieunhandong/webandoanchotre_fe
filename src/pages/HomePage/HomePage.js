@@ -63,31 +63,31 @@ const HomePage = () => {
   // Reviews data
   const reviews = [
     {
-      name: "Đào Hoàng Mai",
+      name: "Trần Ánh Nguyệt",
       avatar: "/feedback1.jpg",
       rating: 5,
-      comment: "Các công thức ăn dặm rất chi tiết và dễ làm. Bé nhà mình rất thích ăn!",
+      comment: "Ai có con biếng ăn hay mẹ quá bận thì thử nha, mình dùng rồi mới thấy con no khỏe, mẹ cũng đỡ tủi thân vì lúc nào cũng chạy theo con ép ăn.",
       date: "2 tuần trước",
     },
     {
-      name: "Nguyễn Việt Anh",
+      name: "Nguyễn Thị Hà Trang",
       avatar: "/feedback2.jpg",
       rating: 5,
-      comment: "Set ăn dặm rất đa dạng, giúp mình tiết kiệm thời gian suy nghĩ món ăn cho bé.",
+      comment: "Giá thì có nhỉnh hơn mẹ tự nấu một chút nhưng bù lại mẹ đỡ cực, bé ăn khỏe, tăng ký đều, thấy đáng tiền lắm luôn.",
       date: "1 tháng trước",
     },
     {
       name: "Nguyễn Văn Đông",
       avatar: "/feedback3.jpg",
       rating: 5,
-      comment: "Blog có nhiều bài viết bổ ích về dinh dưỡng, giúp vợ chồng mình học hỏi nhiều.",
+      comment: "Lúc đầu cũng lo bé không chịu ăn ai ngờ bé hợp tác lắm luôn.",
       date: "3 tuần trước",
     },
     {
       name: "Thanh Đoan",
       avatar: "/feedback4.jpg",
       rating: 5,
-      comment: "Dịch vụ tư vấn nhiệt tình, chuyên nghiệp. Rất hài lòng!",
+      comment: "Thực đơn thay đổi mỗi ngày không trùng lặp. Bé đỡ chán ăn, mẹ cũng đỡ phải nghĩ xem hôm nay nấu gì",
       date: "1 tuần trước",
     },
   ];
