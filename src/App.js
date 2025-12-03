@@ -37,6 +37,7 @@ import SetDetail from "./pages/SetDetail/SetDetail.js";
 import SocialButtons from "./components/SocialButtons.js";
 import FoodPage from "./pages/FoodPage/FoodPage.js";
 import FoodDetails from "./pages/FoodPage/FoodDetails.js";
+import GAListener from "./utils/GAListener.js";
 const AdminRoute = ({ children }) => {
   const userRole =
     localStorage.getItem("userRole") || sessionStorage.getItem("userRole");
@@ -114,6 +115,7 @@ function App() {
 
   return (
     <>
+      <GAListener />
       {
         !shouldHideHeader && (
           <Header userEmail={userEmail} updateUserEmail={updateUserEmail} />
