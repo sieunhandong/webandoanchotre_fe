@@ -114,105 +114,106 @@ function App() {
 
 
   return (
-    <>
-      <GAListener />
-      {
-        !shouldHideHeader && (
-          <Header userEmail={userEmail} updateUserEmail={updateUserEmail} />
-        )
-      }
+    <GAListener>
+      <>
+        {
+          !shouldHideHeader && (
+            <Header userEmail={userEmail} updateUserEmail={updateUserEmail} />
+          )
+        }
 
 
-      <ScrollToTop />
-      <ToastContainer />
-      <Routes>
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminLayout updateUserEmail={updateUserEmail} />
-            </AdminRoute>
-          }
-        >
-          <Route path="products">
-            <Route index element={<BookList />} />
-            <Route path="add" element={<BookFormPage />} />
-            <Route path=":id/edit" element={<BookFormPage />} />
+        <ScrollToTop />
+        <ToastContainer />
+        <Routes>
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout updateUserEmail={updateUserEmail} />
+              </AdminRoute>
+            }
+          >
+            <Route path="products">
+              <Route index element={<BookList />} />
+              <Route path="add" element={<BookFormPage />} />
+              <Route path=":id/edit" element={<BookFormPage />} />
+            </Route>
+            <Route path="categories" element={<CategoryManagementPage />} />
+            <Route path="meal-set" element={<MealSetManagement />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="feedbacks" element={<FeedbackManagement />} />
+
+            <Route path="orders" element={<OrderManagement />} />
+            <Route path="complaints" element={<ComplaintManagement />} />
+            <Route path="feedbacks" element={<FeedbackManagement />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="foods" element={<AdminFood />} />
+            <Route path="blog-categories" element={<AdminBlogCategory />} />
           </Route>
-          <Route path="categories" element={<CategoryManagementPage />} />
-          <Route path="meal-set" element={<MealSetManagement />} />
-          <Route path="users" element={<UserManagement />} />
-          <Route path="feedbacks" element={<FeedbackManagement />} />
+          <Route
+            path="/account/login"
+            element={<Login onLoginSuccess={updateUserEmail} />}
+          />
+          <Route path="/account/register" element={<Register />} />
+          <Route
+            path="/"
+            element={<HomePage />}
+          />
+          <Route
+            path="/mealset/:id"
+            element={
+              <SetDetail
+              />
+            }
+          />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/payment-success" element={<PaymentResult />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogDetail />} />
+          <Route path="/user/profile" element={<Profile />} />
+          <Route path="/account/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/user/complaint" element={<ComplaintPage />} />
+          <Route path="/user/refund" element={<Refund />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/recipes" element={<FoodPage />} />
+          <Route path="/recipes/:id" element={<FoodDetails />} />
+          <Route
+            path="/user/change-password"
+            element={
+              <UserOnlyRoute>
+                <ChangePassword />
+              </UserOnlyRoute>
+            }
+          />
+          <Route
+            path="/track-order"
+            element={
+              <UserOnlyRoute>
+                <TrackOrderPage />
+              </UserOnlyRoute>
+            }
+          />
+          <Route
+            path="/track-order/:orderId"
+            element={
+              <UserOnlyRoute>
+                <OrderDetailPage />
+              </UserOnlyRoute>
+            }
+          />
 
-          <Route path="orders" element={<OrderManagement />} />
-          <Route path="complaints" element={<ComplaintManagement />} />
-          <Route path="feedbacks" element={<FeedbackManagement />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="blogs" element={<AdminBlogs />} />
-          <Route path="foods" element={<AdminFood />} />
-          <Route path="blog-categories" element={<AdminBlogCategory />} />
-        </Route>
-        <Route
-          path="/account/login"
-          element={<Login onLoginSuccess={updateUserEmail} />}
-        />
-        <Route path="/account/register" element={<Register />} />
-        <Route
-          path="/"
-          element={<HomePage />}
-        />
-        <Route
-          path="/mealset/:id"
-          element={
-            <SetDetail
-            />
-          }
-        />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/payment-success" element={<PaymentResult />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:id" element={<BlogDetail />} />
-        <Route path="/user/profile" element={<Profile />} />
-        <Route path="/account/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/user/complaint" element={<ComplaintPage />} />
-        <Route path="/user/refund" element={<Refund />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/recipes" element={<FoodPage />} />
-        <Route path="/recipes/:id" element={<FoodDetails />} />
-        <Route
-          path="/user/change-password"
-          element={
-            <UserOnlyRoute>
-              <ChangePassword />
-            </UserOnlyRoute>
-          }
-        />
-        <Route
-          path="/track-order"
-          element={
-            <UserOnlyRoute>
-              <TrackOrderPage />
-            </UserOnlyRoute>
-          }
-        />
-        <Route
-          path="/track-order/:orderId"
-          element={
-            <UserOnlyRoute>
-              <OrderDetailPage />
-            </UserOnlyRoute>
-          }
-        />
+        </Routes>
+        <SocialButtons />
 
-      </Routes>
-      <SocialButtons />
-
-      {!isAdminRoute && !shouldHideFooter && (
-        <>
-          <Footer />
-        </>
-      )}
-    </>
+        {!isAdminRoute && !shouldHideFooter && (
+          <>
+            <Footer />
+          </>
+        )}
+      </>
+    </GAListener>
   );
 }
 
